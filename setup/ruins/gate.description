@@ -1,0 +1,15 @@
+cd /realm/ruins
+load PublicRoom gate
+set gate.called ^yYea Olde Gate^-
+set gate.portrait wandering through the ruins of Dawnkeep
+set gate.relation ""
+edit gate.description
+.wipe
+The ruins are surrounded by an enormous wall now decayed with age, wearied by the years of protecting those within from the hard reality outside.
+
+The only entrance is guarded by the crumbling, silent gate you are looking at which, by the way, is open.  In fact, the gate has always been open to welcome all, a symbol of the freedom of all men to enter.  <footnote 3>  Lying next to the gate are the battered instruments of musicians, no longer heralding the entry of people to the realm.
+
+Welcome to the ruins of Forest, a place of distant dreams.
+.end
+transfer gate $
+cd

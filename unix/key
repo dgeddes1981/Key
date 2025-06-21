@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#--- Configuration -----------------------------------------
+#
+#  You will need to change these variables to reflect
+#  where and how you wish to run Key.
+
+#      this will normally be set already
+#   JDKHOME=/usr/local/java
+
+#      this should be set to where the key home directory is
+KEYHOME=$KEY_HOME
+
+#      this is set for linux, it disables the AWT (less memory usage)
+export NS_JAVA="true"
+
+#      this is the location of the virtual machine
+export JAVA_VM=$JDKHOME/bin/java
+#export JAVA_VM=/opt/Compuware/DPRA/bin/nmjava
+
+#  set this to be what you need in order to get the timezone right
+# US settings are: EST, CST, MST, PST.  Australia is GMT-10 or GMT-11 (summer)
+# I don't know any others.
+export TZ=GMT-11
+#	JAVA_VM=$JDKHOME/bin/java_g
+#   JAVA_VM=/usr/local/bin/kaffe
+
+#      options for the virtual machine
+		# JDK1.2 options
+JIT="-Djava.compiler=NONE"
+export VM_OPT="-classpath $KEYHOME/classes:$KEYHOME/external/javax.servlet.jar:$KEYHOME/external/gnujsp.jar:$KEYHOME/external/com.mortbay.Jetty.jar:$KEYHOME/external/bsh-1.0.jar:$KEYHOME/external/filesystem.jar -mx45m -ms5m -DTHREADED_SERVER_THREAD_CLASS=key.web.PoolThread"
+#export VM_OPT="-mx45m -ms5m -Djava.compiler=shujit"
+
+#      the class to start with
+export BASE_CLASS="key.Main"
+
+#----------------------------------------- Configuration ---
+
+#--- Script ------------------------------------------------
+#
+#  The remainder of this file need not be changed.  It is
+#  a shell script that will ensure Key is started with the
+#  supplied parameters and in the correct directory.
+#
+
+#while( true )
+#do
+	if [ \"$1\" = \"nojit\" ]; then 
+		JIT=""
+		shift 1
+	fi
+	
+	cd $KEY_HOME
+	echo $JAVA_VM $JIT $VM_OPT $BASE_CLASS $*
+	$JAVA_VM $JIT $VM_OPT $BASE_CLASS $*
+#	sleep 2
+#done
+
+#
+#------------------------------------------------ Script ---

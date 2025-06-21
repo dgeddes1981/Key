@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom cave
+set cave.called ^cEntrance Cave^-
+set cave.portrait the entrance of the caves.
+set cave.relation at
+edit cave.description
+.wipe
+You are standing outside a cave.  Inside the cave looks to be very dark and you cannot make out how deep into the mountains it extends.  Legends say that the cave system leads to the otherside of the mountain range to the Marshlands.  You cannot hear any noises from inside the cave.  All is quiet...  a bit too quiet.
+
+Maybe you should leave the caves be.
+.end
+transfer cave $
+cd

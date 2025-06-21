@@ -1,0 +1,545 @@
+package key;
+
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.io.*;
+
+import java.lang.reflect.*;
+
+/**
+  *  Material
+  *
+  *  The base class for most user-manipulatable objects
+ */
+public abstract class Material extends Atom implements Thing
+{
+	private static final long serialVersionUID = -3366054986544050407L;
+	
+//---  static section  -------------------------------------------------
+//
+//  contains some static constants that are useful for the manipulation
+//  of objects.
+//
+	protected static transient Hashtable methods = new Hashtable();
+	protected static transient String available_verbs;
+	protected static transient String defaultVerb;
+	protected static transient Method defaultMethod;
+	
+	public static final Class[] verbParameters =
+	{
+		Player.class,
+		StringTokenizer.class,
+		InteractiveConnection.class,
+		Flags.class
+	};
+	
+		//  place the methods from Thing into the hashtable
+	static
+	{
+		Vector v = new Vector( 5, 5 );
+		
+		try
+		{
+			Method m[] = Thing.class.getDeclaredMethods();
+			
+			for( int i = 0; i < m.length; i++ )
+			{
+				Class[] parameters = m[i].getParameterTypes();
+
+				if( parametersEquivalent( parameters, verbParameters ) )
+				{
+					String name = m[i].getName();
+					Method meth = m[i];
+					
+					methods.put( name, meth );
+					v.addElement( name );
+					
+					if( defaultMethod == null )
+					{
+						defaultMethod = meth;
+						defaultVerb = name;
+					}
+				}
+			}
+			
+			available_verbs = Grammar.commaSeperate( v.elements() );
+		}
+		catch( Exception e )
+		{
+			Log.debug( Material.class, "Could not initialise fields from Thing: " + e.toString() );
+			e.printStackTrace();
+		}
+	}
+	
+	public Material()
+	{
+			//  objects typically start out
+			//  as publically moveable.
+		getPermissionList().allow( Atom.moveAction );
+	}
+	public final static void anyAtomInspect( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom th )
+	{
+		Reference owner = th.getOwnerReference();
+		StringBuffer sb = new StringBuffer( th.getId() );
+		Type type = Type.typeOf( th );
+		
+		sb.append( " is" );
+		
+		if( type != null )
+		{
+			sb.append( ' ' );
+			sb.append( Grammar.aAn( type.getName() ) );
+		}
+		
+		if( owner.isValid() )
+		{
+			sb.append( " owned by " );
+			sb.append( owner.getName() );
+		}
+		
+		sb.append( '.' );
+		
+		ic.send( sb.toString() );
+	}
+	public Reference build( Player p )
+	{
+		return( getThis() );
+	}
+	public void close( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	close( p, args, ic, flags, this );	}
+	public void close( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot close the " + getFullPortrait( p ) + "." );
+	}
+	protected final void defaultDrop( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		Room r = p.getLocation();
+		Inventory i = p.getInventory();
+		
+			//  ensure we won't have to back out
+		r.checkPermissionList( Container.addToAction );
+		i.checkPermissionList( Container.removeFromAction );
+		checkPermissionList( Atom.moveAction );
+		
+		if( !r.canAdd() )
+		{
+			ic.sendFailure( "There is too much in this room to drop any more." );
+			return;
+		}
+		
+		try
+		{
+			i.remove( this );
+			r.add( this );
+			ic.sendFeedback( "You put down " + getFullPortrait( p ) + "." );
+		}
+		catch( CannotDropWhileWearingException e )
+		{
+			ic.sendFailure( "You cannot drop " + getFullPortrait( p ) + " while you are wearing it." );
+		}
+		catch( Exception e )
+		{
+			throw new UnexpectedResult( e );
+		}
+	}
+	protected final void defaultGet( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		Room r = p.getLocation();
+		Inventory i = p.getInventory();
+		
+			//  ensure that we won't have to back out
+		r.checkPermissionList( Container.removeFromAction );
+		i.checkPermissionList( Container.addToAction );
+		checkPermissionList( Atom.moveAction );
+		
+		if( !i.canAdd() )
+		{
+			ic.sendFailure( "You are carrying too much already." );
+			return;
+		}
+		
+		try
+		{
+			r.remove( this );
+			i.add( this );
+			ic.sendFeedback( "You pick up the " + getFullPortrait( p ) + "." );
+		}
+		catch( Exception e )
+		{
+			throw new UnexpectedResult( e );
+		}
+	}
+	protected final void defaultGive( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		if( !args.hasMoreTokens() )
+		{
+			ic.sendFailure( "Who do you want to give the " + getFullPortrait( p ) + " to?" );
+			return;
+		}
+		
+		String pname = args.nextToken();
+		Player t = null;
+		
+		try
+		{
+			t = (Player) Command.getOnlinePlayer( p, ic, pname );
+		}
+		catch( ClassCastException e )
+		{
+			ic.sendFailure( "You may only give to single players" );
+			return;
+		}
+		
+		if( t == null )
+		{
+			ic.sendFailure( "No such player '" + pname + "'" );
+			return;
+		}
+		
+		Inventory i = p.getInventory();
+		Inventory ti = t.getInventory();
+		
+			//  ensure that we won't have to back out
+		i.checkPermissionList( Container.removeFromAction );
+		ti.checkPermissionList( Container.addToAction );
+		checkPermissionList( Atom.moveAction );
+		
+		if( !ti.canAdd() )
+		{
+			ic.sendFailure( p.HeShe() + " is carrying too much already." );
+			return;
+		}
+		
+		try
+		{
+			i.remove( this );
+			ti.add( this );
+			ic.sendFeedback( "You give the " + getFullPortrait( p ) + " to " + t.getName() + "." );
+		}
+		catch( Exception e )
+		{
+			throw new UnexpectedResult( e );
+		}
+	}
+	protected final void defaultInspect( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		standardInspect( p, args, ic, flags, (Thing) item );
+	}
+	protected final void defaultWear( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		String[] wl = wearLocations( p );
+		
+		if( wl == null || wl.length == 0 )
+		{
+			ic.send( "You may not wear the " + getFullPortrait( p ) + "." );
+			return;
+		}
+		
+		Inventory i = p.getInventory();
+		
+			//  check all locations are free
+		for( int j = 0; j < wl.length; j++ )
+		{
+			Thing o = (Thing) i.getProperty( wl[j] );
+			
+			if( o != null )
+			{
+				ic.sendFailure( "You are already wearing the " + getFullPortrait( p ) + " on your " + wl[j] + "." );
+				return;
+			}
+		}
+		
+			//  place it in all locations
+		for( int j = 0; j < wl.length; j++ )
+		{
+			i.setProperty( wl[j], this );
+		}
+		
+		ic.sendFeedback( "You are now wearing the " + getFullPortrait( p ) + "." );
+	}
+/**
+ *
+ * @param p key.Player
+ * @param args java.util.StringTokenizer
+ * @param ic key.InteractiveConnection
+ * @param flags key.Flags
+ * @param item key.Atom
+ *
+ * @author Luca Pancallo - 1999.03.30
+ */
+protected final void defaultWield( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item ) {
+
+	// check the body type for this player
+	Reference bodyRef = (Reference)p.body;
+	if ( bodyRef == Reference.EMPTY || bodyRef == null )
+	{
+		ic.send( "You don't have a body! You can't wield anything." );
+		return;
+	}
+
+	// search the number of locations needed to wield this item (ex. 2 for a two-handed sword)
+	int numWieldLocations = numWieldLocations( p );
+
+	if( numWieldLocations == -1 )
+	{
+		ic.send( "The " + getFullPortrait( p ) + " can't be wielded." );
+		return;
+	}
+
+	// check if the player has enough free locations
+	BodyType body = (BodyType)bodyRef.get();
+	String[] wl = body.canWieldMore(numWieldLocations);
+
+	if( wl == null || wl.length == 0 )
+	{
+		ic.send( "Sorry, you don't have enough free limbs to wield the " + getFullPortrait( p ) + "." );
+		return;
+	}
+
+	// check if player specify locations on command line
+	// TODO
+
+	// wield!
+	for ( int i=0; i<numWieldLocations; i++ ) {
+		body.setWielded(wl[i],this);
+	}
+
+	ic.sendFeedback( "You are now wielding the " + getFullPortrait( p ) + "." );
+
+}
+	public void drink( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	drink( p, args, ic, flags, this );	}
+	public void drink( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot drink the " + getFullPortrait( p ) + "." );
+	}
+	public void drop( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	drop( p, args, ic, flags, this );	}
+	public void drop( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		defaultDrop( p, args, ic, flags, item );
+	}
+	public void eat( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	eat( p, args, ic, flags, this );	}
+	public void eat( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "The " + getFullPortrait( p ) + " is not edible." );
+	}
+	public void fill( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	fill( p, args, ic, flags, this );	}
+	public void fill( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot fill the " + getFullPortrait( p ) + "." );
+	}
+	public void get( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	get( p, args, ic, flags, this );	}
+	public void get( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		defaultGet( p, args, ic, flags, item );
+	}
+	public static final String getAvailableVerbs()
+	{
+		return( available_verbs );
+	}
+	public static final String getDefaultVerb()
+	{
+		return( defaultVerb );
+	}
+//---  proxy methods  --------------------------------
+	public String getFullPortrait( Player p, Atom proxy )
+		{	return( getFullPortrait( p ) );	}
+	public static final Method getMethod( String verb )
+	{
+		return( (Method) methods.get( verb ) );
+	}
+	public void give( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{ give( p, args, ic, flags, this ); }
+	public void give( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		defaultGive( p, args, ic, flags, item );
+	}
+	/**
+	  *  This proxy method should be a fraction more expressive.
+	  *  In particular, it should prefix the inspect screen by
+	  *  some information detailing that this inspect is proxied,
+	  *  and isn't completely representative of the object.
+	  *
+	  *  MaterialContainer, the primary user of the proxy interface,
+	  *  by default outputs an inspect for the container, followed
+	  *  by the proxy inspect, thus providing complete information
+	  *  about the object.
+	 */
+	public void inspect( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	inspect( p, args, ic, flags, this );	}
+	/**
+	  *  It is not real friendly to override this method in order
+	  *  to hide the inspect information - it's very useful stuff.
+	 */
+	public void inspect( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		//ic.send( "You do not descry anything of note about the " + getFullPortrait( p ) + "." );
+		defaultInspect( p, args, ic, flags, item );
+	}
+	public boolean isMethodSpecial( Method m )
+	{
+		Class dc = m.getDeclaringClass();
+		
+		return( dc != Material.class &&
+				!Modifier.isFinal( m.getModifiers() ) &&
+				!Modifier.isAbstract( m.getModifiers() )
+			  );
+	}
+	public void lock( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	lock( p, args, ic, flags, this );	}
+	public void lock( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot lock the " + getFullPortrait( p ) + "." );
+	}
+	public void look( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	look( p, args, ic, flags, this );	}
+	public void look( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You don't see anything of note" );
+	}
+/**
+ * This method must be overridden by subclasses. ( used by Material.defaultWield() )
+ * return -1 if you want that the object cannot be wielded.
+ *
+ * @return int
+ */
+public int numWieldLocations( Player p ) {
+	
+	return 0;
+}
+	public void open( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	open( p, args, ic, flags, this );	}
+	public void open( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot open the " + getFullPortrait( p ) + "." );
+	}
+	public static boolean parametersEquivalent( Class[] a, Class[] b )
+	{
+		if( a.length != b.length )
+			return( false );
+		
+		for( int j = 0; j < a.length; j++ )
+		{
+			if( a[j] != b[j] )
+				return( false );
+		}
+		
+		return( true );
+	}
+	public void read( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	read( p, args, ic, flags, this );	}
+	public void read( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot read the " + getFullPortrait( p ) + "." );
+	}
+	public void remove( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	remove( p, args, ic, flags, this );	}
+	public void remove( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot remove the " + getFullPortrait( p ) + "." );
+	}
+	public void sit( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	sit( p, args, ic, flags, this );	}
+		//  META: eventually do a default method for this
+	public void sit( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot sit on the " + getFullPortrait( p ) + "." );
+	}
+	public void stand( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	stand( p, args, ic, flags, this );	}
+		//  META: eventually do a default method for this
+	public void stand( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You are not sitting on the " + getFullPortrait( p ) + "." );
+	}
+	public final static void standardInspect( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Thing th )
+	{
+		ic.sendLine();
+		anyAtomInspect( p, args, ic, flags, (Atom) th );
+		ic.sendLine();
+		
+		{
+			Vector verbs = new Vector( 10, 10 );
+			
+				//  this is lots of fun.
+				//  scan through the methods on this object comparing
+				//  them to these defaults and see what has changed.
+			Class ourClass = th.getClass();
+			Method[] localMethods = ourClass.getMethods();
+			
+			for( int i = 0; i < localMethods.length; i++ )
+			{
+				Method m = localMethods[i];
+				Class[] parameters = m.getParameterTypes();
+				
+				if( parametersEquivalent( parameters, verbParameters ) )
+				{
+					String mn = m.getName();
+					
+					if( th.isMethodSpecial( m ) )
+					{
+							//  this one is different
+						verbs.addElement( mn );
+					}
+				}
+			}
+			
+			if( verbs.size() == 0 )
+				ic.send( "No active verbs" );
+			else
+				ic.send( "Verbs: ^h" + Grammar.enumerate( verbs.elements() ) + "^-" );
+		}
+		
+		ic.sendLine();
+	}
+	public void unlock( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	unlock( p, args, ic, flags, this );	}
+	public void unlock( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot unlock the " + getFullPortrait( p ) + "." );
+	}
+	public void use( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	use( p, args, ic, flags, this );	}
+//---  default implementations  --------------------------------
+	public void use( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+		ic.send( "You cannot use the " + getFullPortrait( p ) + "." );
+	}
+	public void wear( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	wear( p, args, ic, flags, this );	}
+	public void wear( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+	{
+			//  the default implementation is to allow the player to
+			//  wear it
+		defaultWear( p, args, ic, flags, item );
+	}
+	public String[] wearLocations( Player p )
+	{
+		return( new String[0] );
+	}
+	public void wield( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags )
+		{	wield( p, args, ic, flags, this );	}
+public void wield( Player p, StringTokenizer args, InteractiveConnection ic, Flags flags, Atom item )
+{
+	//  the default implementation is to allow the player to
+	//  wield it
+	defaultWield( p, args, ic, flags, item );
+}
+}

@@ -1,0 +1,85 @@
+
+                  Key is Copyright (C) 1996-1998 by
+            Paul Mclachlan, Jason Crane, and George Wright
+                    v0.9 beta 6th October, 1998
+
+
+I guess I should write a little bit about what makes Key so cool.
+
+
+    o   Key is written in Java.  It was going to be the first talker
+		written in Java, and it would have been, if I'd been happy
+		at leaving it as just a talker.  But noooo... I had to go
+		and do everything else thats in this file.  But being in Java
+		does mean that you can run the talker in Windoze, if you
+		must, or at least that we don't have to worry about different
+		types of unix. ;)  It's also all object-oriented, and some
+		of the new features of 1.1 (which key really pre-dates, so
+		it doesn't use them yet), such as reflection, promise some
+		great advantages for sections of the program.  Besides, Java
+		is cool.
+	
+	o	Key has a proper telnet protocol implementation.  It works
+		out client terminal types and window sizes, and cool stuff
+		like that.  This bit is fairly pluggable, if anyone is
+		looking for an implementation of a telnet server in Java...
+	
+	o	The system is very powerful, allowing you to set arbitrary
+		properties for players or commands online, or set up
+		new ranks or groups, pretty much however you want.  For
+		example, if someone's title is annoying you, you can just
+
+			set ~someone.title ""
+		
+		to clear it.  If you want to change what "say" outputs
+		_online_, you can, with something like:
+
+			set /commandsets/base/say.broadcast "%o mumbles '%m'"
+
+		Which would instantly change everyones says to be like:
+
+			subtle mumbles 'hey, man!'
+
+		If I want to give an individual person, for example, the
+		trace command, I don't have to rely on any hard coded
+		rank, I can literally instantiate it just for them.
+
+			instant commands.Trace trace
+		(will return something like 'made new /players/subtle/trace')
+
+		and then:
+			
+			mv ~me/trace ~someone.commands
+
+		and they instantly have the new command available.  (actually,
+		you'd need to initialise their command list "set #someone.commands
+		CommandList" first, or it wouldn't work.  but you get the idea)
+		
+	o	Because it's OO, you can create very specialised rooms - rooms
+		that people can't leave, or rooms where you can't see who is
+		in them, or rooms which will disconnect anyone who walks in -
+		all online, just by writing the code and dynamically loading it
+		into the system.  Eventually, people will be able to write their
+		own java code, compile it, and ftp it up into key, so they can
+		create their own special objects, just like a MOO, but without
+		the annoying programming language.  (ie, they can use Java),
+	
+	o	We have plans for adding graphics to rooms, and sounds as well,
+		mainly for when we write our own applet with which to connect.
+		The modular 'interactive connection' design, however, will permit
+		it still to remain backward compatible with telnet sessions, for
+		those people still stuck on Amiga's with 1200 baud modems. (hell,
+		where do you think I started out?  not that I'm bitter).
+	
+	o	And finally, it 'almost' implements everything that is in EW.
+		Which is really quite a bit.  It took us forever to write the
+		code for all those finnicky commands, but its down now.
+
+I don't expect you to use Key out of the box.  It's not really for out of
+the box admins.  It's for people who want to write their own talker/mud/moo,
+but want to skip the 3 years development work just getting something 'usable'
+and cool.  Key is well designed if a little rough around the edges - it
+will make a good 'starting point' for making a unique talker.  Anything is
+better than taking a stock standard copy of PG-96, surely. ;)  (No offence,
+Mike. ;)
+

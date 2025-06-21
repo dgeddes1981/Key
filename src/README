@@ -1,0 +1,121 @@
+
+              Key is Copyright (C) 1996-1999 by Paul Mclachlan
+                           v0.98 13 June, 1999
+
+This is a beta release of Key.  What documentation we have is in the doc/
+directory.
+
+Quickstart steps to get it running:
+
+1. Make sure your CLASSPATH environment variable has a pointer to
+   key/classes and also to each of the external .jar files.
+   
+   Under unix, try something like:
+	    export CLASSPATH=$CLASSPATH:${HOME}/key/classes:${HOME}/key/classes/com.mortbay.Jetty.jar:${HOME}/key/classes/javax.servlet.jar:${HOME}/key/classes/gnujsp.jar
+	or
+	    setenv CLASSPATH $CLASSPATH:${HOME}/key/classes
+	
+	Under Windows 95, you have to:
+	    set CLASSPATH %CLASSPATH%:C:\key\classes
+	(either in your AUTOEXEC.BAT, or in the command prompt before
+	 you run it.)
+	
+	Under Windows NT, you can use the 'System' control panel to 
+	add the environment variable.
+
+2. Customise the bin/key script (or bin/key.bat) to change the path
+   to where you installed the key directory, and the path where Java
+   is, and the like.  You don't -have- to use this script to start Key,
+   I'll explain what it does a bit further down.
+
+3. Run bin/key and follow the on screen instructions.
+
+
+If it doesn't run, check that you have at least Java version 1.1, and that
+you got the classpath set up correctly.  You can always email me
+(pdm@acm.org) if you can't get it going.
+
+The bin/key script just changes directory to the key directory (this is
+important, so that key can find all it's files), and runs 'java key.Main
+key.Forest' with some basic options that my experience has shown to be good.
+
+----------------------------------------------------------------------------
+
+Key isn't that easy to use, at first, and there isn't as much 'admin'
+documentation as we would have liked.  (In fact, its dismal.  We don't
+even have as much user documentation as we would have liked.  We're just
+glad it compiles. ;)
+
+I can give you a brief outline of how to get the initial steps up and going,
+if you have any more complicated problems or issues, email me or the mailing
+list (key@realm.progsoc.uts.edu.au).
+
+The top 'priv' is called "beyond".  If you've got beyond, you can do anything,
+permissions-wise.
+
+In order to get it, you have to be the first person online when the program
+boots with no configuration / database.  This is kind of hard to arrange for
+more than one person, so, at the moment, only a single person can have beyond.
+
+(Unless you figure out a way to do it.  I'll write a utility to set beyond on
+a playerfile sometime).
+
+Just having this priv isn't enough to let you 'do' anything, though - for that
+you need to be in the appropriate ranks - you can create your own ranks
+with commands in them, the information on how to do all of this is provided
+in 'example' form, in the setup/ directory.  There are essentially a lot of
+scripts there that set up a forest style environment.  The most basic
+(and first one that you'd have to run, if you deleted all of the configuration
+files) is setup/setup.tf
+
+Not all the documentation in the doc directory is accurate, or even really
+that relevant.  It's a collection of all the stuff we wrote while we were
+developing the system.  A lot of it is Forest-centric, a lot of it is just
+ideas that we'd like to have had time to write.  But there is some fairly
+serious/interesting stuff there, and if you're even going to have a chance
+at using this thing effectively, you might as well have a read.  There isn't
+_that_ much. ;)
+
+Having a look around
+--------------------
+
+There is a typescript of a quick look around Key, just so that you
+can see what you're getting in for, and how to use some of the basic
+'ref' (for reference, similar to cd), 'dump' (shows an object, or the
+current object), and 'set'.  Take a look at 'example' in the doc directory
+
+
+Compiling it
+------------
+
+Me, personally, to deal with Java, I have a classes directory off my home
+directory, which I use as a kind of glorified classpath, with symlinks to
+other packages where required.  I might put key in my home directory,
+then, and symlink $HOME/classes/key to $HOME/key/classes/key.  To compile,
+I use the 'jc' script in the key/bin directory, which will put the .class
+files in the proper directory.  You can do whatever you like, but thats
+how it works at the moment. 
+
+There are some funny dependancies that you might not expect between the
+different directories.  I don't have a makefile, really, but I've tried to
+capture most of them in a fullcompile script.  Personally, I just "jc
+ */*.java */*/*.java"  from the key/src directory, which does the
+trick.  (If I want to compile it all, obviously) 
+
+
+Shutting the damn thing down
+----------------------------
+
+There isn't a "shutdown" command as such.
+
+There is a pre-created shutdown event in /online: you can use it with:
+
+"schedule /online/shutdown 5s"
+
+(which will schedule a shutdown in 5 seconds).  You can also use like
+'5m' for 5 minutes, '5h' for hours, and so on.  It will respond with
+something like: Event 'shutdown' scheduled for Sat Sep 20, 1997 9:51:24 ( 5
+seconds hence )
+
+- Paul (pdm@acm.org)
+

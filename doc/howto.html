@@ -1,0 +1,215 @@
+<HTML>
+<HEAD>
+	<TITLE>HOWTO listings (user documentation)</TITLE>
+</HEAD>
+<BODY>
+
+
+
+
+<HR>
+<H1>How do I create a room?</H1>
+<div align=right><I>author: eXile</I></div>
+<HR>
+
+
+
+
+
+Below is a script that sets up two rooms and an exit between them.
+
+<FONT SIZE=-1>
+<PRE>
+-> construct room treehouse The Tree House
+Constructed the room 'treehouse' (in eXile)
+This room has also been set to your home, since you don't have any others.
+-> construct room backyard The Backyard
+Constructed the room 'backyard' (in eXile)
+-> home
+                              The Tree House
+Flat, gray and featureless.  Terribilis est locus iste.
+
+
+There is nobody here but you.
+
+-> edit treehouse.description
+------------------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately (without
+  the quotes), and read 'help editor'
+
+Limitations:  200 lines, 10000 characters.
+------------------------------------------------------------------------------
+Flat, gray and featureless.  Terribilis est locus iste.
+
+------------------------------------------------------------------------------
++ .wipe
+Editing Buffer Cleared.
++ This is a tree house.
+This is a tree house.
++ .end
+\Saving editor buffer...
+-> edit backyard.description
+------------------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately (without
+  the quotes), and read 'help editor'
+
+Limitations:  200 lines, 10000 characters.
+------------------------------------------------------------------------------
+Flat, gray and featureless.  Terribilis est locus iste.
+
+------------------------------------------------------------------------------
++ .wipe
+Editing Buffer Cleared.
++ This is the Backyard of eXile's place.
+This is the Backyard of eXile's place.
++ .end
+Saving editor buffer...
+-> construct exit rope backyard
+Constructed the exit rope in treehouse, which leads to somewhere (backyard)
+-> go rope
+You walk through the exit
+                               The Backyard
+This is the Backyard of eXile's place.
+
+
+There is nobody here but you.
+
+-> construct exit rope treehouse
+Constructed the exit rope in backyard, which leads to somewhere (treehouse)
+</PRE>
+</FONT>
+<P>
+Now using the edit command we can change the exit's description and the 'through'. Remember you have to edit both instances of the 'rope' exit.
+<P>
+Happy construction!
+
+
+
+
+<HR>
+<H1>How do I create a room?</H1>
+<div align=right><I>author: subtle</I></div>
+<HR>
+
+
+
+
+
+You create rooms and exits using the <B>construct</B> command.  An individual may usually have up to four rooms.  For example, if I wished to create a treehouse, I might type:
+<P>
+<PRE>
+construct room treehouse Paul's Treehouse
+</PRE>
+<P>
+The first word to the construct command is the <B>id</B> of the room, and the
+rest of the line is 'called' property.  The called room property is put at the
+top of the room description, in the centre of the screen, when someone in the
+room uses the <B>look</B> command.
+<P>
+The easiest way to go to your new room is the <B>trans</B> command, which moves
+you to one of your own named rooms.  For instance, you would type 'trans
+treehouse' to go to your new treehouse.  (If you had built one).
+<P>
+When you enter, you'll notice that it looks kind of empty.
+
+<H2>Setting up a room</H2>
+
+One of the more useful commands when setting up a room is the <B>inspect</B>
+command.  This command shows some information about how the room is set up at
+the moment.  Our new treehouse might look like this:
+
+<PRE>
+-----------------------------------------------------
+/players/subtle/treehouse is a room owned by subtle.
+-----------------------------------------------------
+There is nobody here but you.
+There aren't any objects in this room.
+
+The portrait reads:  Someone is [in] [somewhere].
+-----------------------------------------------------
+</PRE>
+
+This screen shows the rooms id (/players/subtle/treehouse), who it is owned by
+(subtle), as well as the rooms portrait.  As you can see, a rooms portrait
+consists of two parts, a 'relation', and the actual portrait.  The relation is
+the 'in' part, and the portrait is the 'somewhere' part.  The rooms description
+and called property may be viewed normally with the <B>look</B> command.
+<P>
+The portrait itself shows what appears when someone does a <B>where</B> command
+on someone in this room.  For instance, 'where subtle' would return 'subtle is
+in somewhere' at the moment.  For a treehouse, we're simply going to change the
+'somewhere' to be 'the treehouse':
+<P>
+<PRE>
+-> portrait the treehouse
+The portrait now reads: [subtle is in] the treehouse
+->
+</PRE>
+
+To change the relation property (which you might want to do when creating a
+hill - no-one is ever 'in' a hill), you use the <B>relation</B> command:
+<P>
+<PRE>
+-> relation
+The portrait now reads: [subtle is on] the treehouse
+->
+</PRE>
+
+(We might use this trick later to create a room that is on top of the
+treehouse)
+<P>
+Using the <B>look</B> command, we can see what the room looks like at the
+moment:
+<PRE>
+-> l
+                  <B>Paul's Treehouse</B>
+
+There is nobody here but you.
+->
+</PRE>
+
+To add a describe, we use the <B>room describe</B> command, and the editor.
+The editor has some more advanced features, allowing you to fix mistakes and
+delete lines, but for now, there are only 3 things you need to know about it.
+<P>
+When you're in the editor, you have a + prompt, and whatever you type will
+appear in your description, unless it starts with a period '.'.  There are many
+period commands, but the best ones are ".end" (to finish editting), and ".wipe"
+(to wipe everything and start over).
+<P>
+We start the editor:
+<PRE>
+----------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately
+  (without the quotes), and read 'help editor'
+
+Limitations:  6 lines, 480 characters.
+----------------------------------------------------------------------
+----------------------------------------------------------------------
++
+</PRE>
+We can now type in a simple description:
+<PRE>
++ The treehouse is of the normal wooden variety, albeit rather rickety.  Several comics are lying scattered around.
+The treehouse is of the normal wooden variety, albeit rather rickety. 
+ Several comics are lying scattered around.
++ .end
+Saving editor buffer...
+You change the description of 'treehouse'
+</PRE>
+When you type in descriptions, type whole paragraphs on one line if you can.
+This will make the program automatically word-wrap them to the width of whoever
+is looking at them.
+<P>
+Using the <B>look</B> command now shows us our complete room!  The next section
+shows you how to create exits between rooms (for the go command), and mentions
+a little more about room management.
+<P>
+
+SEE ALSO: construct inspect portrait relation look where describe room
+
+</BODY>
+</HTML>

@@ -1,0 +1,45 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Referrer,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+/**
+  *  If a class can have a reference to an atom,
+  *  then it is a 'referrer', and should pass itself
+  *  into that atom using the 'addReference()' routine
+  *  and 'removeReference()' routine when it adds /
+  *  removes its reference.
+ */
+public interface Referrer
+{
+	/**
+	  *  This method is called by a to all its referrer's
+	  *  when it is being deleted.  You should clean up
+	  *  and remove all references to this atom
+	 */
+	public void delete( Atom a );
+
+	/**
+	  *  Stop referring to this atom, as its being swapped
+	  *  out of memory.  Store the tag, if you so wish,
+	  *  or whatever.
+	 */
+	//public void swapout( Atom a );
+}

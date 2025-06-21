@@ -1,0 +1,312 @@
+List of changes:
+
+21May99:
+
+	Sat May 22, 1999 10:01:51: puck - ahh!  since remote tells to your friends splashed to you have Player as an originator, they're coloured that way.
+	Tue May 18, 1999 1:20:10: Koschei - deleting a mail deletes both it and the mail with the next highest number. e.g. "mail delete 2" deletes mails 2 and 3. "mail delete 3" deletes 3 and 4
+	Tue May 18, 1999 19:10:08: snowcrash - java.lang.NullPointer when logging in as 'who'
+Sun May 16, 1999 19:20:50: snapper - can't do a who from the login screen
+Mon May 17, 1999 15:24:15: gleNN - 'f anna' .. null pointer exception .. she hasnt logged into key yet?
+Mon May 17, 1999 15:25:36: gleNN - same for 'f mag' ??
+Mon May 17, 1999 15:26:59: gleNN - Yup .. anyone that hasnt logged into key gets a null pointer exception
+Sun May 16, 1999 15:54:30: Box - typing 'who' at the login prompt yields a null pointer exception
+Sat May 15, 1999 21:04:26: Travis - i typed who at the login prompt and got this : Detail: java.lang.NullPointerException
+Fri May 14, 1999 3:16:26: Fistandantulus - Who at the logon screen doesn't work.
+Fri May 14, 1999 2:16:02: MaNNy - who at login disconnects me in an evil sorta way...
+Thu May 13, 1999 10:50:02: Koschei - 'who' at the prompt no longer works at all and gives a nullpointerexception
+Tue May 11, 1999 17:11:16: temporal - why doesn't who when logging in work?
+Tue May 11, 1999 8:59:10: puck - consider making # connections transient - so it doesn't survive a reset, at least
+Tue May 11, 1999 4:57:15: puck - 'who' at login prompt not working
+Sat May 8, 1999 1:12:51: sable - empty mails give nullPointerExceptinos
+Mon May 3, 1999 8:53:35: snapper - login/logout message look tacky on the msgs screen.   [logoutMsg  : : pfft]
+Sun May 2, 1999 16:33:17: snapper - with the 'with' command, there's a double space instead of a single one between a person's prefix, and their name.
+Sun May 2, 1999 3:07:57: topp - when you type: mail delete 1     the 1st two mails get deleted...
+
+test:
+	Sun May 16, 1999 17:08:43: puck - if I lock my own room, I can't enter it
+		--  fixed
+	Sun May 16, 1999 14:06:25: puck - giving florins when person is hidden doesn't work
+		--  fixed
+	Sat May 15, 1999 16:35:02: puck - do session titles reject colours?
+	Sat May 1, 1999 8:23:30: cina - inform clan actually informs you of other people who dis/connects who are not in your clan
+		--  fixed
+	Mon May 10, 1999 10:02:59: Sinner - inform clan Show's everyone in a clan connecting, not just peeps in your clan.
+		--  fixed
+	
+hipri:
+	Tue May 4, 1999 8:19:09: puck - block friends-from-name
+		--  or have 'block friendtells' action on permission list
+	Sat May 15, 1999 16:30:40: temporal - When I set a comment, it reads You comment now reads...instead of your comment now reads....just a grammatical prob.
+	Fri May 14, 1999 17:44:44: dana - too-long sessions just get truncated, not like old forest which wouldn't let u set 'em
+		--  it isn't code based - some kind of table restriction?
+	Fri May 14, 1999 14:45:34: temporal - when you type session, it reads Format: session <session comment>....shouldn't it read the current session or is this a new thing?
+	Tue May 11, 1999 1:58:32: puck - clever would be to have Player implement PlayerGroup and only have one element in the enumeration
+	Fri May 7, 1999 17:23:34: Box - no matter how much I persist with the 'nopager' command, I can not get a pager to appear, ever
+Sun May 2, 1999 12:25:07: sabrewulf - paging the viewing in the editor (.view) is bad ... try it ;)
+Sat May 1, 1999 9:42:27: puck - block idelmsgs please
+Fri Apr 30, 1999 0:42:05: puck - 'sites' 'idletime' 'websites'
+Fri Apr 30, 1999 1:52:18: snapper - I can use the same email twice to register a player? (or 3,4,5,- times)
+Fri Apr 30, 1999 7:17:08: hatter - publicRoom is case sensitive ?  Come now, that's a bit heavy
+Thu Apr 29, 1999 9:46:37: puck - need either shared permissions or a recursive chmod
+Thu Apr 29, 1999 10:46:24: puck - connection throttle?
+Thu Apr 29, 1999 7:41:18: hatter - 'term vt100' prints back Terminal forced to 'ansi'
+
+checking for null founders, etc.
+
+reply:
+	Sun May 9, 1999 1:24:25: ami - no way to remove sent mail, mailboxes get full and one is not alowed to post mail anymore. you can't free your list and therefore, no mail can be sent.
+
+9May99:
+
+Mon Apr 19, 1999 3:52:41: bemused - clan editmotd, on exiting the editor, yields an error .. atom implicitly locked
+Mon Apr 19, 1999 4:09:30: bemused - clan inform informs for everyone n a clan?
+Mon Apr 19, 1999 4:39:39: snapper - when you use the defect command, the word Director appears.
+Mon Apr 19, 1999 5:01:36: Hee - if I type 'clan clanmotd' I get: error: java.lang.nullpointerexception
+Mon Apr 19, 1999 5:05:30: Box - examine has a double line under the title
+Mon Apr 19, 1999 5:17:24: bemused - Access Violation IC: bemused trying to modify /players/clanwOOf  when i was trying to enrol clanwoof .. it still seeme dto work, though
+Mon Apr 19, 1999 5:18:12: Koschei - Footnote 8: Wizard^G'^-s First....
+Mon Apr 19, 1999 8:35:00: nOOdles - possessive form of pronoun 'it'...it's coming up aas "It's" in the char profiles, whereas it should be "Its"
+Mon Apr 19, 1999 9:21:02: Koschei - defect says the defect has been logged for a *Director's* attention
+Mon Apr 19, 1999 11:38:08: bill - "inform glacier" - should show inform messages for clan galcier members only, yes? Appears to be showing clan inform messages for everyone.
+Mon Apr 19, 1999 14:40:06: subtle - default title tolerance to 20?
+Mon Apr 19, 1999 17:55:51: subtle - block tell doesn't work
+Mon Apr 19, 1999 19:32:59: snapper - clan inform seems to show anyone in a clan connecting and disconnecting?
+Tue Apr 20, 1999 12:19:59: sTarbursT - the 'who' command on the login screen displays the long listing of names, as opposed to the old 'swho' way it used to do ;)
+Tue Apr 20, 1999 14:05:37: Ninja - saving changes to my clan motd gives Error: java.lang.ClassCastException: key.TextParagraph and doesn't save the text
+Tue Apr 20, 1999 7:50:18: snapper - clan editmotd throws some sort of wierd key.TextParagraph exception
+Tue Apr 20, 1999 8:32:03: druss - grab message seems to be incorrect - sanity spids rapidly into being. - maybe we ment spins?
+Thu Apr 29, 1999 11:03:59: Koschei - "person was last seen at ....." is actually "person last logged in at...." rather than "person logged out at ....."
+Thu Apr 22, 1999 10:14:12: bill - since there is a "setHome" room action, why do you need to be allowwed to "modify" a room to use "room setHome" in it?
+
+WARNING:
+Mon Apr 19, 1999 8:54:10: bill - banname - I don't think I'm supposed to have this. Tried "banname matthew" to see what it did, and got "'matthew' added to the reserved name list" back.
+Mon Apr 19, 1999 8:59:02: bill - banname - cool, username "matthew" still prompts for password. Tried "grumblesnarkx" and now you can't log in with that name.
+Mon Apr 19, 1999 13:33:45: subtle - transfer was available to ressies
+Mon Apr 19, 1999 13:42:29: subtle - banname was available to ressies
+Mon Apr 19, 1999 20:07:00: stryker - er you can build exits in any rooms, even public ones
+Mon Apr 19, 1999 20:22:40: Koschei - echo should have it so that ";fake-echoes [Koschei]" doesn't look like it came from koschei
+Tue Apr 20, 1999 13:14:13: bill - ? can have things like friends tells appear in the middle of the "clan structure" output.
+Tue Apr 20, 1999 8:28:40: druss - looking at a player displays the 'object not in this room' message, then displays what the player is wearing....
+Tue Apr 20, 1999 8:45:08: Rosencavelier - clan leader cant enrol ppl to clans?
+Thu Apr 22, 1999 12:28:01: MaNNy - quit works rather abrupt...no 'character saved' no logout screen...just a blunt cut -off..
+Sat Apr 24, 1999 10:23:59: Koschei - "tells it's friends". kill that apostrophe!!
+Mon Apr 26, 1999 3:03:14: bill - can't take yourself off your own friends list (er, used to have it there to keep an eye on my own prefix when checking "fwho").
+	--  please reply, too
+
+RESPONSE:
+Mon Apr 19, 1999 9:49:54: Koschei - why *is* it defect rather than bug?
+Mon Apr 19, 1999 19:55:55: stryker - colour shouts hilite   "Could not find a colour for 'hilite'"
+Tue Apr 20, 1999 11:47:49: sTarbursT - the 'liberate' command still works when you're in a clan.
+Tue Apr 20, 1999 12:20:16: MANSHooN - no way to hide ya IP from people
+Tue Apr 20, 1999 9:14:05: sometimes - i have one of kitsune's rooms and will gladly give it up to have the beet.closet back
+Tue Apr 20, 1999 18:15:06: arTek - i got this thing that goes [square] -> ni front of my name now. make it go away or i will cry.
+Wed Apr 21, 1999 0:32:55: storm - I cant see shouts. I only see exclamation marks. And when I do a shout and I hit return nothing happens but other ppl can see my shout but I cant see their replies. No, I'm not blocking them
+Wed Apr 21, 1999 9:48:20: themadone - there isn't a way of turning the annoying prompt off.
+Sun Apr 25, 1999 21:54:40: bemused - who on the login screen yields regulara who output insted of swho, so it will often put you in the pager, which you can't get out of at that point
+
+Wed Apr 21, 1999 10:16:21: Koschei - no way to block page&wake?
+	--  block with 'block page', now.
+
+Sat Apr 24, 1999 0:37:26: snapper - interesting EW/bug: mansoon created an exit called 'manshoon.saloon in his abode' and we can't delete it, as the code recognises the . as a property. ;)  Either a) set it so it knows it isn't a property, or disallow people from creating "anything" with a dot in it.
+
+Thu Apr 29, 1999 7:41:18: hatter - 'term vt100' prints back Terminal forced to 'ansi'
+Fri Apr 30, 1999 1:52:18: snapper - I can use the same email twice to register a player? (or 3,4,5,- times)
+
+FIX ONLINE:
+Mon Apr 19, 1999 18:54:24: snapper - clan prefix doesn't work anymore?
+	--  for each clan, add a symlink to the prefix command
+Tue Apr 20, 1999 8:30:14: Rosencavelier - need 'ce' back... keep forgettign to type 'c:'
+Tue Apr 20, 1999 23:39:28: gleNN - bring back the 'cl' alias
+Mon Apr 26, 1999 3:45:19: bill - last line of Verification of Key (forest) email: telnet  realm.progsoc.uts.edu.au 2809
+
+Wed Apr 21, 1999 16:24:42: rOAdkIll - When you type news post, to see how to post news.. you get the line news post <name> <subgect>
+	-- update usage online to: <'news' or playername> <subject>
+
+Sun May 2, 1999 6:07:50: puck - bannames doesn't work
+	--  is bannednames a pattern string set?  NO - fix it.
+
+
+TEST:
+Wed Apr 21, 1999 6:18:31: druss - error when finding hiding person is a lil cryptic - i know what it means .. but .. you know?
+	--  done
+Wed Apr 21, 1999 9:50:36: Koschei - create exit allows periods in the exit id, and such exits can't be deleted (or used for that matter)
+	--  done
+Thu Apr 22, 1999 11:47:49: bill - manshoon created an exit with a "." which probably shoudn't be allowed
+	--  done
+Sat Apr 24, 1999 6:41:09: Betrayal - whisper <player> when you're not in the same room tells you the player is not online
+	-- done
+Mon Apr 26, 1999 22:14:53: snapper - anyone can trans ~<name>/room regardless of if the room is locked.
+	--  done
+Tue Apr 27, 1999 18:40:05: Koschei - logout time seems to be incorrect: Savage was last seen at Wed Apr 28, 1999 7:31:46 when tehy just logged out and it was  <Your local time: Wed Apr 28, 1999 8:39:28>
+	--  done
+
+5May99:
+
+    clan accept fixed
+	problem where friends not swapped out, fixed
+	problem where people lose passwords / can't set: fixed
+	verified clans can be swapped out without too much
+	  danger.
+
+23Oct98:
+
+	auto-exit use if name matched.
+
+29Oct98:
+
+IMPORTANT:
+if any of the basic things are swapped out (ie, /realm), then the Key class 
+loses it's reference to it.  either an implicit reference is required,
+or we need to use Reference's.  I think implicit is the best way to go, since the 
+basic types don't need to be synced out anyway.
+	--  believe fixed
+
+why doesn't shortcut work in x?
+	--  because 'x' was really finger.  fixed
+
+changed 'construct room' to 'build room' in order to use 'construct' for objects.
+
+------------------------------------------------------------------------------
+from J:
+snapper is a leader.
+rent is a leader.
+
+This is done as snapper:
+
+revoke rent leader
+java.lang.NullPointerException:
+java.lang.NullPointerException:
+      at key.Player.enrolIntoClan(Player.java:1660)
+      at key.commands.clan.Revoke.run(Revoke.java:107)
+      at key.Player.command(Player.java:1191)
+      at key.Player.run(Player.java:1026)
+      at key.InteractiveConnection.run(InteractiveConnection.java:72)
+      at java.lang.Thread.run(Thread.java)
+
+believe fixed
+------------------------------------------------------------------------------
+
+support for a 'blank' command that gets executed every single time, regardless?
+
+rename "homepage" to "url"
+	-- disagree.  'homepage' is much more descriptive.
+
+cache "commands" output on a per-CommandList basis - to be erased if anything
+is sorted or whatever and re-generated.
+	--  nah, this is probably rare behaviour.
+
+make a routine in grammar that does substitution for paragraphs, in particular,
+text & multi-paragraphs.  This way 'finger' can be done much more easily and
+cleanly and modifiably - except there is no way to determine which screen to use
+since we don't know private information more than once, but we can just do multiple
+screens to remove the 'if' clause.
+	--  done
+
+finish doing Factory.makeAtom() conversion, particularly for Internet/Network/Site,
+and the initial parts of Key
+	--  done
+
+2Nov98:
+
+fixed key.commands.clan.Revoke to allow offline removes of players
+
+when clans are swapped out, they aren't loaded and notified when a player comes online
+from that clan.  same with friends lists, but the distinction is that we -want-
+a clan to be loaded, and we don't want friends lists to be.
+	--  fixed
+
+public "noSideEffectRemove" routine is bad for programmable key.
+	--  can be fixed by using anonymous inner classes instead - see Player.java
+	--  fixed
+
+'date' command
+	--  use "time -"
+
+6Nov98:
+
+make a paragraph immutable - otherwise security violations for anyone who can
+read a paragraph.
+	--  done
+
+make duration immutable
+	--  done
+make datetime immutable
+	--  done
+
+add a common interface for all replacable objects - to support References,
+LineParagraphs, and Types all in the same call.
+	--  done
+
+13Dec98:
+
+-> c. hi                                                                        
+Cannot find player 'hi' online                                                  
+Error: java.lang.NullPointerException:                                          
+java.lang.NullPointerException:                                                 
+        at key.commands.Citizen.run(Citizen.java:89)                            
+        at key.Player.command(Player.java:1347)                                 
+        at key.Player.run(Player.java:1161)                                     
+        at key.InteractiveConnection.run(InteractiveConnection.java:72)         
+        at java.lang.Thread.run(Thread.java)                                    
+
+	--  exception fixed
+
++---                                                                            
+-> block hi                                                                     
+No player of the name 'hi'                                                      
+Couldn't find 'hi'                                                              
+	--  fixed
+--------------------------------------------------------------------------------
++---                                                                            
+-> f hi                                                                         -> finger hi                                                                    
+->                                                                              
+	--  fixed
+--------------------------------------------------------------------------------
+
+[debug]: player - key.AccessViolationException: IC for blert trying to          
+summon /players/blert                                                           
+key.AccessViolationException: IC for blert trying to summon /players/blert      
+key.AccessViolationException: IC for blert trying to summon /players/blert      
+        at key.PermissionList.check(PermissionList.java:232)                    
+        at key.Player.moveTo(Player.java:1719)                                  
+        at key.Player.run(Player.java:1074)                                     
+        at key.InteractiveConnection.run(InteractiveConnection.java:72)         
+        at java.lang.Thread.run(Thread.java)                                    
+[debug]: key.AccessViolationException: IC for blert trying to modify            
+/players/blert                                                                  
+key.AccessViolationException: IC for blert trying to modify /players/blert      
+        at key.PermissionList.check(PermissionList.java:232)                    
+        at key.Player.disconnect(Player.java:1543)                              
+        at key.Player.run(Player.java:1202)                                     
+        at key.InteractiveConnection.run(InteractiveConnection.java:72)         
+        at java.lang.Thread.run(Thread.java)                                    
+Deleting atom (key.TelnetIC) IC for blert                                       
+	--  should be fixed
+
+-> newbies                                                                      
+Error: java.lang.NullPointerException                                           
+java.lang.NullPointerException                                                          at key.commands.Newbies.displayTable(Newbies.java:68)                   
+        at key.commands.Newbies.run(Newbies.java:39)                            
+        at key.Player.command(Player.java:1347)                                 
+        at key.Player.run(Player.java:1161)                                     
+        at key.InteractiveConnection.run(InteractiveConnection.java:72)         
+        at java.lang.Thread.run(Thread.java)
+--  should be fixed
+
+an event that causes a background sync() every now and then of all
+atoms (as well as the latencycache, since it holds clans, etc)
+	--  done
+
+move Me.currentlyRunning() to the Player class.
+	--  done
+
+15 Dec 98:
+
+redesign command names (esp create/build)
+	--  done
+
+build 'alias' command that calls another command with the same arguments.
+perhaps call it 'proxy' instead of alias.  maybe build 'alias' to do
+text substitution like in a unix shell.
+	--  done
+

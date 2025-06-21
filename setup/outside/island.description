@@ -1,0 +1,11 @@
+cd /realm/outside
+load PublicRoom island
+set island.called ^cSeparare Insula^-
+set island.portrait somewhere in the Sea of Mists.
+set island.relation ""
+edit island.description
+.wipe
+The island is rarely visited and still remains rugged and untamed.  The sounds of the sea quickly become muffled by the new sounds of the active rainforests that cover the island.  Though not very large in size, the density of it's flora hides the curiosity of it's fauna (and the dangers).  There are rumors that a tower was built here eons before the seeds of the City were planted.
+.end
+transfer island $
+cd

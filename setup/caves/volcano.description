@@ -1,0 +1,13 @@
+cd /realm/caves
+load PublicRoom volcano
+set volcano.called ^MThe Furnace^- 
+set volcano.portrait experiencing the heat of the ^Rvolcano^-.
+set volcano.relation ""
+edit volcano.description
+.wipe
+The foul fumes seeping from the large wound in the earth below make your head spin.  You know that this place is not meant to be hospitible to the living.  You stare, strangely fascinated, at the red hot liquid rock that surges, swells and subsides making loud hissing pops.  The heat that rises from the inferno causes your face to go red and sweat to bead upon your brow.
+
+It is very hot here and the sulpherous gases hurt your eyes.
+.end
+transfer volcano $
+cd

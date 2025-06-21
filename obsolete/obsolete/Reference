@@ -1,0 +1,335 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Reference,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.io.IOException;
+import java.io.DataOutput;
+import java.io.DataInput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.StringTokenizer;
+
+/**
+  *  When you set it (be it by loading the id or giving it
+  *  an atom, this class will attempt to use *only* that
+  *  reference for as long as possible.  An actual reference
+  *  to the object has a higher priority than an id.
+  * <p>
+  *  This means:
+  *  <ul>
+  *  <li>You can set it directly with a reference to an object
+  *      during construction, and it will use that reference, 
+  *      even if, technically, it couldn't look up that atom's
+  *      id yet.  (Key needs to do this)</li>
+  *  <li>You can load the id using loadFrom() before the object
+  *      exists - until you try and use the reference property
+  *      it will not try and resolve it.</li>
+  *  </ul>
+  * <p>
+  *  There are, then, four states for this object:
+  *  <ul>
+  *  <li>resolved == null, value == null:  Nothing is set, a null reference</li>
+  *  <li>resolved == something, value == null:  We have a reference, but not the id</li>
+  *  <li>resolved == null, value == something:  An unresolved reference</li>
+  *  <li>resolved == something, value == something:  A fully decked out reference</li>
+  *  </ul>
+  * <p>
+  *  Think about removing that last state in the name of storing as little as
+  *  possible.  Then we only have 3 states to worry about.  You'd remove it by
+  *  changing the resolve() method to clear the value. ;)
+ */
+public abstract class Reference
+	implements Serializable
+{
+	protected String value;
+	protected transient Tag resolved;
+	
+	public Reference()
+	{
+		this( null );
+	}
+	
+	public Reference( Atom theValue )
+	{
+		value = null;
+		
+		if( theValue != null )
+			set( theValue );
+	}
+	
+	/**
+	  *  We may wish (in the future) to put in some code
+	  *  that can do a rescan, or, better, notice, when
+	  *  an atom moves, so that the resolved reference
+	  *  isn't wrong - or the value's don't get confused
+	 */
+	public Atom get()
+	{
+		if( resolvable() )
+		{
+			Tag o = resolve( Key.instance() );
+
+			if( o != null )
+				return( o.getActual() );
+			else
+				return( null );
+		}
+		else if( resolved != null )
+			return( resolved.getActual() );
+		else
+			return( null );
+	}
+	
+	private void writeObject( ObjectOutputStream oos ) throws IOException
+	{
+		if( value == null && resolved != null )
+			value = resolved.getId();
+
+		oos.defaultWriteObject();
+	}
+	
+	public boolean resolvable()
+	{
+		return( resolved == null && value != null );
+	}
+
+	/**
+	  * This routine can be made more efficient by combining
+	  * the getSymbol and isSymbolTransit routines - possibly
+	  * by having another routine that returns a 'searchObject'
+	  * or something, which can have flags on it based on how it
+	  * was found.
+	 */
+	public Tag resolve( Atom relTo )
+	{
+		if( resolved == null && value != null )
+		{
+			Search s = new Search( value, relTo );
+			
+			Object o = s.result;
+			
+			if( o instanceof Atom )
+				o = ((Atom)o).getTag();
+			
+			if( o instanceof Tag )
+			{
+				if( s.dirty )
+				{
+					char c = value.charAt( 0 );
+					if( relTo != Key.instance() && c != '/' && c != '#' )
+					{
+							//  for us to be able to do this, we'd need to
+							//  store where the provided string is relative
+							//  to - a reference to that Atom.  This is
+							//  unnecessary overhead and complexity.  It's
+							//  much easier to just make them specify an
+							//  absolute location than deal with trying to
+							//  convert a relative location to an absolute
+							//  PS:  I can't believe the code has gotten this
+							//       complex.  *grumble*.  I'm just trying to
+							//       make set relative.  - subtle
+						throw new LimitationException( "At present, it is not possible to resolve relative references that pass through a transit atom.  To work around this, specify an absolute reference." );
+					}
+					
+					resolved = null;
+					Key.debug( this, "transit symbol '" + ((Tag)o).getName() + " resolved..." );
+					return( (Tag) o );
+				}
+				
+				resolved = (Tag) o;
+				
+				if( resolved != null )
+				{
+					Key.debug( this, "added reference to " + ((Tag)resolved).getName() );
+					((Tag)resolved).addReference( this );
+					value = null;
+				}
+			}
+			else
+			{
+				//System.out.println( "reference returning null after a search for '" + value + "'." );
+				return( null );
+			}
+		}
+		
+		return( resolved );
+	}
+
+	/**
+	  *  Make it so we're not referencing anything anymore
+	 */
+	public void clear()
+	{
+		if( resolved != null )
+		{
+			((Tag)resolved).removeReference( this );
+			//Key.debug( this, "cleared reference from " + name + " to " + ((Atom)resolved).getName() );
+			resolved = null;
+		}
+		
+		value = null;
+	}
+
+	public void delete( Atom a )
+	{
+		if( resolved == a.getTag() )
+		{
+			//Key.debug( this, "delete on reference called" );
+			clear();
+		}
+		else
+			throw new UnexpectedResult( "delete() called in Reference for an atom that we're not referring to." );
+	}
+
+	/**
+	  * Store the resolved reference
+	 */
+	public void set( Atom o ) throws TypeMismatchException
+	{
+		clear();
+		
+		if( o != null )
+		{
+			resolved = o.getTag();
+			//Key.debug( this, "added reference to " + ((Tag)resolved).getName() );
+			((Tag)resolved).addReference( this );
+		}
+	}
+	
+	/**
+	  *  This method allows you to get the Id of a reference
+	  *  without actually restoring the Atom is points to.
+	  *  This may be particularly useful if, for instance, it
+	  *  points to a player who may be swapped out of memory
+	  *  (on disk) at the moment.
+	 */
+	public String getId()
+	{
+		if( resolved != null )
+			return( resolved.getId() );
+		else if( value != null )
+			return( value );
+		else
+			return( Key.nullString );
+	}
+	
+	/**
+	  *  Just store the id of the atom
+	 */
+	public void setId( String id )
+	{
+		clear();
+		
+		if( id.equals( Key.nullString ) )
+			value = null;
+		else
+			value = id;
+	}
+	
+	/**
+	  *  Set the reference to point to id, where
+	  *  id is relative to relTo.  If id is an
+	  *  absolute reference, it is safe to set
+	  *  relTo to Key.instance().
+	 */
+	public void set( String id, Atom relTo )
+	{
+		setId( id );
+		
+			//  if the value isn't absolute, it will
+			//  need to be resolved with reference to relTo.
+			//  in this case, we call resolve() now, in order
+			//  to avoid losing the 'relTo' atom.
+		char c = value.charAt( 0 );
+		if( relTo != Key.instance() && c != '/' && c != '#' )
+		{
+			Tag r = resolve( relTo );
+			if( r == null )
+			{
+				Key.debug( this, "id: '" + id + "', relTo: " + relTo.getId() + ", search returned null" );
+			}
+		}
+	}
+	
+	public void swapout( Atom a )
+	{
+		if( resolved == null )
+			throw new UnexpectedResult( "unresolve() called when we don't have anything resolved" );
+		else
+		{
+			if( resolved != a.getTag() )
+				throw new UnexpectedResult( "swapout() called in Reference for an atom that we're not referring to." );
+			
+			if( value == null )
+				value = ((Tag)resolved).getId();
+			
+			((Tag)resolved).removeReference( this );
+			//Key.debug( this, "cleared reference from " + name + " to " + ((Atom)resolved).getName() );
+			resolved = null;
+		}
+	}
+}
+
+/**
+  *  A reference that is stored with a string id that is looked up
+  *  at each get() operation.
+  *
+  *  This is useful for references that need to travel through transit
+  *  atoms (references that need to change).
+ */
+class IndirectReference extends Reference
+{
+	String id;
+	
+	public IndirectReference( String path )
+	{
+		id = path;
+	}
+	
+	public Object get()
+	{
+		Search s = new Search( value, Key.instance() );
+		
+		return( s.result );
+	}
+}
+
+/**
+  *  A reference that stores the integer index of this atom in the
+  *  system registry.  This allows faster lookups than the string
+  *  reference, but does not permit changing references to be stored.
+  *
+  *  (Such as those through a transit symbol match, such as #me)
+ */
+class DirectReference extends Reference
+{
+	int index;
+	
+	public DirectReference( int registry_index )
+	{
+		index = registry_index;
+	}
+	
+	public Object get()
+	{
+		return( Registry.instance.get( index ) );
+	}
+}

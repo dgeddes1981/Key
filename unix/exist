@@ -1,0 +1,23 @@
+#!/usr/bin/zsh
+
+cd ${HOME}/key
+echo "" >> console.out
+echo -n "Exist script started: " >> console.out
+/bin/date >> console.out
+while (true)
+do
+	echo "" >> console.out
+	echo -n "Key started: " >> console.out
+	/bin/date >> console.out
+	${HOME}/key/source/unix/key 2>&1 >> console.out
+	echo "" >> console.out
+	echo "---RESET---" >> console.out
+	echo "---RESET---"
+	echo "" >> console.out
+	echo ""
+	/bin/date >> console.out
+	/bin/date
+	echo "" >> console.out
+	echo ""
+	/bin/sleep 60
+done

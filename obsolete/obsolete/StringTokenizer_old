@@ -1,0 +1,101 @@
+package key.util;
+
+public final class StringTokenizer
+implements Enumeration, Cloneable
+{
+	private int currentPosition;
+	private int maxPosition;
+	private String str;
+	private String delimiters;
+	private boolean retTokens;
+	
+	public StringTokenizer( String str, String delim, boolean returnTokens )
+	{
+		currentPosition = 0;
+		this.str = str;
+		maxPosition = str.length();
+		delimiters = delim;
+		retTokens = returnTokens;
+	}
+	
+	public StringTokenizer( String str, String delim )
+	{
+		this( str, delim, false );
+	}
+	
+	public StringTokenizer( String str )
+	{
+		this( str, " \t\n\r", false );
+	}
+	
+	private StringTokenizer( StringTokenizer st )
+	{
+		currentPosition = st.currentPosition;
+		maxPosition = st.maxPosition;
+		str = st.str;
+		delimiters = st.delimiters;
+		retTokens = st.retTokens;
+	}
+	
+	public Object clone()
+	{
+		return( new StringTokenizer( this ) );
+	}
+	
+	private void skipDelimiters()
+	{
+		while( !retTokens &&
+			   (currentPosition < maxPosition) &&
+			   (delimiters.indexOf(str.charAt(currentPosition)) >= 0) )
+		{
+			currentPosition++;
+		}
+	}
+	
+	public boolean hasMoreTokens()
+	{
+		skipDelimiters();
+		return( currentPosition < maxPosition );
+	}
+
+	public String nextToken()
+	{
+		skipDelimiters();
+		
+		if( currentPosition >= maxPosition )
+		{
+			throw new NoSuchElementException();
+		}
+		
+		int start = currentPosition;
+		while( (currentPosition < maxPosition) && 
+			   (delimiters.indexOf(str.charAt(currentPosition)) < 0) )
+		{
+			currentPosition++;
+		}
+		
+		if( retTokens && (start == currentPosition) &&
+			(delimiters.indexOf(str.charAt(currentPosition)) >= 0) )
+		{
+			currentPosition++;
+		}
+		
+		return( str.substring( start, currentPosition ) );
+	}
+	
+	public String nextToken( String delim )
+	{
+		delimiters = delim;
+		return nextToken();
+	}
+	
+	public boolean hasMoreElements()
+	{
+		return hasMoreTokens();
+	}
+	
+	public Object nextElement()
+	{
+		return nextToken();
+	}
+}

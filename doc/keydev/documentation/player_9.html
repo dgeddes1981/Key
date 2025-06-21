@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>KEY - player documentation</title>
+<meta name="Author" content="Paul Mclachlan">
+<meta name="Description" content="Player manual">
+<meta name="Keywords" content="key help faq howto manual">
+<link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#CD853F" vlink="#55188A" alink="#008000">
+<center>
+
+<table border=0 width=95% cellspacing=0 cellpadding=10>
+	<tr>
+		<td>
+			<a href="../">
+			<img src = "../images/key-logo-small.gif" alt="Key Logo" border=0  align="center">
+			</a>
+		</td>
+		
+		<td>
+		<center>
+			<img src = "../images/resources-title.jpg" alt="Key resources" border=0>
+		</center>
+		</td>
+	</tr>
+</table>
+
+</center>
+
+<H1>9. Building: creating things of your own</H1>
+<P>
+As a resident, you have the ability to play god and create things for your
+own personal use.  Generally, you are permitted to create only a limited
+number of things, due to memory and disk space constraints.
+<P>
+You create things with the 'create' command.  To get a list of the things
+you are permitted to build, use '<KBD>create commands</KBD>'
+('commands create' also works):
+<PRE>
+-&gt; <KBD>create commands</KBD>
+---  [base - 3 commands]  ------------------------------------------
+    exit, room, commands
+--------------------------------------------  3 commands listed  ---</PRE>
+
+	<P>
+	Lets start with some of the basic definitions and discovery commands:
+	<P>
+	
+	<UL>
+	<H3>Room</H3>
+	A room is some place that you can 'be' on the program.  For instance, a
+	room might be a courtyard, a log cabin, a hilltop, or a dojo.
+	<P>
+	More than one person can be in a room at any time, and when you use the
+	commands '<KBD>say</KBD>', '<KBD>emote</KBD>' and '<KBD>think</KBD>', they
+	are
+	all directed to everyone who is in the room with you.
+	<P>
+	The '<KBD>look</KBD>' command shows you a description of
+	the room you are in, as well as who (and what) is in it with you.
+
+	<H3>Exit</H3>
+	An exit is one mechanism for moving from one room to another.  The exits
+	from a room normally show up when you '<KBD>look</KBD>'.
+	You can also see the exits in a room with the '<KBD>exits</KBD>' command.
+	<P>
+	You use an exit by going through it, as in '<KBD>go
+	track</KBD>', or '<KBD>go south</KBD>'.  Most of the
+	time (unless there is a command with the same name), you can also use an
+	exit just by typing it's name, such as '<KBD>track</KBD>',
+	or '<KBD>south</KBD>'.
+	<P>
+	An exit is in one place, and leads to another.  To create an exit, you
+	have to have access to at least 2 different rooms - one to put the exit
+	in, and one for the exit to go to.
+	<P>
+	Exits are <EM>one way</EM>.  That is, if you build a log cabin and a
+	campfire area, and wish to have a door that goes from the log
+	cabin to the campfire, you actually need two exits:<P><UL><LI>one that is
+	in the cabin and goes to the campfire, and<LI>one that is in the
+	campfire room and goes into the cabin.</UL>
+	
+	<H3>Homes</H3>
+	Every player may have one of his or her rooms designated as a 'home'
+	room.  When you type '<KBD>home</KBD>', you are
+	automatically transported to your home room.  When you type '<KBD>visit
+	slide</KBD>', you will be automatically transported to slide's home room.
+	The '<KBD>ghome</KBD>' command sets your profile so that when you log in
+	you are automatically taken to your home, as opposed to any other place.
+	<P>
+	That's just about all it means for a room to be your home.
+	
+	<H3>Showing a list of your rooms</H3>
+	You can use the '<KBD>rooms</KBD>' command to display a
+	list of the rooms you have currently.  As you don't have any rooms at
+	the moment, the output will look like this:
+	<PRE>
+-&gt; <KBD>rooms</KBD>
+There aren't any rooms in sLiDe.  Use 'create room &lt;id&gt;' if you want
+   to create one.</PRE>
+   	</UL>
+   </UL>
+	
+<H2>Creating a room</H2>
+<UL>
+	
+	To create a new room you use the 'create room' command, like this:
+	
+	<PRE>
+-&gt; <KBD>create room treehouse The Tree House</KBD>
+Built the room 'treehouse' (in sLiDe)
+This room has also been set to your home, since you don't have 
+   any others.</PRE>
+  	
+	The exact format of this command is '<KBD>create room &lt;room id&gt; &lt;room name&gt;</KBD>'.  The <EM>room id</EM> is how you need to refer to the room from then on.  For instance, to go to our new room, we can:
+	<PRE>
+-&gt; <KBD>trans treehouse</KBD>
+                        <B>The Tree House</B>
+
+There is nobody here but you.
+
+You have transported yourself to /players/sLiDe/treehouse.</PRE>
+	
+	You can use the <KBD>trans</KBD> command to go to any of
+	your rooms.
+	
+	<H3>Setting up the room</H3>
+
+	Well, we have a room now, but it looks kind of bare.  One of the more
+	useful commands when setting up a room is the <KBD>inspect</KBD>
+	command.  This command shows some information about how the room is set
+	up at the moment.  Our new treehouse might look like this:
+	<PRE>
+-&gt; <KBD>inspect</KBD>
+-----------------------------------------------------------------
+/players/sLiDe/treehouse is a room owned by sLiDe.
+There is nobody here but you.
+There aren't any objects in this room.
+
+The portrait reads:  Someone is [in] [somewhere]
+-----------------------------------------------------------------</PRE>
+	
+	This screen shows the rooms id (<SPAN
+	class=em>/players/sLiDe/treehouse</SPAN>), who it is owned by (<SPAN
+	class=em>sLiDe</SPAN>), as well as the rooms portrait.
+	
+	<H3>Portraits</H3>
+	
+	As you can see from the inspect screen above, a rooms portrait consists of
+	two parts, the '<SPAN class=em>relation</SPAN>', and the actual <SPAN
+	class=em>portrait</SPAN>.  The relation is the 'in' part, and the portrait
+	is the 'somewhere' part.
+	<P>
+	The portrait itself shows what appears when someone does a <KBD>where</KBD> command on someone in this room.  For instance,
+	'<KBD>where slide</KBD>' returns '<SPAN class=em>sLiDe is in
+	somewhere</SPAN>'.
+	<P>
+	
+	For our treehouse, we're simply going to change the '<SPAN
+	class=em>somewhere</SPAN>' to be '<SPAN class=em>the treehouse</SPAN>':
+	
+	<PRE>
+-&gt; <KBD>room portrait the treehouse</KBD>
+The portrait now reads: [sLiDe is in] the treehouse</PRE>
+	
+		To change the relation property (which you might want to do when creating a hill: no-one is ever 'in' a hill), you use the <KBD>room relation</KBD> command:
+		<PRE>
+-&gt; <KBD>room relation at</KBD>
+The portrait now reads: [sLiDe is at] the hill</PRE>
+		
+	(We might use this trick later to create a room that is on top of the treehouse)
+	
+	<H3>Descriptions</H3>
+	
+	The rooms <SPAN class=em>description</SPAN> and <SPAN class=em>name</SPAN>
+	may be viewed with the <KBD>look</KBD> command.  The name, if it is set, appears centred above the description.
+	<P>
+	To add a description, we use the <KBD>room describe</KBD>
+	command and the editor.  The editor has some more advanced features,
+	allowing you to fix mistakes and delete lines, but for now, there are only
+	3 things you need to know about it.
+	<P>
+	When you're in the editor, you have a + prompt, and whatever you type will
+	appear in your description, unless it starts with a period '.'.  There are
+	many period commands, but the best ones are:
+	<P>
+	<UL>
+		<LI> '<KBD>.end</KBD>' (to finish editting and save your
+		changed),
+		<LI> '<KBD>.wipe</KBD>' (to wipe everything and start
+		over), and
+		<LI> '<KBD>.quit</KBD>' (to exit without saving any
+		changes).
+	</UL>
+	<P>
+	So, we start the editor and type in a simple description:
+
+	<PRE>
+-&gt; room describe
+-----------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' 
+  immediately (without the quotes), and read 'help editor'
+
+Limitations:  22 lines, 1760 characters.
+-----------------------------------------------------------------
+-----------------------------------------------------------------
++ <KBD>The treehouse is of the normal wooden variety, albeit rather rickety.  Several comics are lying scattered around.</KBD>
+The treehouse is of the normal wooden variety, albeit rather 
+rickety.  Several comics are lying scattered around.
++ <KBD>.end</KBD>
+Saving editor buffer...
+You change the description of 'treehouse'</PRE>
+	
+	When you type in descriptions, type whole paragraphs on one line if you
+	can.  This will make the program automatically word-wrap them to the width
+	of whoever is looking at them.
+	<P>
+	<H3>Renaming rooms</H3>
+	While you can't change a rooms id, you can change the the name that appears
+	at the top.
+	<P>
+	In fact, it isn't necessary to specify it when you first create the
+	room, either.  We could just have written '<KBD>room create
+	treehouse</KBD>' and the room would have begun life without a title.
+	<P>
+	Nevertheless, to change it, or set it in the first place, use the
+	'<KBD>room name</KBD>' command.  Here's an example using colour
+	codes.  (Colour codes have a chapter all for themselves, but here's a
+	sneak preview):
+	<PRE>
+-&gt; room name ^MThe slippery treehouse^-
+This room is now called <font color=magenta><b>The slippery treehouse.</b></font></PRE>
+	<H3>Finished</H3>
+	<P>
+	Using the <KBD>look</KBD> command now shows us our complete
+	room!  The next section shows you how to create exits between rooms (for
+	the go command) and mentions a little more about room management.
+	<P>
+	In summary, here are the steps to create a room:
+	<P>
+	<OL>
+		<LI>Create the room: <KBD>create room treehouse The Tree House</KBD>
+		<LI>Go to the room: <KBD>trans treehouse</KBD>
+		<LI>Set the portrait: <KBD>room portrait the treehouse</KBD>
+		<LI>Set the relation: <KBD>room relation in</KBD>
+		<LI>Describe the room: <KBD>room describe</KBD>.  Use '<KBD>.end</KBD>' when you're finished.
+		<LI>Rename the room, if desired: <KBD>room name ^MThe slippery treehouse^-</KBD>
+	</OL>
+</UL>
+
+<H1>Creating an exit</H1>
+<UL>
+	As mentioned previously, you need at least two rooms to create an exit:
+	one room for the exit to go <EM>from</EM>, and one room for it to go
+	<EM>to</EM>.
+	<P>
+	<H2>You need two rooms...</H2>
+	The first thing to do is quickly bash out another room.  Lets build a
+	backyard for our treehouse to be in.
+	<PRE>
+-&gt; <KBD>create room backyard Joe's backyard</KBD>
+Built the room 'backyard' (in sLiDe)</PRE>
+	We can describe it later.  For now, lets use the <KBD>rooms</KBD>
+	command to check which rooms we wish to use,
+	and their id's:
+	<PRE>
+-&gt; <KBD>rooms</KBD>
+  name             portrait                                pl# ob#
+|----------------|----------------------------------------|---|---|
+ backyard         Someone is in somewhere                  0   0   
+ treehouse        Someone is in the treehouse              1   0   
+|----------------------------------------------------- 2 rooms ---|</PRE>
+	<P>
+	<H2>Building the first exit</H2>
+	Let us now build a ladder exit that goes from the backyard to the
+	treehouse.
+	<P>
+	First, go to the backyard:
+	<PRE>
+-&gt; <KBD>trans backyard</KBD>
+                               Joe's backyard
+
+There is nobody here but you.
+
+You have transported yourself to /players/sLiDe/backyard.</PRE>
+	<P>
+	And create the exit, carefully specifying where you want it to go:
+	<PRE>
+-&gt; <KBD>create exit ladder treehouse</KBD>
+Built the exit ladder in backyard, which leads to the treehouse (treehouse)</PRE>
+	<P>
+	And try it out:
+	<PRE>
+-&gt; <KBD>go ladder</KBD>
+You walk through the exit
+                           <font color=magenta><b>The slippery treehouse</b></font>
+The treehouse is of the normal wooden variety, albeit rather 
+rickety.  Several comics are lying scattered around.
+
+There is nobody here but you.</PRE>
+	<P>
+	Well, that worked.  If you remember my explanation of the exit at the
+	start of this chapter, you'll know that to get back, we need to create
+	another exit.  Lets do that now:
+	<PRE>
+-&gt; <KBD>create exit ladder backyard</KBD>
+Built the exit ladder in treehouse, which leads to somewhere (backyard)</PRE>
+	<P>
+	Notice how this time it only leads to '<SPAN class=em>somewhere</SPAN>'?
+	That's because we haven't set the portrait in the other room yet, a task
+	you can do later on.
+	<P>
+	Anyway, take a look at the '<KBD>inspect</KBD>' screen for
+	the exit we just created.
+	<PRE>
+-&gt; <KBD>inspect ladder</KBD>
+-----------------------------------------------------------------------
+/players/sLiDe/treehouse/ladder is an exit owned by sLiDe.
+-----------------------------------------------------------------------
+No active verbs
+-----------------------------------------------------------------------
+Autolook: on
+The arriveRoom message is: sLiDe walks in
+The departRoom message is: sLiDe walks out
+
+This exit leads to somewhere, designated by /players/sLiDe/backyard.
+
+----------------------------  description  ----------------------------
+A rent in the fabric of reality
+
+(the message a player sees when going through this exit is shown below)
+------------------------------  through  ------------------------------
+You walk through the exit
+-----------------------------------------------------------------------</PRE>
+	<P>
+	The inspect screen lists everything that may be customised about the
+	exit.
+	<P>
+	<H3>Autolook</H3>
+		This property, when it is on, will force a "look" command after you
+		go through the exit.
+		<P>
+		It is nearly always left on, but the ability to turn it off means
+		that, for instance, a room can have a different description when you
+		enter through a door than when you're just standing in it looking
+		around.  You do this with the 'through' property, below.
+		<P>
+		Use the "<KBD>exit &lt;exit&gt; through</KBD>" command change to
+		this:
+<PRE>
+-&gt; <KBD>exit ladder through</KBD>
+-----------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately 
+  (without the quotes), and read 'help editor'
+
+Limitations:  200 lines, 10000 characters.
+-----------------------------------------------------------------------
+You walk through the exit
+-----------------------------------------------------------------------
++ <KBD>.wipe</KBD>
+Editing Buffer Cleared.
++ <KBD>You carefully climb down the ladder into the backyard.</KBD>
+You carefully climb down the ladder into the backyard.
++ <KBD>.end</KBD>
+Saving editor buffer...</PRE>
+	<H3>arriveRoom</H3>
+		This property describes the message sent to the room that the moving
+		player is arriving into.  The player will not see this message, only
+		everyone else in that room.
+		<P>
+<PRE>
+-&gt; <KBD>exit ladder arriveroom %o climbs down the ladder into the backyard</KBD>
+The value now reads: %o climbs down the ladder into the backyard</PRE>
+		<P>
+		Obviously, the '%o' is replaced by the name of the player going
+		through the exit.  (You must include the %o; otherwise it would be
+		possible to make a way of entering someone elses room without anyone
+		knowing who came in.)
+		<P>
+		There are a couple of other codes that you can use here (and more
+		can be added if you want one, use the 'idea' command).  They are:
+		<P>
+		<UL>
+			<LI>%h - Replaced with 'he' or 'she' based on the players
+			gender.</LI>
+			<LI>%i - Replaced with 'his' or 'her' based on the players
+			gender.</LI>
+		</UL>
+	<H3>departRoom</H3>
+		This property describes the message sent to the room that the moving
+		player departs, or leaves.  The player will not see this message,
+		only everyone else in that room.
+		<PRE>
+-&gt; <KBD>exit ladder departroom %o steps over to the ladder and disappears down it.</KBD>
+The value now reads: %o steps over to the ladder and disappears down it</PRE>
+	<H3>description</H3>
+		This paragraph shows the message sent when someone types "<KBD>look
+		&lt;exit name&gt;</KBD>".  You can edit it with the
+		<KBD>describe</KBD> command:
+<PRE>
+-----------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately 
+  (without the quotes), and read 'help editor'
+
+Limitations:  40 lines, 3160 characters.
+-----------------------------------------------------------------------
+A rent in the fabric of reality
+-----------------------------------------------------------------------
++ <KBD>.wipe</KBD>
+Editing Buffer Cleared.
++ <KBD>A ladder that leads down into the backyard</KBD>
+A ladder that leads down into the backyard
++ <KBD>.end</KBD>
+Saving editor buffer...
+You change the description of 'ladder'</PRE>
+	<H3>through</H3>
+		You will remember, no doubt, the 'You walk through the exit' message
+		that was sent when you went through the last exit.  This is a
+		configurable message, known as '<EM>through</EM>' message, sent only
+		to the player as they go through the exit.
+		<P>
+		You may use this message for anything you please, although here are
+		some suggestions:
+		<P>
+		<UL>
+			<LI>Blank it out.  The exit will behave the way old EW
+			exits did: just take you to the room and then autolook.
+			<LI>Set it, and leave autolook on.  You can write a little bit
+			of custom information in the exit, like "<SPAN class=em>You walk
+			down the windy road until you reach the bottom of the
+			mountains.</SPAN>", which provides a good lead-in to the
+			"<SPAN class=em>foothills</SPAN>" room, for instance.
+			<LI>Set it and turn autolook off.  Here you can customise the
+			rooms description a little more.  As a player walks into the
+			room, they have a different perspective (perhaps with less
+			detail, or from another angle) than if they are standing in the
+			room and 'look' around.  Perhaps if they look a second time
+			they'll see something that they missed initially, or perhaps you
+			only see something on your way in, and not in the room itself.
+		</UL>
+		<P>
+		It's predictable, but you set this paragraph with the
+		<KBD>exit &lt;exit&gt; through</KBD> command:
+<PRE>
+-&gt; <KBD>exit ladder through</KBD>
+-----------------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' immediately 
+  (without the quotes), and read 'help editor'
+
+Limitations:  200 lines, 10000 characters.
+-----------------------------------------------------------------------
+You walk through the exit
+-----------------------------------------------------------------------
++ <KBD>.wipe</KBD>
+Editing Buffer Cleared.
++ <KBD>You step onto the ladder and climb down into the backyard.</KBD>
+You step onto the ladder and climb down into the backyard.
++ <KBD>.end</KBD>
+Saving editor buffer...</PRE>
+	</UL>
+	<P>
+<H2>FAQ's</H2>
+<H3>How to I make an exit that leads to a room that isn't mine?</H3>
+<UL>
+	When you create the exit, put the players name, a slash (/), and then the
+	room name.  To have an exit to snapper's den, use '<KBD>create exit path
+	snapper/den</KBD>'.
+	<P>
+	You can create exits to clan rooms; use the clanname and a slash, as in
+	'<KBD>create exit path osiris/hall</KBD>'.
+	<P>
+	You can create exits to realm rooms, as well.  Each of the public rooms
+	is located in a scene.  For instance, the town square is in the 'city'
+	scene, so you can '<KBD>create exit path city/square</KBD>'.
+</UL>
+<H3>How do I change my home room?</H3>
+<UL>
+	With the '<KBD>sethome</KBD>' command.  Go to your new home and type
+	'<KBD>room sethome</KBD>'.
+	<P>
+	You can only set your home to a room you have the 'setHome' permission
+	for.  This is trivially true for all of your rooms, but your clan
+	founder may have set up certain clan rooms that you can set as your
+	home, or your net.wife might build a room for the two of you.
+	<P>
+	You'll want to read chapter 11 on context permissions to know how to
+	give the setHome permission to someone.
+</UL>
+<center>
+<hr>
+
+These pages are sponsored by 
+<a href="http://www.progsoc.uts.edu.au">progsoc</a>, on
+<a href="http://realm.progsoc.uts.edu.au/">realm</a>.
+<BR>(last modified: <!--#echo var="LAST_MODIFIED" -->, <!--#exec cgi="/cgi-bin/counter" --> hits)
+
+</center>
+</body>
+</html>

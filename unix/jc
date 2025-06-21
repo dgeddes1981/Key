@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#
+#  Just a little script to compile a group of java
+#  files & place the classes into their correct
+#  class directories
+#
+
+JAVA_NS="true"
+export CLASSPATH="$KEYHOME/classes:$KEYHOME/external/javax.servlet.jar:$KEYHOME/external/gnujsp.jar:$KEYHOME/external/com.mortbay.Jetty.jar:$KEYHOME/external/bsh-1.0.jar"
+nice javac $VM_OPT -g -d $KEYHOME/classes $*

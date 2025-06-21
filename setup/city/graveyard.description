@@ -1,0 +1,11 @@
+cd /realm/city
+load PublicRoom graveyard
+set graveyard.called ^RThe City Graveyard^-
+set graveyard.portrait visiting the graves of the dearly departed.
+set graveyard.relation ""
+edit graveyard.description
+.wipe
+The graveyard fills you with an eerie sensation.  You can see the many tombstones of the residents who have left this world for another.  Some of them died during the mass exodus from the ruins of dawnkeep while some departed when the calls of the next world could not be denied any longer.  The atmosphere is thick and silent with the large and heavily foliaged trees cast deep shadows over the entire area.  Nevertheless the graveyard is a place where people come to contemplate the `otherside' or just for some quiet.
+.end
+transfer graveyard $
+cd

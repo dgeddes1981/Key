@@ -1,0 +1,14 @@
+
+                      Key is Copyright (C) 1996-1998 by
+                Paul Mclachlan, Jason Crane, and George Wright
+                        v0.91 beta 21st October, 1998
+
+The main change you'll see with this release over the others is that Key
+is now -much- easier to start up and initialise.  I've done away with the
+old ".tf" scripts (that required tinyfugure or something clever to run),
+and replaced them with custom ".ks" scripts that Key itself can interpret.
+
+It's best to show it rather than try to explain it all - essentially there's
+now a little 'menu' for people starting Key.  If you already have a database,
+you can access it with 'key admin'.
+

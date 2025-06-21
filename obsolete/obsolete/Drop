@@ -1,0 +1,104 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Drop,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  20Oct98     subtle       created
+**
+*/
+
+package key.commands;
+
+import key.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
+import java.util.Enumeration;
+
+public final class Drop extends Command
+{
+	public Drop()
+	{
+		setKey( "drop" );
+		usage = "<object>";
+	}
+	
+	public void run( Player p, StringTokenizer args, String fullLine, ModalCommand caller, InteractiveConnection ic, Flags flags ) throws IOException
+	{
+		if( !args.hasMoreTokens() )
+		{
+			usage( ic );
+			return;
+		}
+		
+		String nt = args.nextToken();
+
+		Room r = p.getLocation();
+		Inventory i = p.getInventory();
+		
+			//  ensure we won't have to back out
+		r.getPermissionList().check( Container.addToAction );
+		i.getPermissionList().check( Container.removeFromAction );
+		
+		if( nt.equalsIgnoreCase( "all" ) )
+		{
+			if( i.count() == 0 )
+			{
+				ic.sendFailure( "You have nothing to drop." );
+				return;
+			}
+			
+			for( Enumeration e = i.elements(); e.hasMoreElements(); )
+			{
+				if( !r.canAdd() )
+				{
+					ic.sendFailure( "There is too much in this room to drop any more." );
+					return;
+				}
+				
+				doTheDrop( p, ic, i, r, (Thing) e.nextElement() );
+			}
+		}
+		else
+		{
+			if( !r.canAdd() )
+			{
+				ic.sendFailure( "There is too much in this room already." );
+				return;
+			}
+			
+			Thing t = getObjectFromInventory( p, ic, nt );
+			
+			if( t != null )
+				doTheDrop( p, ic, i, r, t );
+		}
+	}
+	
+	private void doTheDrop( Player p, InteractiveConnection ic, Inventory i, Room r, Thing t )
+	{
+		try
+		{
+			i.remove( (Atom) t );
+			r.add( (Atom) t );
+			ic.sendFeedback( "You put down " + t.getFullPortrait( p ) );
+		}
+		catch( CannotDropWhileWearingException e )
+		{
+			ic.sendFailure( "You cannot drop " + t.getFullPortrait( p ) + " while you are wearing it" );
+		}
+		catch( Exception e )
+		{
+			throw new UnexpectedResult( e );
+		}
+	}
+}

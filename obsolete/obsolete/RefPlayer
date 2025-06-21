@@ -1,0 +1,98 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+package key.commands;
+
+import key.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+public class RefPlayer extends Command
+{
+	public RefPlayer()
+	{
+		setKey( "player" );
+		usage = "<player name> [<command>]";
+	}
+
+	public void run( Player p, StringTokenizer args, String fullLine, CategoryCommand caller, InteractiveConnection ic, Flags flags ) throws IOException
+	{
+		if( args.hasMoreTokens() )
+		{
+			String pname = args.nextToken();
+			Atom r = getPlayer( ic, pname );
+			
+			if( r == null )
+				return;
+			
+			if( args.hasMoreTokens() )
+			{
+				Atom old = p.getContext();
+				p.setContext( r );
+				p.command( args.nextToken( "" ), ic, false );
+				p.setContext( old );
+				return;
+			}
+			
+			p.setContext( r );
+			ic.sendFeedback( "Now referencing '" + p.getContext().getId() + "'" );
+		}
+		else
+			usage( ic );
+	}
+	
+	/**
+	  * @see key.Command.getMatch
+	 */
+	public Command getMatch( final Player p, key.util.StringTokenizer st )
+	{
+		if( st.hasMoreTokens() )
+		{
+			String pname = st.nextToken();
+			Atom r = getPlayer( pname );
+			
+			if( r == null )
+				return( this );
+			
+			if( st.hasMoreTokens() )
+			{
+				//return( 
+			}
+			
+			//return( (Command) getCommandList().getExactElement( command ) );
+		//}
+		//else
+			return( this );
+	}
+	
+	public Command.Match getFinalMatch( final Player p, key.util.StringTokenizer st )
+	{
+		if( st.hasMoreTokens() )
+		{
+			final String command = st.nextToken();
+			
+			return( new Command.Match()
+			{
+				{
+					match = (Command) getCommandList().getExactElement( command );
+				}
+				
+				public String getErrorString()
+				{
+					return( "No such command '" + command + "' in " + Command.this.getName() );
+				}
+			} );
+		}
+		else
+			return( super.getFinalMatch( p, st ) );
+		
+	}
+}

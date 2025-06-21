@@ -1,0 +1,14 @@
+cd /realm/city
+load PublicRoom tavern
+set tavern.called ^RThe Bitter Brother^-
+set tavern.portrait the Bitter Brother tavern.
+edit tavern.description
+.wipe
+A musty ale aroma assails the nostrils on entering The Bitter Brother.  This is the tavern that flourished after the destruction of Castle Dawnkeep.  Citizens gather here regularly to forget about their problems and with entertainment in full swing twenty-four hours a day, The Bitter Brother caters for both paupers and merchants alike.  The barrels of ale here can only be described as endless.
+
+Minstrels find solace in The Bitter Brother and are able to display their fine skills, singing songs of heros, battles fought and loves lost.  Gambling Merchants, a common sight at tables of like-minded fellows are often to blame for the noise that escape the tavern doors late at night.  Sometimes violence erupts, but to the regular drunkards, who stagger and oggle the bar maids, roar with laughter thinking it all part of the fun.  Such is the atmosphere of The Bitter Brother...
+
+Come, stay a while, and enjoy the spirited people, entertainment and laughter.
+.end
+transfer tavern $
+cd

@@ -1,0 +1,31 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Parent,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+public interface Parent extends HasParent
+{
+	/**
+	  *  called to tell the parent that it can no longer
+	  *  refer to this atom as its child.
+	 */
+	public void noLongerReferencing( Atom a );
+	public String getId();
+}

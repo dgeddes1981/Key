@@ -1,0 +1,10 @@
+
+logout directs to index.jsp?
+
+
+finger.jsp?name=***  redirects to  /people.jsp?action=finger&player=***
+
+all displayed names must link to <a href="finger.jsp?name=***">***</a>
+
+LOG everything!!!
+

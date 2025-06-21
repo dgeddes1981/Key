@@ -1,0 +1,8 @@
+
+Using tinyfugue to autologin uses the -T'lp' flag.
+
+ie: 
+
+	/addworld -T'lp' myname mypassword realm.progsoc.uts.edu.au 3000
+
+

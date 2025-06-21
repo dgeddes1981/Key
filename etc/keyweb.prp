@@ -1,0 +1,199 @@
+# ========================================================================
+# keyweb Jetty configuration
+# ------------------------------------------------------------------------
+
+#
+#  There's one server, it's called 'main'
+#
+SERVERS                                   : main
+
+#---  Server configuration  ------------------------------------------------
+#
+#  This configures each server (each port the webserver listens on)
+#
+main.CLASS				  : com.mortbay.HTTP.HttpServer
+
+	#  There's one stack, it's called 'root'
+main.STACKS				  : root
+main.EXCEPTIONS  : defaultEx
+
+	#  Some config parameters
+main.PROPERTY.SessionMaxInactiveInterval  : 3600
+main.PROPERTY.MinListenerThreads	  : 3
+main.PROPERTY.MaxListenerThreads	  : 20
+main.PROPERTY.MaxListenerThreadIdleMs	  : 60000
+main.PROPERTY.MimeMap			  : ./etc/Mime.prp
+
+	#  Listen on 3080 with HttpListener
+main.LISTENER.all.CLASS                   : com.mortbay.HTTP.HttpListener
+main.LISTENER.all.ADDRS                   : 0.0.0.0:3080
+
+#---  root stack configuration  --------------------------------------------
+#
+#  The root stack configuration.
+#
+#main.root.HOSTS				  :
+main.root.PATHS               : /
+
+	#  Handle requests in the following order:
+	#
+	#  1. Log the request
+	#  2. Translate their request if necessary, (ie, make /forest /te0)
+	#  3. Authenticate the user, if they're asking for a protected path
+	#  4. If the name they typed matches a configured servlet (or jsp), run it
+	#  5. Otherwise look for a file that matches their path
+	#  6. Else output 'not found'
+main.root.HANDLERS			  : Log;Translate;Auth;Param;Session;Servlet;File;NotFound
+	
+	#  Handle exceptions with the 'Default' handler
+#main.root.EXCEPTIONS		  : Default
+
+	#  Yes, log www hits to logs/www
+main.root.Log.CLASS			  : com.mortbay.HTTP.Handler.LogHandler
+main.root.Log.PROPERTY.File               : ./logs/www
+main.root.Log.PROPERTY.Append             : True
+main.root.Log.PROPERTY.LongForm           : True
+main.root.Log.PROPERTY.CountContentLength : False
+#main.root.Log.PROPERTY.DateFormat         : dd/MMM/yyyy:HH:mm:ss
+
+#---  Translations  --------------------------------------------------------
+#
+#  A translation makes one path magically map to another by using the
+#  'permanently moved' HTTP response.
+#
+main.root.Translate.CLASS	: com.mortbay.HTTP.Handler.TranslateHandler
+
+	#  Make /, /forest & /eclipse all point at te0
+main.root.Translate.PROPERTY./$	: /te0/
+main.root.Translate.PROPERTY./eclipse	: /te0/
+main.root.Translate.PROPERTY./forest	: /te0/
+
+	#  common typos o and capital O instead of 0
+main.root.Translate.PROPERTY./teo	: /te0
+main.root.Translate.PROPERTY./teO	: /te0
+
+	#  Make /who go to /jsp/who.jsp
+	#  (the $ means don't remap 'who/hi' or 'whom', for instance)
+main.root.Translate.PROPERTY./who$	: /te0/who.jsp
+main.root.Translate.PROPERTY./te0|	: /te0/index.jsp
+main.root.Translate.PROPERTY./finger	: /te0/finger.jsp
+
+#---  Authentication  ------------------------------------------------------
+#
+#  This uses key.web.KeyAuthHandler to authenticate people based on their
+#  forest login/password & the player being in the specified container.
+#
+#  /players allows anyone with a forest account
+#  /ranks/mage (etc) allows anyone in the mage group
+#
+main.root.Auth.CLASS              : key.web.te0Handler
+main.root.Auth.PROPERTY.forest.LABEL     : forest
+main.root.Auth.PROPERTY.forest.ID        : /players
+main.root.Auth.PROPERTY.forest.PATHS     : /online
+main.root.Auth.PROPERTY.mage.LABEL     : mage
+main.root.Auth.PROPERTY.mage.ID        : /ranks/mage
+main.root.Auth.PROPERTY.mage.PATHS     : /online/mage
+
+#---  Sessions  ------------------------------------------------------------
+main.root.Param.CLASS			  : com.mortbay.HTTP.Handler.ParamHandler
+main.root.Param.PROPERTY.Cookies          : True
+main.root.Session.CLASS			  : com.mortbay.HTTP.Handler.SessionHandler
+
+#---   Servlets & JSP  -----------------------------------------------------
+#
+#  A servlet runs a java class when the page gets hit.  JSP is implemented
+#  through a JSP servlet that'll compile (if necessary) & run the JSP page.
+#
+main.root.Servlet.CLASS		: com.mortbay.HTTP.Handler.ServletHandler
+
+	#  No dynamic servlets are configured.  Honestly, I don't
+	#  have a clue how to use this.  Leave it alone.
+#main.root.Servlet.PROPERTY.PATHS	: /servlet/
+#main.root.Servlet.PROPERTY.CLASSPATH: ./servlets:
+#main.root.Servlet.PROPERTY.AutoReloadDynamicServlets			: True
+#main.root.Servlet.PROPERTY.Loader	: com.mortbay.HTTP.Handler.FileJarServletLoader
+
+	#  You can put jsp pages in /jsp or /online/jsp or /online/mage/jsp
+	#
+main.root.Servlet.PROPERTY.SERVLET.jsp.CLASS		: org.gjt.jsp.JSPServlet
+main.root.Servlet.PROPERTY.SERVLET.jsp.PATHS	: /jsp/*.jsp
+main.root.Servlet.PROPERTY.SERVLET.jsp.CLASSPATH	: ./external/gnujsp.jar
+main.root.Servlet.PROPERTY.SERVLET.jsp.PROPERTY.repository	: ./tmp
+main.root.Servlet.PROPERTY.SERVLET.jsp.PROPERTY.pagebase	: ./www/jsp/
+main.root.Servlet.PROPERTY.SERVLET.jsp.PROPERTY.compiler	: builtin-javac -classpath %classpath%:%respository% -d %repository% %source%
+
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.CLASS		: org.gjt.jsp.JSPServlet
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.PATHS	: /online/*.jsp
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.CLASSPATH	: ./external/gnujsp.jar
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.PROPERTY.repository	: ./tmp
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.PROPERTY.pagebase	: ./www/online/
+main.root.Servlet.PROPERTY.SERVLET.onlineJsp.PROPERTY.compiler	: builtin-javac -classpath %classpath%:%respository% -d %repository% %source%
+
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.CLASS		: org.gjt.jsp.JSPServlet
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.PATHS	: /online/mage/*.jsp
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.CLASSPATH	: ./external/gnujsp.jar
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.PROPERTY.repository	: ./tmp
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.PROPERTY.pagebase	: ./www/online/mage/
+main.root.Servlet.PROPERTY.SERVLET.mageJsp.PROPERTY.compiler	: builtin-javac -classpath %classpath%:%respository% -d %repository% %source%
+
+main.root.Servlet.PROPERTY.SERVLET.te0.CLASS		: org.gjt.jsp.JSPServlet
+main.root.Servlet.PROPERTY.SERVLET.te0.PATHS	: /te0/*.jsp
+main.root.Servlet.PROPERTY.SERVLET.te0.CLASSPATH	: ./external/gnujsp.jar
+main.root.Servlet.PROPERTY.SERVLET.te0.PROPERTY.repository	: ./tmp
+main.root.Servlet.PROPERTY.SERVLET.te0.PROPERTY.pagebase	: ./www/te0/
+main.root.Servlet.PROPERTY.SERVLET.te0.PROPERTY.compiler	: builtin-javac -classpath %classpath%:%respository% -d %repository% %source%
+
+	#  err, this is just a stupid example of upload.
+main.root.Servlet.PROPERTY.SERVLET.Upload.PATHS	: /Upload$
+main.root.Servlet.PROPERTY.SERVLET.Upload.CLASS	: com.mortbay.Jetty.UploadServlet
+
+	#  this sets debug options
+main.root.Servlet.PROPERTY.SERVLET.Debug.PATHS	: /online/mage/debug$
+main.root.Servlet.PROPERTY.SERVLET.Debug.CLASS	: com.mortbay.Servlets.DebugServlet
+
+#---   File  ---------------------------------------------------------------
+#
+#  This section states what directories may be served and under what
+#  paths they occur.
+#
+main.root.File.CLASS			  : com.mortbay.HTTP.Handler.FileHandler
+main.root.File.PROPERTY.AllowPut		 : False
+main.root.File.PROPERTY.AllowDelete		 : False
+
+	#  Use these files as indexes.
+main.root.File.PROPERTY.Indexes			 : index.html;index.jsp;index.shtml
+
+	#  Serve the pages in te0 as /te0
+main.root.File.PROPERTY.FILES.te0.PATHS     : /te0/
+main.root.File.PROPERTY.FILES.te0.DIRECTORY : ./www/te0
+
+	#  Serve eclipse /eclipse
+main.root.File.PROPERTY.FILES.eclipse.PATHS     : /eclipse
+main.root.File.PROPERTY.FILES.eclipse.DIRECTORY : ./www/eclipse
+
+	#  Map user homepages such as ~subtle to www/homes/subtle
+main.root.File.PROPERTY.FILES.homes.PATHS     : /~
+main.root.File.PROPERTY.FILES.homes.DIRECTORY : ./www/homes/
+
+main.root.File.PROPERTY.FILES.online.PATHS     : /online
+main.root.File.PROPERTY.FILES.online.DIRECTORY : ./www/online
+
+	#  If nothing else matches, look in defaultRoot
+main.root.File.PROPERTY.FILES.defaultRoot.PATHS     : /
+main.root.File.PROPERTY.FILES.defaultRoot.DIRECTORY : ./www/defaultRoot/
+
+#---  NotFound  ------------------------------------------------------------
+#
+#  If we can't find anything else, output a not-found message
+#
+main.root.NotFound.CLASS		  : com.mortbay.HTTP.Handler.NotFoundHandler
+
+#---  Exception  -----------------------------------------------------------
+#
+#  If we catch an exception, just output it with the default exception
+#  handler.
+#
+main.defaultEx.PATHS			  : /
+main.defaultEx.HANDLERS			  : DefaultEx
+main.defaultEx.DefaultEx.CLASS			  : com.mortbay.HTTP.Handler.DefaultExceptionHandler
+

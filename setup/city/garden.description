@@ -1,0 +1,31 @@
+cd /realm/city
+load PublicRoom garden
+set garden.called ^RThe City Gardens^-
+set garden.portrait the gardens
+edit garden.description
+.wipe
+The gentle surroundings of the garden set you instantly at ease.  The fragrant breeze gently tussles the many flowers and bushes of every colour, shape and size.  There are several benches which have been ornately carved from a solid block of polished marble.  Throughout the peaceful setting of the garden lay plaques dedicated to the heroic <footnote 7> efforts of the faithful citizens of the realm.
+.end
+transfer garden $
+
+cd garden
+load Prop oldtopspod
+edit oldtopspod.description
+.wipe
+A marble plaque listing pre-eclipse heros of the realm.
+
+(You can use 'read oldtopspod' to read it)
+.end
+edit oldtopspod.read
+.wipe
+Pre-Eclipse top spods
+---------------------
+
+[You peer at the plaque, but don't seem to be able to make out any of the names, faded and chiped as they have been]
+
+^HTODO/INCOMPLETE^-
+.end
+set oldtopspod.fullPortrait marble plaque
+transfer oldtopspod $
+many oldtopspod plaque marble
+cd

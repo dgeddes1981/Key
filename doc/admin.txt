@@ -1,0 +1,38 @@
+
+                          j###t  ########## ####   ####                    
+                         j###t   ########## ####   ####                    
+                        j###T               "###L J###"                    
+                    ######P'    ##########   #########                     
+                    ######k,    ##########   T######T                      
+                    ####~###L   ####                                       
+                    #### q###L  ##########   .#####                        
+                    ####  \###L ##########   #####"                        
+
+                           site documentation
+
+        $Id: admin.txt,v 1.1.1.1 1999/10/07 19:58:01 pdm Exp $
+
+----------------------------------------------------------------------------
+Reserving names & Disallowed names
+----------------------------------------------------------------------------
+
+  In the online container, there are two StringSets, each containing a
+  list of names that can't be used by players to log in, but for
+  different reasons.
+
+  The reserved list will output the message 'That word means something
+  else here, please use another'.
+
+  The disallowed list will ouput the message 'The word cannot be used
+  as a name, please use another'.
+
+  A good use of a reserved name is, for instance, the name of your talker.
+  On forest, we would not allow a player to use the name 'forest', or,
+  for that matter 'dawnkeep'.  "That word means something else here".
+
+  A good use of a disallowed name is for swearwords, such as 'fuck' or
+  'shithead'.  People are dumb, and sometimes try to login using these,
+  we like to maintain a certain level of decency and stop that.
+
+----------------------------------------------------------------------------
+

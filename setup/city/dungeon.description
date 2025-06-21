@@ -1,0 +1,11 @@
+cd /realm/city
+load PublicRoom dungeon
+set dungeon.called ^rThe Dungeon^-
+set dungeon.portrait held in the dungeon.
+set dungeon.relation being
+edit dungeon.description
+.wipe
+This room causes the bile in your stomach to rise.  You must have really messed up to get put here.  I will spare you the horrors of the description so that you can concentrate on the reasons which brought you here.
+.end
+transfer dungeon $
+cd

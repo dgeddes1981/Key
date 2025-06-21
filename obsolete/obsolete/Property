@@ -1,0 +1,106 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Property,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.io.IOException;
+import java.io.DataOutput;
+import java.io.DataInput;
+import java.util.Date;
+
+public abstract class Property implements Symbol,HasParent
+{
+	String name;
+	Type type;
+	Atom parent;
+	
+	public Property( String name, Type type, Atom parent )
+	{
+		totalProperties++;
+		
+		this.type = type;
+		this.name = name.intern();
+		this.parent = parent;
+		
+		checkType( type );
+	}
+	
+	public final Type getType()
+	{
+		return( type );
+	}
+
+	public final String getName()
+	{
+		return( name );
+	}
+
+	public final HasParent getHasParent()
+	{
+		return( parent );
+	}
+	
+	public final Object getKey()
+	{
+		return( name );
+	}
+	
+	public final void setKey( Object key )
+	{
+		name = (String) key;
+	}
+
+	protected void checkType( Type type )
+	{
+		if( type.isA( Type.ATOM ) )
+			throw new UnexpectedResult( "property " + name + " on atom is atomic - please use an AtomicProperty." );
+	}
+
+	public void writeTo( DataOutput to ) throws IOException
+	{
+	}
+	
+	/**
+	  *  You need to have the property class set up *before*
+	  *  calling this command
+	 */
+	public void loadFrom( DataInput from ) throws IOException
+	{
+	}
+
+	public String toString()
+	{
+		return( "()" );
+	}
+	
+	private static int totalProperties;
+	
+	public static int getTotalProperties()
+	{
+		return( totalProperties );
+	}
+	
+	protected void finalize() throws Throwable
+	{
+		super.finalize();
+		
+		totalProperties--;
+	}
+}

@@ -1,0 +1,26 @@
+/AccessViolationException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/BadKeyException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/CannotDropWhileWearingException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/CircularException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/InvalidArgumentException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/InvalidContainerObject.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/InvalidEmailException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/InvalidSearchException.java/1.1.1.1/Thu Oct  7 19:58:31 1999//
+/LimitExceededException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/LimitationException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/NetworkException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/NoSuchPropertyException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/NonUniqueKeyException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/NotEnoughMoney.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/NotEnoughParametersException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/OutOfDateReferenceException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/PasswordEntryCancelled.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/PermissionDeniedException.java/1.1.1.1/Thu Oct  7 19:58:32 1999//
+/PlayerNotConnectedException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/RedundantException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/SiteDisallowedException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/TypeMismatchException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/UnexpectedResult.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/UserOutputException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+/WrongTerminalTypeException.java/1.1.1.1/Thu Oct  7 19:58:33 1999//
+D

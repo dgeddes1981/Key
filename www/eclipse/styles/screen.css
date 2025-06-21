@@ -1,0 +1,209 @@
+/*
+ *****************************************************************************************
+ * Key default CSS Stylesheet for screen media
+ * by koschei.
+ * $Id: screen.css,v 1.1.1.1 1999/10/07 19:58:24 pdm Exp $
+ *****************************************************************************************
+ */
+
+/* A fairly typical colour and background selection for the main text.
+ * A subtly non-black text colour. A white background with an subtle
+ * repeating image which scrolls with the page.
+ */
+BODY {
+  padding : 5% 10%;
+}
+
+BODY, TD, P {
+/* for white pages...
+  color : black;
+  background-color: white;*/
+/* for black pages... */
+  color : white;
+  background-color: black ;
+  text-indent: 0;
+  font-family: Arial, Homerton, Helvetica, sans-serif;
+  text-align: justify
+}
+
+/* Whenever we want a new section it would be nice for it to be indented
+ * when compared with its heading and also superior sections.
+ */
+DIV.section {
+  margin-left: 5%;
+  margin-right: 5%
+}
+
+/* Link colours. Hover and focus are for when the pointer is over the
+ * link, and when the link has input focus, respectively.
+ * Also included is a SPAN class for lists of links where the page
+ * which one is currently on is featured, so that one can colour it
+ * as active.
+ */
+/* black background suitable colours */
+A:link, A:visited, A:active { text-decoration : none }
+A:link                { color : yellow; }
+A:active,SPAN.current { color : fuchsia; }
+A:visited             { color : lime; }
+A:hover,A:focus       { color : fuchsia; }
+/* white background suitable colours
+A:link                { color : #cd853f; }
+A:active,SPAN.current { color : #008000; }
+A:visited             { color : #55188a; }
+A:hover,A:focus       { color : #000080; }
+ */
+
+
+/* Centre various items
+ */
+P.ce,P.signoff,DIV.ce {
+  text-align: center
+}
+
+/* The navigation bar should be moderately subtle, and look swish as well.
+ * So we'll chuck it over to the right of the page, and make sure it doesn't
+ * come more than halfway across.
+ */
+/* and since the footer is more or less the same style, we'll put that comment
+ * up here as well...
+ */
+/* The footer of each page should contain useful stuff such as hit count,
+ * who wrote the page, time last modified (preferably either GMT or AEST).
+ * Apache should be able to handle two out of three, and we still need it to
+ * look nice.
+ */
+P.navbar, P.footer {
+/*  color : rgb(80,0,0); */
+  color : rgb(175,255,255);
+  font-size : 90%;
+  font-style: italic;
+  margin-left: 0%;
+  margin-right: 0%;
+  text-align: right;
+}
+
+DIV.se {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+/* The colour text should be if reporting an error of some sort.
+ */
+SPAN.error {
+/*  color: #9400D3 */
+  color: #6BFF2C
+}
+
+/* We want things to look nice, so let's make the headings look
+ * funky to begin with.
+ */
+H1,H2 {
+  font-family: arial, homerton, helvetica, sans-serif;
+  text-transform : capitalize;
+/*  color: #191970; */
+  color: #E6E68F;
+}
+
+H1 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 170%
+}
+
+H2 {
+  text-align : left;
+  font-size: 110%
+}
+
+H3 {
+/*  color: #197019; */
+  color: #E68FE6;
+  font-size: 105%;
+}
+
+/* The standard horizontal line in most browsers is terribly dull,
+ * so we'll make it look better: it'll go the full span of whatever
+ * block it happens to be in; it shall be 4 pixels high and it shall
+ * be centered. The last is probably not necessary give the 100% width
+ * bit, but strange things happen in CSS and big browsers.
+ */
+HR {
+  width : 100%;
+  size : 4px;
+  align : center
+}
+
+/* this one is just my personal preference. definition lists look
+ * silly without the headings being in bold.
+ */
+DT {
+  font-weight : bold
+}
+
+/* PRE needs direct setting because some browsers are weird.
+ */
+PRE {
+  font-family: courier, corpus, monospace;
+  font-size: 90%;
+}
+
+/* sundry stylistic points
+ */
+
+SPAN.replace {
+/*  color: #ff0000;*/
+  color: #00ffff;
+}
+
+TD {
+  vertical-align: top;
+  font-family: arial, homerton, helvetica, sans-serif;
+}
+
+SPAN.typed {
+/*  color: #bb1919;*/
+  color: #44E6E6;
+  white-space: nowrap;
+}
+
+KBD {
+  color: #44e6e6;
+  white-space: nowrap;
+}
+
+SPAN.incomplete {
+  background-color: #bbbb19;
+}
+
+SPAN.example {
+/*  color: #197019;*/
+  color: #E68FE6;
+  font-style: italic;
+}
+
+EM, SPAN.em {
+  color: #e68f8f;
+}
+
+/* colour schemes for ye goode olde ansi selection
+ */
+
+SPAN.db { color: rgb(0,0,172 )   }
+SPAN.dg { color: rgb(0,189,0)    }
+SPAN.dc { color: rgb(0,189,189)  }
+SPAN.dr { color: rgb(189,0,0)    }
+SPAN.dm { color: rgb(189,0,189)  }
+SPAN.db { color: rgb(189,189,0)  }
+SPAN.dd { color: rgb(0,0,0)      }
+SPAN.BB { color: rgb(0,0,255)    }
+SPAN.BG { color: rgb(0,255,0)    }
+SPAN.BC { color: rgb(0,255,255)  }
+SPAN.BR { color: rgb(255,0,0)    }
+SPAN.BN { color: rgb(255,0,255)  }
+SPAN.BY { color: rgb(255,255,0)  }
+SPAN.dH, SPAN.BH, SPAN.BW { color: rgb(255,255,255)}
+
+/* And that's all the definitions we have time for now, so I'll
+ * bid you good day, and if I don't see you later, good afternoon,
+ * good evening and good night.
+ */

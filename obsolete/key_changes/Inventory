@@ -1,0 +1,175 @@
+package key;
+
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Inventory,v 1.1.1.1 1999/10/07 19:58:20 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+import key.collections.ObjectCollection;
+
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+import java.util.Hashtable;
+import java.io.*;
+
+/**
+  *  Nothing other than person location positions should be in this property
+  *  list.
+ */
+public class Inventory extends Container
+{
+	private static final long serialVersionUID = 3171435380110162286L;
+
+	public static final AtomicElement[] ELEMENTS = {};
+	public static final AtomicStructure STRUCTURE = new AtomicStructure( Container.STRUCTURE, ELEMENTS );
+
+	class Map
+	{
+		Reference fr;
+		StringBuffer sb;
+		
+		Map( String first, Reference r )
+		{
+			fr = r;
+			sb = new StringBuffer( first );
+		}
+	}
+	
+	public static final TableParagraph.Column[] columns = 
+	{
+		new TableParagraph.Column( "name", Player.MAX_NAME ),
+		new TableParagraph.Column( "location", 40 )
+	};
+	public Inventory()
+	{
+		super( false, "inventory", new ObjectCollection() );
+		
+		setConstraint( Type.THING );
+		setLimit( 10 );
+	}
+public Paragraph contents(Reference body)
+{
+	Hashtable ht = new Hashtable();
+
+	//  if the player has a valid body, prescan for worn or wield items
+	if ( !(body instanceof EmptyReference) ) {
+		AtomicElement[] bodyElements = ((BodyType)body.get()).getELEMENTS();
+
+		// skip first two items ( getXXX() methods )
+		for( int i = 2; i < bodyElements.length; i++ )
+		{
+			try
+			{
+				AtomicElement ae = bodyElements[i];
+				Reference r = (Reference) ae.getBasicValue( (Atom)((BodyType)body.get()) );
+				
+				if( r.isValid() )
+				{
+					Map m = (Map) ht.get( r );
+					
+					if( m == null )
+					{
+						m = new Map( ae.getName(), r );
+						ht.put( r, m );
+					}
+					else
+					{
+						m.sb.append( ", " );
+						m.sb.append( ae.getName() );
+					}
+				}
+			}
+			catch( Exception e )
+			{
+				Log.debug( this, e.toString() + " while checking if wearing" );
+				e.printStackTrace();
+			}
+		}
+
+	}	
+
+	//  now output everything
+	TableParagraph.Generator table = new TableParagraph.Generator( columns );
+	
+	for( Enumeration e = referenceElements(); e.hasMoreElements(); )
+	{
+		Reference r = (Reference) e.nextElement();
+		Map m = (Map) ht.get( r );
+			
+			//  this line is necessary - if we are carrying more
+			//  than one of the same thing, we still only list it
+			//  as being worn once - as this is indeed the case: 
+			//  it can only be worn once.
+		ht.remove( r );
+		
+		String s[] = new String[2];
+		s[0] = r.getName();
+		
+		if( m != null )
+			s[1] = m.sb.toString();
+		else
+			s[1] = "";
+		
+		table.appendRow( s );
+	}
+	
+	int c = count();
+	StringBuffer footer = new StringBuffer();
+	footer.append( "There ");
+	footer.append( Grammar.isAreCount( c ) );
+	footer.append( " " );
+	footer.append( Grammar.objectObjects( c ) );
+	footer.append( " in your inventory." );
+	table.setFooter( footer.toString() );
+	
+	ht.clear();
+	
+	return( table.getParagraph() );
+}
+	public AtomicStructure getDeclaredStructure()
+	{
+		return( STRUCTURE );
+	}
+	public boolean isWearing( Atom a )
+	{
+			//  quickly scan our fields & determine if we're wearing
+			//  this or not
+		for( int i = 0; i < ELEMENTS.length; i++ )
+		{
+			try
+			{
+				if( ((Reference) ELEMENTS[i].getBasicValue( this )).contains( a ) )
+					return( true );
+			}
+			catch( Exception e )
+			{
+				Log.debug( this, e.toString() + " while checking if wearing" );
+				e.printStackTrace();
+			}
+		}
+		
+		return( false );
+	}
+	public void remove( Atom removed ) throws NonUniqueKeyException,NoSuchElementException,BadKeyException
+	{
+		if( isWearing( removed ) )
+			throw new CannotDropWhileWearingException();
+		
+		super.remove( removed );
+	}
+}

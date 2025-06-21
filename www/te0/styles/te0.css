@@ -1,0 +1,26 @@
+
+BODY {
+  color : #000000;
+  background-color: white;
+  padding : 0% 0%;
+  text-indent: 0%;
+  font-family: Helvetica, Arial;
+  //text-align: justify
+}
+
+TD 
+{
+  font-family: Helvetica, Arial;
+}
+
+INPUT
+{
+  font-family: Helvetica, Arial;
+}
+
+A:link, A:visited, A:active { text-decoration : none }
+A:link                { color : rgb(0,  0, 200) }
+A:active,SPAN.current { color : rgb(255,  0,  0) }
+A:visited             { color : rgb(0 , 0,  100) }
+A:hover,A:focus       { color : rgb(  255, 0,  0) }
+

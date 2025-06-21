@@ -1,0 +1,88 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+package key.web;
+
+import com.mortbay.Base.*;
+import com.mortbay.Util.*;
+import com.mortbay.Servlets.*;
+import com.mortbay.HTML.*;
+import com.mortbay.HTTP.*;
+import com.mortbay.HTTP.Handler.*;
+import com.mortbay.HTTP.Filter.*;
+import com.mortbay.HTTP.Configure.*;
+import java.io.*;
+import java.net.*;
+import javax.servlet.*;
+import java.util.*;
+
+/**
+  *  This class is a thread which opens and binds a port,
+  *  creating new instances of 'InteractiveConnectionion' to
+  *  deal with each connection request that comes in.
+ */
+
+public class WWWDaemon extends key.Daemon
+{
+	private static final long serialVersionUID=-1359963406925714554L;
+	
+	transient Hashtable server_map;
+	
+	public WWWDaemon()
+	{
+		setKey( "WWWDaemonStarter" );
+	}
+	
+	public void run()
+	{
+		if( server_map == null )
+		{
+			try
+			{
+				String filename = "etc/keyweb.prp";
+				
+					// load property file
+				Properties props = new Properties();
+				props.load( new BufferedInputStream( new FileInputStream( filename ) ) );
+				server_map = Server.buildServers( props );
+				
+				Code.debug( server_map );
+				
+					// Start all severs
+				Enumeration e = server_map.elements();
+				
+				while( e.hasMoreElements() )
+					((Server)e.nextElement()).start();
+			}
+			catch( Exception e )
+			{
+				Code.warning( e );
+			}
+		}
+	}
+	
+	public boolean isAlive()
+	{
+		return( server_map != null );
+	}
+	
+	public void stop()
+	{
+			// Join all severs
+		Enumeration e = server_map.elements();
+		
+		while (e.hasMoreElements())
+			((Server)e.nextElement()).stop();
+		
+		server_map = null;
+		super.stop();
+	}
+}

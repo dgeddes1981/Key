@@ -1,0 +1,11 @@
+cd /realm/ruins
+load PublicRoom avenue
+set avenue.called ^yThe Avenue^-
+set avenue.portrait wandering through the ruins of Dawnkeep.
+set avenue.relation ""
+edit avenue.description
+.wipe
+As you stroll down a decaying avenue you notice some houses that once belonged to some of the more distinguished citizens of the Realm.  Of course in the great riots of the Change Over these fine houses were the first to be trashed.  All that is left are the ghostly husks.
+.end
+transfer avenue $
+cd

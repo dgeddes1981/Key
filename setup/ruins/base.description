@@ -1,0 +1,13 @@
+cd /realm/ruins
+load PublicRoom base
+set base.called ^yOutside the walls of Dawnkeep^-
+set base.portrait wandering through the ruins of Dawnkeep.
+set base.relation ""
+edit base.description
+.wipe
+You are standing at the base of the the ruins of Castle Dawnkeep <footnote 4>.  The castle hath stood ere since the beginning of time, and shall stand here until the end.  <footnote 5>.
+
+To the east, once stood the stables, and to the west, silently lies the broken courtyard.  To the south, stood the Guard Room which was destroyed in the great riots.  A crumbling road disappears into the hill in the north.
+.end
+transfer base $
+cd

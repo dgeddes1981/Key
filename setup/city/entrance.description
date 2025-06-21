@@ -1,0 +1,13 @@
+cd /realm/city
+load PublicRoom entrance
+set entrance.called ^RCity Entrance^-
+set entrance.portrait the entrance to the city.
+set entrance.relation at
+edit entrance.description
+.wipe
+The high walls that surround the city abruptly end at a large cobbled entrance.  Merchants, travellers and citizens pass through here regularly going about their daily business.  The noises of city life chase away the lonely silence of the wilderness.  You know that you have reached civilisation and that it lies just beyond the entrance.
+
+Outside the city walls runs the Great Southern Road and the open space of the City Square lies before you.
+.end
+transfer entrance $
+cd

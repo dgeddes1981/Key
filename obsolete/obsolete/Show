@@ -1,0 +1,107 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Show,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**  
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  21Jul97    subtle       created this command
+**
+*/
+
+package key.commands;
+
+import key.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+public class Show extends Command
+{
+	public Show()
+	{
+		setKey( "show" );
+		usage = "[<word or showstring>]";
+	}
+	
+	public void run( Player p, StringTokenizer args, String fullLine, ModalCommand caller, InteractiveConnection ic, Flags flags ) throws IOException
+	{
+		boolean bitset[] = p.getShowFlags();
+		
+		if( !args.hasMoreTokens() )
+		{
+			usage( ic );
+		}
+		else
+		{
+			String s = args.nextToken();
+			
+			boolean found = false;
+			
+			for( int i = 0; i < Player.SHOWNAMES.length; i++ )
+			{
+				if( s.equalsIgnoreCase( Player.SHOWNAMES[ i ] ) )
+				{
+					bitset[ i ] = !bitset[ i ];
+					found = true;
+					continue;
+				}
+			}
+
+			if( !found )
+			{
+				for( int j = 0; j < s.length(); j++ )
+				{
+					for( int i = 0; i < Player.SHOWCHARS.length; i++ )
+					{
+						if( s.charAt( j ) == Player.SHOWCHARS[ i ] )
+						{
+							bitset[ i ] = !bitset[ i ];
+							found = true;
+						}
+					}
+
+					if( !found )
+					{
+						ic.sendError( "Unrecognised keyword '" + s + "'.  Please use one of " + Grammar.enumerate( Player.SHOWNAMES ) );
+						return;
+					}
+				}
+			}
+
+			ic.sendFeedback( "Show qualifiers toggled." );
+		}
+		
+		ic.sendBlankLine();
+		
+		boolean found = false;
+		
+		for( int i = 0; i < Player.SHOWCHARS.length; i++ )
+		{
+			if( bitset[ i ] )
+			{
+				if( !found )
+					ic.sendFeedback( "You are showing qualifiers for: " );
+				
+				ic.sendFeedback( Player.SHOWCHARS[i] + "  " + Player.SHOWNAMES[i] );
+				found = true;
+			}
+		}
+
+		if( !found )
+			ic.sendFeedback( "You aren't currently showing qualifiers for any effect" );
+		else
+		{
+			ic.sendBlankLine();
+			ic.sendFeedback( "There is currently a competition running to redesign the output of this command.  To enter, email how you think this screen should look to subtle@realm.progsoc.uts.edu.au\n" );
+		}
+	}
+}

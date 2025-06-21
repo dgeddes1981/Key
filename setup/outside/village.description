@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom village
+set village.called ^cCoastal Village^-
+set village.portrait talking with the villagers by the sea.
+set village.relation out
+edit village.description
+.wipe
+The smell of fish hangs lightly in the air <footnote 2> as you walk down the busy, earth packed, street of the village.  The people here are always nice and have many a pleasant story to tell to those who wish to stop and listen.  The village shop owners try to sell you their wares of fresh food, beautiful hand carved furniture and colourful clothes.  Simple, yet lively, these people live in harmony with the sea and each other.
+
+The shore that the village is based near stretches further south.  The main road that runs through the village continues up the mountain.
+.end
+transfer village $
+cd

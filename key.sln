@@ -1,0 +1,13 @@
+Microsoft Visual Studio Solution File, Format Version 1.00
+Project("{66355F20-A65B-11D0-BFB5-00A0C91EBFA0}") = "key", "key.vjp", "{B28B41E2-66F7-11D3-A22C-00C04F7F47CA}"
+EndProject
+Global
+	GlobalSection(LocalDeployment) = postSolution
+		StartupProject = {B28B41E2-66F7-11D3-A22C-00C04F7F47CA}
+	EndGlobalSection
+	GlobalSection(BuildOrder) = postSolution
+		0 = {B28B41E2-66F7-11D3-A22C-00C04F7F47CA}
+	EndGlobalSection
+	GlobalSection(DeploymentRoot) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,13 @@
+cd /realm/city
+load PublicRoom library
+set library.called ^RThe City Library^-
+set library.portrait expanding their mind in the City Library
+set library.relation ""
+edit library.description
+.wipe
+This room is large and yet it is so full that you have barely any room to move.  From one end of the room to the other sits row after row of book shelves.  Each shelf bends wearyly under the weight of massive volumes of some arcane knowledge (as well as centuries of dust).  You notice the musty smell of yellowing pages and mouldy leather covers.
+
+You know that you could quite easily sit here for the rest of your life and still not make it through the first shelf.
+.end
+transfer library $
+cd

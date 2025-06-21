@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom beach
+set beach.called ^cThe Beach^-
+set beach.portrait the beach.
+set beach.relation at
+edit beach.description
+.wipe
+The clear blue waters from the Sea of Mists surge from the depths of its bed to throw itself relentlessly at the shore.  You experience the power and passion of nature simultaneously.  Intensely beautiful and destructive the beach offers those who behold it a cool ocean breeze and an environment most worthy for contemplation.  The sunsets here make even the most hardy sightseer sigh in awe.
+
+You see a boat tied to a simple wooden weir and a little stream that runs to the west.  The sea shore stretches further north.
+.end
+transfer beach $
+cd

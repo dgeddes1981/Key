@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom southroad
+set southroad.called ^cGreat Southern Road^-
+set southroad.portrait the Great Southern Road.
+set southroad.relation on
+edit southroad.description
+.wipe
+The Great Southern Road is the main highway that services the realm.  The road is well built and well used.  One can stand on the road and be constantly greeted by other travellers from all over the realm and beyond.  No one actually knows where the Great Southern Road leads, some say to the other side of the world and others say that it continues forever.
+
+The famous tavern the Bitter Brother welcomes all weary travellers with quality drinks at reasonable prices.  The City entrance opens its doors to all who wish to enter.  A laneway weaves its way up the mountain side.
+.end
+transfer southroad $
+cd

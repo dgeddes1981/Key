@@ -1,0 +1,519 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>KEY - player documentation</title>
+<meta name="Author" content="Paul Mclachlan">
+<meta name="Description" content="Player manual">
+<meta name="Keywords" content="key help faq howto manual">
+<link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#CD853F" vlink="#55188A" alink="#008000">
+<center>
+
+<table border=0 width=95% cellspacing=0 cellpadding=10>
+	<tr>
+		<td>
+			<a href="../">
+			<img src = "../images/key-logo-small.gif" alt="Key Logo" border=0  align="center">
+			</a>
+		</td>
+		
+		<td>
+		<center>
+			<img src = "../images/resources-title.jpg" alt="Key resources" border=0>
+		</center>
+		</td>
+	</tr>
+</table>
+
+</center>
+
+<H1>6. Personal: setting up your own profile</H1>
+<P>
+As you learnt about in the previous chapter, there are several ways that
+other people may request information about you.  This chapter describes the
+commands that you can use in order to customise what other people see.
+<P>
+<UL>
+
+<A name="gender">
+<H2>Your gender</H2>
+<P>
+	Often, you will have already selected your gender when you first logged
+	in.  If you haven't, or you wish to change it (huh?), you may do so with
+	the '<KBD>gender</KBD>' command.
+	<P>
+	If you think you're male, type '<KBD>gender m</KBD>'.  The
+	females among us should type '<KBD>gender f</KBD>'.  If
+	you're undecided, or you just like being called an 'it' whenever it comes
+	up, type '<KBD>gender n</KBD>', for neuter.
+	<P>
+	You can determine someone else's gender on, for instance, the finger
+	screen.  Some of the lines will begin with His, Her, or It's, as in
+	'Her total login time is...'.
+<P>
+<A name="title">
+<H2>Your title</H2>
+<P>
+	Your title is the text that appears after your name on the finger and
+	examine screens.  (And occasionally in a few other places).  If you
+	haven't yet changed it, your title probably reads something like:
+	<PRE>
+--------------------------------------------------------------
+slide the newbie, so please treat me nicely
+--------------------------------------------------------------</PRE>
+	(You can see what people see when they finger or examine you by typing
+	'<KBD>finger me</KBD>', or '<KBD>examine
+	me</KBD>'.  This trick works with a lot of other commands, as well.)
+	<P>
+	You can change it with the title command.  You don't type in your name,
+	just the last part.  For instance, typing '<KBD>title spends
+	too much time online!</KBD>' will look like:
+	<PRE>
+--------------------------------------------------------------
+slide spends too much time online!
+--------------------------------------------------------------</PRE>
+	Something else you can do is use some punctuation at the front of your
+	title to make it look a little different.  Here's an example:  '<SPAN
+	class=typed>title : first spod of Forest</SPAN>'.
+	<PRE>
+--------------------------------------------------------------
+slide: first spod of Forest
+--------------------------------------------------------------</PRE>
+<P>
+<H2>The rest</H2>
+<P>
+	I'd love to go into that much detail for everything that you can set up,
+	but I think you've got the idea now.  Instead, here's an example finger
+	screen, and a little template showing what everything is an where it
+	goes:
+	<PRE>
+--------------------------------------------------------------
+sLiDe: first spod of Forest
+--------------------------------------------------------------
+slippery sLiDe has been logged in for 49 minutes and 3 seconds
+sLiDe is logged in from [jian/127.0.0.1]
+His total login time is 1 hour, 43 minutes and 17 seconds
+He is 23 years old
+Also known as: Joe
+His email address is: joe_citizen@hotmail.com
+His web page is: http://realm.progsoc.uts.edu.au/key
+---------------------------------------------------  plan  ---
+"I want to take it back... I want to start again"
+Natalie Imbruglia
+--------------------------------------------------------------</PRE>
+	
+	The template for finger:
+	
+	<PRE>
+--------------------------------------------------------------
+[<span class="replace">your recapped name</span>] [<span class="replace">your title</span>]
+--------------------------------------------------------------
+[<span class="replace">your prefix</span>] [<span class="replace">name</span>] has been logged in for [<span class="replace">since you logged in</span>]
+[<span class="replace">name</span>] is logged in from [<span class="replace">your site</span>]
+[<span class="replace">gender</span>] total login time is [<span class="replace">your total login</span>]
+[<span class="replace">gender</span>] is [<span class="replace">age</span>] years old
+Also known as: [<span class="replace">aka</span>]
+[<span class="replace">gender</span>] email address is: [<span class=replace>email address</span>]
+[<span class="replace">gender</span>] web page is: [<span class=replace>webpage</span>]
+---------------------------------------------------  plan  ---
+[<span class="replace">plan</span>]
+--------------------------------------------------------------</PRE>
+	
+	And a quick explanation of the new terms and their commands:
+	<UL>
+		<A name="recap">
+		<h3>recapped name:</h3>
+			<UL>
+				You can change the capitalisation of your name.  To achieve
+				the effect above, you would type '<SPAN class="typed">recap
+				sLiDe</SPAN>'.
+			</UL>
+		<h3>your title:</h3>
+			<UL>
+				Your title sometimes appears after your name.  Type '<SPAN
+				class="typed">title : first spod of Forest</SPAN>'.  If your
+				title doesn't start with a punctuation character, a space
+				will be automatically inserted.
+			</UL>
+		<A name="prefix">
+		<h3>your prefix:</h3>
+			<UL>
+				Your prefix sometimes appears before your name.  Type '<SPAN
+				class="typed">prefix slippery</SPAN>'.  There are strict
+				limits on the length of your prefix, as it can show up in
+				tells and remotes, also.
+			</UL>
+		<h3>gender:</h3>
+			<UL>
+				Your gender is indicated with the "His", "Her", or "It's"
+				words.  You can become male with '<SPAN class="typed">gender
+				m</SPAN>', female with '<SPAN class="typed">gender f</SPAN>',
+				or neuter with '<SPAN class="typed">gender n</SPAN>'.  Isn't
+				the net a scary place?
+			</UL>
+		<A name="age">
+		<h3>age:</h3>
+			<UL>
+				Your age must be an integer.  Set it like this with 'age 23'.
+			</UL>
+		<A name="email">
+		<h3>email:</h3>
+			<UL>
+				
+			</UL>
+		<A name="webpage">
+		<h3>webpage:</h3>
+			<UL>
+				
+			</UL>
+		<A name="plan">
+		<h3>plan:</h3>
+			<UL>
+				Your plan only appears on the finger screen.  Generally
+				people just use it to write neat stuff, about themselves or
+				otherwise.  To set it type the red words:
+				<PRE>
+-&gt; <SPAN class="typed">plan</SPAN>
+--------------------------------------------------------------
+Entering the forest editor <footnote 10>:
+  If you're not sure how to use the editor, enter '.quit' 
+  immediately (without the quotes), and read 'help editor'
+
+Limitations:  6 lines, 480 characters.
+--------------------------------------------------------------
+--------------------------------------------------------------
++ <SPAN class="typed">"I want to take it back... I want to start again"</SPAN>
+"I want to take it back... I want to start again"
++ <SPAN class="typed">Natalie Imbruglia</SPAN>
+Natalie Imbruglia
++ <SPAN class="typed">.end</SPAN>
+Saving editor buffer...
+You change your plan.
+-&gt;</PRE>
+				There are lots of other neat things you can do in the editor
+				to make editting lots of text easier.  The main commands
+				you'll need to know are:
+				<P>
+				<UL>
+					<LI><SPAN class="typed">.wipe</SPAN> - Erases everything so
+					you can start over.
+					<LI><SPAN class="typed">.end</SPAN> - Saves your changes
+					and quits.
+					<LI><SPAN class="typed">.quit</SPAN> - Quits without
+					saving your changes.  (Good if you make a mistake!)
+				</UL>
+			</UL>
+	</UL>
+	
+	<P>
+	
+	The examine screen is very similar to the finger screen, but there are a
+	couple of extra elements, so we'll show the screen and it's template
+	here:
+	<PRE>
+---------------------------------------------------------------
+sLiDe: first spod of Forest
+---------------------------------------------------------------
+A bright yellow plastic slight, including a metal
+ladder and 15 blue rungs.
+---------------------------------------------------------------
+slippery sLiDe has been logged in for 21 minutes and 53 seconds
+sLiDe is logged in from [jian/127.0.0.1]
+---------------------------------------------------------------
+
+---------------------------------------------------------------</PRE>
+	The template for examine:
+	<PRE>
+---------------------------------------------------------------
+[<SPAN class="replace">name</SPAN>] [<SPAN class="replace">title</SPAN>]
+---------------------------------------------------------------
+[<SPAN class="replace">description</SPAN>]
+---------------------------------------------------------------
+[<SPAN class="replace">prefix</SPAN>] [<SPAN class="replace">name</SPAN>] has been logged in for [<SPAN class="replace">time since login</SPAN>]
+[<SPAN class="replace">name</SPAN>] is logged in from [<SPAN class="replace">your site</SPAN>]
+---------------------------------------------------------------
+[<SPAN class="replace">ranks</SPAN>]
+---------------------------------------------------------------</PRE>
+
+	The fields we haven't seen:
+	
+	<UL>
+	<A name="description">
+	<h3>description:</h3>
+		<UL>
+			Your description will appear on your examine screen, and
+			also when someone looks at you.  You use the '<SPAN
+			class="typed">describe</SPAN>' command to change your
+			description, it works the same way as the 'plan' command.
+		</UL>
+	</UL>
+	
+	<P>
+	
+	<A name="msgs">
+	Also available are several 'messages' that can be displayed to other
+	users in certain circumstances.  You can get a list of these with the
+	'<SPAN class="typed">msgs</SPAN>' command:
+
+	<PRE>
+--------------------  messages for sLiDe  ---------------------
+idleMsg    : I'm eating dinner
+blockMsg   : Leave me alone
+blockingMsg: I'm busy atm
+loginMsg   : Everyone say hi!
+logoutMsg  : later
+---------------------------------------------------------------</PRE>
+	
+	These messages can appear to other people in varying contexts:
+	
+	<UL>
+		<A name="idlemsg">
+		<h3>idlemsg:</h3>
+		<UL>
+			When you type the 'idle' command, to indicate that you're away from
+			the keyboard (afk) or doing something else, people who tell
+			(remote/rthink) to you directly will get this message on their
+			screen, warning them that you might not be able to reply quickly.
+	<PRE>
+-&gt; <SPAN class="typed">idlemsg I'm eating dinner</SPAN>
+When you are idle or afk, people will now see:
+sLiDe is idle: I'm eating dinner</PRE>
+		</UL>
+		
+		<A name="blockmsg">
+		<h3>blockmsg:</h3>
+		<UL>
+			When you 'block' someone ('<SPAN class="typed">block
+			&gt;name&lt;</SPAN>'), it prevents them from talking to you.  If
+			they try, they'll get this message.
+			<PRE>
+-&gt; <SPAN class="typed">blockmsg I'm busy atm</SPAN>
+When you are blocking them, people will now see:
+sLiDe is blocking you: Leave me alone</PRE>
+		</UL>
+		
+		<A name="blockingmsg">
+		<h3>blockingmsg:</h3>
+		<UL>
+			When you '<SPAN class="typed">block tells</SPAN>', you prevent
+			just about everyone from talking to you.  (If you have previously
+			typed '<SPAN class="typed">allow &lt;name&gt; tell</SPAN>' then that
+			person will still be able to talk to you).
+			<P>
+			When someone isn't allowed to talk to you for this reason, they'll
+			get this message.
+			<PRE>
+-&gt; <SPAN class="typed">blockingMsg Leave me alone</SPAN>
+When you are blocking tells, people will now see:
+sLiDe is blocking: I'm busy atm</PRE>
+		</UL>
+		
+		<A name="loginmsg">
+		<A name="logoutmsg">
+		<h3>loginmsg, logoutmsg</h3>
+		<UL>
+			It is possible for other people to request to be notified when you
+			log in.
+			<P>
+			(This is called being informed, and they turn it on or
+			off with '<SPAN class="typed">inform &lt;name&gt;</SPAN>'.  You can
+			list the people you are being informed of with the '<SPAN
+			class="typed">informs</SPAN>' command.  You can also request to be
+			informed for everyone with '<SPAN class="typed">inform
+			everyone</SPAN>', or just your friends with '<SPAN class="typed">inform
+			friends</SPAN>'.)
+			<P>
+			When they are sent this notification, you can set a personalised
+			message for them to also see.  When you log in (connect), this is
+			your loginmsg.  When you log out (quit), this is your logoutmsg.
+			
+			<PRE>
+-&gt; <SPAN class="typed">loginmsg Everyone say hi!</SPAN>
+Your login informs will now appear:
+} sLiDe has connected: Everyone say hi! [relation]
+-&gt; <SPAN class="typed">logoutmsg later</SPAN>
+Your logout informs will now appear:
+{ sLiDe has disconnected: later [relation]</PRE>
+		</UL>
+	
+	<A name="hide">
+	<A name="webpage">
+	<A name="email">
+	<B>INCOMPLETE:</B> <SPAN class=incomplete>hide, webpage, email</SPAN>
+	<P>
+	
+	That about wraps it up for externally visible information.  The rest
+	of the chapter deals with the parts of your profile that configure
+	the way things work just for you.
+</UL>
+<A name="colour">
+<H2>Colour</H2>
+<UL>
+	Another aspect of your profile that you may set up is your colour
+	settings.  Your colour settings don't affect how you are viewed by
+	others, but certainly change your outlook on the world.
+	<P>
+	Colours can not only make your window more aesthetically pleasing, they
+	make it easier to work out who is talking to you, and how.
+	<P>
+	Before you can use colours effectively, you must be using a
+	colour-compatible terminal, and indicate to the program that this is so.
+	<P>
+	First, check that you are using a colour compatible terminal.  Type
+	'<SPAN class="typed">iscolour</SPAN>'.  If your terminal can display
+	colours, you'll get a screen like:
+	<A name="iscolour">
+	<PRE>
+     The words on the lines below should be displayed in colour
+
+<font color=blue>blue,</font> <font color=green>green,</font> <font color=cyan>cyan,</font> <font color=red>red,</font> <font color=magenta>magenta,</font> <font color=brown>brown,</font> <b>dark</b>
+<B><font color=blue>brightBlue,</font> <font color=green>brightGreen,</font> <font color=cyan>brightCyan,</font> <font color=red>brightRed,</font>
+<font color=magenta>brightMagenta,</font> <font color=yellow>brightYellow,</font> <font color="white">white</font></B>
+
+If you can see the above colours, you have an ANSI colour terminal, 
+and you can type 'term ansi' to force it on.  If some of the words 
+appear bold, you probably have a vt100-style terminal.  Use 'term 
+vt100' to force that on.</PRE>
+
+	If the words are actually coloured on your screen, you can follow
+	the instructions and type '<SPAN class="typed">term ansi</SPAN>' to
+	activate colours on your terminal.
+	<P>
+	Initially, you are given a default colourset, chosen by yours truly.
+	It seems that most people dislike my choices of colours, and so the next
+	section explains how to change them:
+	<P>
+	The most important command is the '<KBD>colours</KBD>'
+	command.  This command shows what your current colourset is.  This is
+    the default colourset (which you already have):
+	<PRE>
+-&gt; colours
+--------------------------  colour entries  --------------------------
+     player: <font color=magenta><b>brightMagenta</b></font>              clan: <font color=blue><b>brightBlue</b></font>
+     friends: <font color=green><b>brightGreen</b></font>               shouts: brightWhite
+     room: <font color=cyan>cyan</font>                         connection: <font color=red>red</font>
+     movement: <font color=red><b>brightRed</b></font>
+------------------------------------------------------  7 entries  ---</PRE>
+	
+	To change these, you can use the 'colour' command like this: '<SPAN
+	class=typed>colour &lt;class&gt; &lt;colour&gt;</SPAN>'.  For instance,
+	'<KBD>colour player brightMagenta</KBD>', to set the first
+	entry on this list.
+	<P>
+	A complete list of the colours you may use is on the '<A
+	HREF="#iscolour"><KBD>iscolour</KBD></A>' screen, above.
+	For technical reasons, it isn't possible to strictly list all of the
+	available classes to colour (it is easily extendable on a per-site
+	basis), but here is a fairly comprehensive standard list, with
+	explanations:
+	<UL>
+		<H3>player:</H3>
+		<UL>
+			This colour is used for lines that are sent to you from other
+			players, directly.  (In EW-speak this is your classic 'hitells'
+			or 'colour tells').  At the least, this includes tells, remotes,
+			and rthinks.
+
+			<PRE>
+-&gt; colour player brightMagenta
+Effects from player will now be <font color=magenta><b>brightMagenta</b></font>.</PRE>
+		</UL>
+		
+		<H3>clan:</H3>
+		<UL>
+			This colour is used for everything sent through the clan
+			channel, if you're in a clan.
+			<PRE>
+-&gt; colour clan brightblue
+Effects from clan will now be <font color=blue><b>brightBlue</b></font>.</PRE>
+		</UL>
+
+		<H3>friends:</H3>
+		<UL>
+			This colour is used when you recieve friend channel messages
+			from another person.
+			<PRE>
+-&gt; colour friends brightgreen
+Effects from friends will now be <font color=green><b>brightGreen</b></font>.</PRE>
+		</UL>
+
+		<H3>shouts:</H3>
+		<UL>
+			For shouts and other messages that go to everyone online.
+			<PRE>
+-&gt; colour shouts brightwhite
+Effects from shouts will now be brightWhite.</PRE>
+		</UL>
+
+		<H3>room:</H3>
+		<UL>
+			For messages that come from the room you are in, such as says,
+			emotes, thinks, and echos.
+			<PRE>
+-&gt; colour room cyan
+Effects from room will now be <font color=cyan>cyan</font>.</PRE>
+		</UL>
+
+		<H3>connection:</H3>
+		<UL>
+			For inform style messages, notifying you when people log in or
+			log out of the program.
+			<PRE>
+-&gt; colour connection red
+Effects from connection will now be <font color=red>red</font>.</PRE>
+		</UL>
+
+		<H3>movement:</H3>
+		<UL>
+			For messages sent when a player moves around, such as entering
+			or leaving a room.
+			<PRE>
+-&gt; colour movement brightred
+Effects from movement will now be <font color=red><b>brightRed</b></font>.</PRE>
+		</UL>
+
+		<H3>blocking:</H3>
+		<UL>
+			For messages that indicate that a player has started/has stopped
+			blocking a particular channel that you're on.  For instance
+			'sLiDe blocks the clan'.
+			<PRE>
+-&gt; colour blocking magenta
+Effects from blocking will now be <font color=magenta>magenta</font>.</PRE>
+		</UL>
+	</UL>
+	<P>
+	Just to warn you so you don't get confused, some of the colours will
+	default to others if they aren't set.  For instance, if you don't have
+	the blocking colour set, 'sLiDe blocks the clan' will probably show up
+	in the colour you have set for the clan channel.  In order to completely
+	understand the rules for how this works you have to understand the
+	design of the colour system, which isn't something I'm going into here.
+	;)
+</UL>
+
+<H2>Miscellaneous</H2>
+<A name="noPager">
+<A name="password">
+<A name="timezone">
+<A name="prompt">
+<B>INCOMPLETE:</B> <SPAN class=incomplete>noPager, password, timezone, prompt, informs, friend lists, prefer</SPAN>
+<P>
+</UL>
+
+<center>
+<hr>
+
+These pages are sponsored by 
+<a href="http://www.progsoc.uts.edu.au">progsoc</a>, on
+<a href="http://realm.progsoc.uts.edu.au/">realm</a>.
+<BR>(last modified: <!--#echo var="LAST_MODIFIED" -->, <!--#exec cgi="/cgi-bin/counter" --> hits)
+
+</center>
+</body>
+</html>
+

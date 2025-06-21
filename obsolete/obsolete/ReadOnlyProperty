@@ -1,0 +1,37 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: ReadOnlyProperty,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.io.IOException;
+import java.io.DataOutput;
+import java.io.DataInput;
+
+public class ReadOnlyProperty extends Property
+{
+	public ReadOnlyProperty( String name, Type type, Atom parent ) throws TypeMismatchException
+	{
+		super( name, type, parent );
+	}
+
+	protected void checkType( Type type )
+	{
+	}
+}

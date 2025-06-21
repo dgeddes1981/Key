@@ -1,0 +1,543 @@
+site is localhost [127.]
+                                                           .oOOOo.
+                                                        .oOOOOOOOOOOo.
+                                                       oOOOOOOOOOOOOOOo
+                                                      oOOOOOOOOOOOOOOOOo
+                                                      OOOOOOOOOOOOOOOOOO
+                       Welcome to the realm of        `OOOOOOOOOOOOOOOO'
+      ___________                                      `OOOOOOOOOOOOOO'
+      `N#######0" ____   ._  _____     ____      ______ `OOOOOOOOOOOO'
+       J##      _dN00Np_ J#d###M##k  _dN00Np_   d##MM##k`N########0"
+       ##L____ g#0"  "0#L"d##F" "T#Lg#k"  "S#L l#F"  "T#L ~Y###P~
+      j#####F"j##'    '##b ##      j##'____'##b I#bgxx_ "  j##F
+      0##I    0##      ##0 ##      0#########P   ~~qY##L   0##<9>
+      ##F     `##k    J##' ##F     `##k        k     0##'  ##F
+    _d##L_     `#NhxxgN#"_d##L_     `#NhxzxgN"  NhxxgN#" _d##L_
+    """"""        """"   """"""        """""     """""   """"""
+
+gPlease enter your name: admin
+
+
+gEnter your password: 
+
+
+
+
+Key:  "building virtual worlds"
+Copyright (C) 1997 Paul Mclachlan, Jason Crane and George Wright.
+
+-------------------------------------------------------------------------------
+
+                           Ahnest du den Schopher
+
+                          Key is  (C)opyright 1997
+
+
+
+gPress enter to continue: 
+
+
+You last connected at Sat Sep 20, 1997 10:02:14, from localhost [127.0.0.1]
+
+
+
+                           This is a boring room
+Flat, gray and featureless.  Terribilis est locus iste.
+
+
+There is nobody here but you.
+
+-> commands
+[context 'admin' - static 'base']: contains 101 commands...
+    actions, afk, age, aka, allow, arriveRoom, block, blocking, blockingMsg, 
+    blockMsg, brief, bug, call, check, cls, colour, colours, commands, 
+    construct, default, delete, deny, departRoom, describe, edit, eject, email,
+    emote, end, eshout, examine, exits, f, finger, footnote, friend, friends, 
+    fwho, gender, give, go, help, hide, home, homepage, idea, idle, idleMsg, 
+    inform, inspect, iscolour, join, leave, liberate, look, motd, msgs, 
+    noPager, page, password, plan, portrait, post, prefer, prefix, prompt, 
+    quit, read, recap, relation, remote, remove, repeat, reply, room, rooms, 
+    rthink, save, say, sethome, shout, show, staff, status, summon, swho, tell,
+    term, think, time, timezone, title, trans, transfer, travel, verify, visit,
+    where, whisper, who, with
+[staffChannel - custom]: contains 1 command...
+    s
+[novice - custom]: contains 19 commands...
+    banish, blankTitle, citizen, dc, display, newbieban, newbies, player, res,
+    reserve, resident, site, siteban, sitesbanned, splat, trace, unban, 
+    unsplat, warn
+[superuser - custom]: contains 1 command...
+    create
+[adept - custom]: contains 2 commands...
+    limitActions, unbanish
+[director - custom]: contains 2 commands...
+    as, lag
+[mage - custom]: contains 15 commands...
+    conceal, dump, form, instant, many, out, ref, reveal, schedule, set, shift,
+    sort, sync, threads, yield
+-> dump
+player:
+.homepage = (homepage)  not set
+.prefix = (string)  ""
+.aka = (string)  ""
+.bannedWithSite = (site)  "~null~"
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  (player) /players/admin
+.gender = (gender)  neuter
+.blockMsg = (string)  ""
+.brief = (boolean)  false
+.location = (room)  "/landscape/void"
+.title = (string)  ", the newbie administrator"
+.inform = (informList)
+.timezone = (duration)  no time at all
+.loginStatistics = (timeStatistics)
+.beyond [readonly] = (boolean)  true
+.citizen = (boolean)  false
+.staff = (boolean)  false
+.prompt = (string)  "-> "
+.titledName [readonly] = (string)  "admin, the newbie administrator"
+.age = (integer)  0
+.expert = (boolean)  false
+.clan = (clan)  "~null~"
+.banishType = (string)  ""
+.prefer = (group)
+.friends = (friends)
+.blockingMsg = (string)  ""
+.description = (key.TextParagraph)
+.limit = (integer)  4
+.id [readonly] = (string)  "/players/admin"
+.email = (emailAddress)  <not set>
+.commands = ~null~
+.hide = (boolean)  false
+.password = (string)  "YWRtaW4="
+.titleTolerance = (integer)  10
+.florins = (integer)  0
+.name [readonly] = (string)  "admin"
+.scapeCount [readonly] = (integer)  9
+.countContents [readonly] = (integer)  1
+.forcedTerminal = (string)  ~null~
+.connection [readonly] = (interactiveConnection)  (key.TelnetConnection)
+.rankCount [readonly] = (integer)  6
+.lastConnectFrom = (string)  "localhost [127.0.0.1]"
+.liberated = (boolean)  false
+.banishedUntil = (dateTime)  ~null~
+.plan = (key.TextParagraph)
+.privateEmail = (boolean)  true
+.idleMsg = (string)  ""
+.isIdle = (boolean)  false
+.parent [readonly] = (parent)  (key.Residents) /players
+.mailbox = (messageBox)
+.canSave = (boolean)  true
+.staticCommandList = (commandList)  "/commandSets/base"
+.saved [readonly] = (boolean)  true
+.connectionStatistics = (connectionStatistics)
+.home = (room)  "~null~"
+.referenceCount [readonly] = (integer)  3
+
+Contents: shutdown
+
+-> dump .title
+.title = ", the newbie administrator"
+-> x me
+-------------------------------------------------------------------------------
+admin, the newbie administrator
+-------------------------------------------------------------------------------
+admin has been logged in for 16 seconds
+It total login time is 23 minutes and 48 seconds
+It has 0 silver florins
+-------------------------------------------------------------------------------
+admin's plan is...
+-------------------------------------------------------------------------------
+-> set .title " the wizard"
+Okay
+-> x me
+-------------------------------------------------------------------------------
+admin the wizard
+-------------------------------------------------------------------------------
+admin has been logged in for 26 seconds
+It total login time is 23 minutes and 59 seconds
+It has 0 silver florins
+-------------------------------------------------------------------------------
+admin's plan is...
+-------------------------------------------------------------------------------
+-> say cool, isn't it?
+You ask 'cool, isn't it?'
+-> cd /
+Now referencing ''
+[key] -> dump
+key.Forest:
+.allNames [readonly] = (string)  "admin"
+.referenceContainer [readonly] = (boolean)  true
+.owner [readonly] = (atom)  ~null~
+.sinceBootLoginStatistics = (timeStatistics)
+.loginStatistics = (timeStatistics)
+.limit = (integer)  ~null~
+.id [readonly] = (string)  ""
+.commands = ~null~
+.name [readonly] = (string)  "key"
+.countContents [readonly] = (integer)  15
+.numberPlayers [readonly] = (integer)  1
+.parent [readonly] = (parent)  ~null~
+.staticCommandList = (commandList)  "~null~"
+.referenceCount [readonly] = (integer)  0
+.bootStatistics = (timeStatistics)
+
+Contents: daemons, ranks, online, shortcuts, landscape, commandSets, clans, 
+   latencyCache, marshland, config, groups, sites, players, scheduler, realm
+
+[key] -> dump config
+key.config.BaseConfiguration:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  ~null~
+.returnAddress = (string)  "forest@realm.progsoc.uts.edu.au"
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/config"
+.loginMessage = (string)  "%o appears."
+.name [readonly] = (string)  "config"
+.countContents [readonly] = (integer)  1
+.logoutMessage = (string)  "%o disappears."
+.emailServer = (string)  "realm.progsoc.uts.edu.au"
+.parent [readonly] = (parent)  (key.Forest)
+.emailPause = (duration)  1 minute
+.referenceCount [readonly] = (integer)  0
+
+Contents: connection
+
+[key] -> cd config
+Now referencing '/config'
+[config] -> dump
+key.config.BaseConfiguration:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  ~null~
+.returnAddress = (string)  "forest@realm.progsoc.uts.edu.au"
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/config"
+.loginMessage = (string)  "%o appears."
+.name [readonly] = (string)  "config"
+.countContents [readonly] = (integer)  1
+.logoutMessage = (string)  "%o disappears."
+.emailServer = (string)  "realm.progsoc.uts.edu.au"
+.parent [readonly] = (parent)  (key.Forest)
+.emailPause = (duration)  1 minute
+.referenceCount [readonly] = (integer)  0
+
+Contents: connection
+
+[config] -> dump connection
+key.config.ConnectionConfiguration:
+.disclaimer = (key.TextParagraph)
+.owner [readonly] = (atom)  ~null~
+.newbieConfirmName = (key.TextParagraph)
+.id [readonly] = (string)  "/config/connection"
+.newbieB = (key.TextParagraph)
+.newbieA = (key.TextParagraph)
+.name [readonly] = (string)  "connection"
+.genderRequest = (key.TextParagraph)
+.parent [readonly] = (parent)  (key.config.BaseConfiguration) /config
+.referenceCount [readonly] = (integer)  0
+
+[config] -> dump connection.disclaimer
+key.TextParagraph:
+.owner [readonly] = (atom)  ~null~
+.id [readonly] = (string)  "/config/connection.disclaimer"
+.name [readonly] = (string)  "disclaimer"
+.parent [readonly] = (parent)  (key.TextParagraph)
+.referenceCount [readonly] = (integer)  0
+Contents:
+
+[config] -> dump connection.genderRequest
+key.TextParagraph:
+.owner [readonly] = (atom)  ~null~
+.id [readonly] = (string)  "/config/connection.genderRequest"
+.name [readonly] = (string)  "genderRequest"
+.parent [readonly] = (parent)  (key.TextParagraph)
+.referenceCount [readonly] = (integer)  0
+Contents:
+  This program requires that you specify your gender.  This is used for the 
+  purposes of correct grammar.  Below, enter either m or f to indicate 
+  whether you are male or female.
+
+[config] -> cd .parent
+Now referencing ''
+[key] -> dump
+key.Forest:
+.allNames [readonly] = (string)  "admin"
+.referenceContainer [readonly] = (boolean)  true
+.owner [readonly] = (atom)  ~null~
+.sinceBootLoginStatistics = (timeStatistics)
+.loginStatistics = (timeStatistics)
+.limit = (integer)  ~null~
+.id [readonly] = (string)  ""
+.commands = ~null~
+.name [readonly] = (string)  "key"
+.countContents [readonly] = (integer)  15
+.numberPlayers [readonly] = (integer)  1
+.parent [readonly] = (parent)  ~null~
+.staticCommandList = (commandList)  "~null~"
+.referenceCount [readonly] = (integer)  0
+.bootStatistics = (timeStatistics)
+
+Contents: daemons, ranks, online, shortcuts, landscape, commandSets, clans, 
+   latencyCache, marshland, config, groups, sites, players, scheduler, realm
+
+[key] -> dump ranks
+container:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  ~null~
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/ranks"
+.name [readonly] = (string)  "ranks"
+.countContents [readonly] = (integer)  9
+.parent [readonly] = (parent)  (key.Forest)
+.referenceCount [readonly] = (integer)  0
+
+Contents: superuser, player, mage, candidate, citizen, advisor, adept, novice,
+   director
+
+[key] -> cd /commandsets/base
+Now referencing '/commandSets/base'
+[base] -> dump
+commandList:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  ~null~
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/commandSets/base"
+.name [readonly] = (string)  "base"
+.countContents [readonly] = (integer)  101
+.parent [readonly] = (parent)  (container) /commandSets
+.referenceCount [readonly] = (integer)  1
+
+Container contains 101 objects.  (not listed)
+
+[base] -> cd say
+Now referencing '/commandSets/base/say'
+[say] -> say hi
+You say 'hi'
+[say] -> dump
+key.commands.Broadcast:
+.scapeFor = (scape)  "~null~"
+.owner [readonly] = (atom)  (player) /players/admin
+.broadcastExclaim = (string)  "%o exclaims '%m'"
+.broadcastQuestion = (string)  "%o asks '%m'"
+.broadcast = (string)  "%o says '%m'"
+.feedbackQuestion = (string)  "You ask '%m'"
+.usage = (string)  "<message>"
+.feedback = (string)  "You say '%m'"
+.id [readonly] = (string)  "/commandSets/base/say"
+.noone = (string)  "But there isn't anyone there."
+.name [readonly] = (string)  "say"
+.parent [readonly] = (parent)  (commandList) /commandSets/base
+.referenceCount [readonly] = (integer)  0
+.feedbackExclaim = (string)  "You exclaim '%m'"
+
+[say] -> set .feedback "You mumble something about '%m'"
+Okay
+[say] -> say hi
+You mumble something about 'hi'
+[say] -> cd .parent
+Now referencing '/commandSets/base'
+[base] -> dump dump
+dump = ~null~
+[base] -> commands
+[admin - static 'base']: contains 101 commands...
+    actions, afk, age, aka, allow, arriveRoom, block, blocking, blockingMsg, 
+    blockMsg, brief, bug, call, check, cls, colour, colours, commands, 
+    construct, default, delete, deny, departRoom, describe, edit, eject, email,
+    emote, end, eshout, examine, exits, f, finger, footnote, friend, friends, 
+    fwho, gender, give, go, help, hide, home, homepage, idea, idle, idleMsg, 
+    inform, inspect, iscolour, join, leave, liberate, look, motd, msgs, 
+    noPager, page, password, plan, portrait, post, prefer, prefix, prompt, 
+    quit, read, recap, relation, remote, remove, repeat, reply, room, rooms, 
+    rthink, save, say, sethome, shout, show, staff, status, summon, swho, tell,
+    term, think, time, timezone, title, trans, transfer, travel, verify, visit,
+    where, whisper, who, with
+[staffChannel - custom]: contains 1 command...
+    s
+[novice - custom]: contains 19 commands...
+    banish, blankTitle, citizen, dc, display, newbieban, newbies, player, res,
+    reserve, resident, site, siteban, sitesbanned, splat, trace, unban, 
+    unsplat, warn
+[superuser - custom]: contains 1 command...
+    create
+[adept - custom]: contains 2 commands...
+    limitActions, unbanish
+[director - custom]: contains 2 commands...
+    as, lag
+[mage - custom]: contains 15 commands...
+    conceal, dump, form, instant, many, out, ref, reveal, schedule, set, shift,
+    sort, sync, threads, yield
+[base] -> cd /groups
+Now referencing '/groups'
+[groups] -> dump
+container:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  ~null~
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/groups"
+.name [readonly] = (string)  "groups"
+.countContents [readonly] = (integer)  0
+.parent [readonly] = (parent)  (key.Forest)
+.referenceCount [readonly] = (integer)  0
+
+Contents: 
+
+[groups] -> cd /ranks
+Now referencing '/ranks'
+[ranks] -> cd mage
+Now referencing '/ranks/mage'
+[mage] -> dump
+rank:
+.allNames [readonly] = (string)  "admin"
+.referenceContainer [readonly] = (boolean)  true
+.owner [readonly] = (atom)  (player) /players/admin
+.implies = (implications)
+.joinedTo = (scape)  "/ranks/mage"
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/ranks/mage"
+.commands = (commandList)
+.name [readonly] = (string)  "mage"
+.countContents [readonly] = (integer)  1
+.numberPlayers [readonly] = (integer)  1
+.targets = (targets)
+.parent [readonly] = (parent)  (container) /ranks
+.staticCommandList = (commandList)  "~null~"
+.referenceCount [readonly] = (integer)  2
+
+Contents: admin
+
+[mage] -> cd .commands
+Now referencing '/ranks/mage.commands'
+[commands] -> dump
+commandList:
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  (player) /players/admin
+.limit = (integer)  ~null~
+.id [readonly] = (string)  "/ranks/mage.commands"
+.name [readonly] = (string)  "commands"
+.countContents [readonly] = (integer)  15
+.parent [readonly] = (parent)  (commandList)
+.referenceCount [readonly] = (integer)  0
+
+Contents: conceal, dump, form, instant, many, out, cd, reveal, schedule, set,
+   shift, sort, sync, threads, yield
+
+[commands] -> dump dump
+key.commands.Dump:
+.owner [readonly] = (atom)  ~null~
+.usage = (string)  "[<identifier>]"
+.id [readonly] = (string)  "/ranks/mage.commands/dump"
+.name [readonly] = (string)  "dump"
+.maxEntriesListed = (integer)  80
+.parent [readonly] = (parent)  (commandList)
+.referenceCount [readonly] = (integer)  0
+
+[commands] -> threads
+Thread Thread[Clock,12,system]: alive = true   isDaemon = true   name = Clock
+Thread Thread[Idle thread,0,system]: alive = true   isDaemon = true   name = 
+   Idle thread
+Thread Thread[Finalizer thread,1,system]: alive = true   isDaemon = true   name
+   = Finalizer thread
+Thread Thread[main,5,main]: alive = false   isDaemon = false   name = main
+Thread Thread[primaryConnectPort,5,main]: alive = true   isDaemon = false   
+   name = primaryConnectPort
+Thread Thread[latencyCache,9,main]: alive = true   isDaemon = true   name = 
+   latencyCache
+Thread Thread[scheduler,5,main]: alive = true   isDaemon = false   name = 
+   scheduler
+Thread Thread[admin,4,main]: alive = true   isDaemon = false   name = admin
+[commands] -> commands
+[admin - static 'base']: contains 101 commands...
+    actions, afk, age, aka, allow, arriveRoom, block, blocking, blockingMsg, 
+    blockMsg, brief, bug, call, check, cls, colour, colours, commands, 
+    construct, default, delete, deny, departRoom, describe, edit, eject, email,
+    emote, end, eshout, examine, exits, f, finger, footnote, friend, friends, 
+    fwho, gender, give, go, help, hide, home, homepage, idea, idle, idleMsg, 
+    inform, inspect, iscolour, join, leave, liberate, look, motd, msgs, 
+    noPager, page, password, plan, portrait, post, prefer, prefix, prompt, 
+    quit, read, recap, relation, remote, remove, repeat, reply, room, rooms, 
+    rthink, save, say, sethome, shout, show, staff, status, summon, swho, tell,
+    term, think, time, timezone, title, trans, transfer, travel, verify, visit,
+    where, whisper, who, with
+[staffChannel - custom]: contains 1 command...
+    s
+[novice - custom]: contains 19 commands...
+    banish, blankTitle, citizen, dc, display, newbieban, newbies, player, res,
+    reserve, resident, site, siteban, sitesbanned, splat, trace, unban, 
+    unsplat, warn
+[superuser - custom]: contains 1 command...
+    create
+[adept - custom]: contains 2 commands...
+    limitActions, unbanish
+[director - custom]: contains 2 commands...
+    as, lag
+[mage - custom]: contains 15 commands...
+    conceal, dump, form, instant, many, out, cd, reveal, schedule, set, shift,
+    sort, sync, threads, yield
+[commands] -> cd
+-> sitesbanned
+No sites have bans in place at the current time
+-> dump
+player:
+.homepage = (homepage)  not set
+.prefix = (string)  ""
+.aka = (string)  ""
+.bannedWithSite = (site)  "~null~"
+.referenceContainer [readonly] = (boolean)  false
+.owner [readonly] = (atom)  (player) /players/admin
+.gender = (gender)  neuter
+.blockMsg = (string)  ""
+.brief = (boolean)  false
+.location = (room)  "/landscape/void"
+.title = (string)  " the wizard"
+.inform = (informList)
+.timezone = (duration)  no time at all
+.loginStatistics = (timeStatistics)
+.beyond [readonly] = (boolean)  true
+.citizen = (boolean)  false
+.staff = (boolean)  false
+.prompt = (string)  "-> "
+.titledName [readonly] = (string)  "admin the wizard"
+.age = (integer)  0
+.expert = (boolean)  false
+.clan = (clan)  "~null~"
+.banishType = (string)  ""
+.prefer = (group)
+.friends = (friends)
+.blockingMsg = (string)  ""
+.description = (key.TextParagraph)
+.limit = (integer)  4
+.id [readonly] = (string)  "/players/admin"
+.email = (emailAddress)  <not set>
+.commands = ~null~
+.hide = (boolean)  false
+.password = (string)  "YWRtaW4="
+.titleTolerance = (integer)  10
+.florins = (integer)  0
+.name [readonly] = (string)  "admin"
+.scapeCount [readonly] = (integer)  9
+.countContents [readonly] = (integer)  1
+.forcedTerminal = (string)  ~null~
+.connection [readonly] = (interactiveConnection)  (key.TelnetConnection)
+.rankCount [readonly] = (integer)  6
+.lastConnectFrom = (string)  "localhost [127.0.0.1]"
+.liberated = (boolean)  false
+.banishedUntil = (dateTime)  ~null~
+.plan = (key.TextParagraph)
+.privateEmail = (boolean)  true
+.idleMsg = (string)  ""
+.isIdle = (boolean)  false
+.parent [readonly] = (parent)  (key.Residents) /players
+.mailbox = (messageBox)
+.canSave = (boolean)  true
+.staticCommandList = (commandList)  "/commandSets/base"
+.saved [readonly] = (boolean)  true
+.connectionStatistics = (connectionStatistics)
+.home = (room)  "~null~"
+.referenceCount [readonly] = (integer)  3
+
+Contents: shutdown
+
+-> save
+Character saved.
+-> quit
+Character saved.

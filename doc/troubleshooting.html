@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.35 i586) [Netscape]">
+   <META NAME="Author" CONTENT="Paul Mclachlan">
+   <META NAME="Description" CONTENT="This is an for the Key Project.">
+   <META NAME="Keywords" CONTENT="key">
+   <TITLE>Key Project</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#CD853F" VLINK="#55188A" ALINK="#008000">
+
+<CENTER>
+<H2>
+<U><FONT COLOR="#800000">Key Project</FONT></U></H2></CENTER>
+
+<CENTER><B><FONT COLOR="#008000">December 1998</FONT></B></CENTER>
+
+<CENTER><H1>Troubleshooting</H1>
+<I>some hints and tips about how to fix common problems</I>
+</CENTER>
+
+<HR>
+<H2>Key not starting properly</H2>
+if the socket seems not to initialise (ie, you get 'boot completed', but
+never '0.0.0.0 2809 initialised' in your startup messages, perhaps your
+Linux box is trying to lookup DNS for 0.0.0.0.  Make sure you have an
+entry in your hosts for it.  For some reason Java assumes that 0.0.0.0 is
+the localhost.
+
+<P>
+
+<HR>
+<H2>java.lang.ClassNotFoundException</H2>
+if you get:
+<PRE>
+[key.Key]: loading global configuration...
+key.UnexpectedResult: java.lang.ClassNotFoundException: key.AliasCollection not found
+while loading algorithm for collection ''
+        at key.Container.loadFrom(Container.java:492)
+        at key.Key.loadObject(Key.java:834)
+        at key.Tag.loadFrom(Tag.java:231)
+        at key.Key.loadObject(Key.java:834)
+        at key.StringKeyCollection.loadFrom(StringKeyCollection.java:201)
+        at key.Container.readContents(Container.java:628)
+		...
+</PRE>
+(or something similar), then add the type to the bottom of Type.java
+
+<P>
+
+<HR>
+<H2>java.io.InvalidClassException</H2>
+If you get a message like:
+<PRE>
+java.io.InvalidClassException: key.Atom; Local class not compatible: stream classdesc
+serialVersionUID=-345254969110657475 local class serialVersionUID=5859663123945492677
+        at java.io.ObjectStreamClass.setClass(ObjectStreamClass.java)
+        at java.io.ObjectInputStream.inputClassDescriptor(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.inputClassDescriptor(ObjectInputStream.java)
+        at java.io.ObjectInputStream.inputObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at key.Registry.readExternal(Registry.java:101)
+        at java.io.ObjectInputStream.inputObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at java.io.ObjectInputStream.readObject(ObjectInputStream.java)
+        at key.Key.loadObject(Key.java:725)
+        at key.Main.main(Main.java:61)
+[boot]: string -FATAL- java.io.InvalidClassException: key.Atom; Local class not
+compatible: stream classdesc serialVersionUID=-345254969110657475 local class
+serialVersionUID=5859663123945492677 while loading from file 'database'
+</PRE>
+<BR>
+When you start the program, it's because a class file has changed, and it's serial
+version id isn't the same anymore.  All you need to do is edit the file and put in
+the new serial id, recompile, and it will work.  In this case, I edit "Atom.java",
+and at the very top of the class, I add:
+<PRE>
+private static final long serialVersionUID = -345254969110657475L;
+</PRE>
+The "L" at the end of the number is very important.
+
+<P>
+
+<HR>
+
+<h1>modifying classes with pfiles intact</h1>
+When you add a field, it's initial value is null - it is never initialised
+to the defaults supplied with =, regardless of how desirable that would be.  In readObject() a hack can be made (if newfield == null, newfield = blah) that
+would ensure pfiles are still loaded correctly.
+
+</BODY>
+</HTML>

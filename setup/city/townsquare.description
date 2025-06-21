@@ -1,0 +1,18 @@
+cd /realm/city
+load PublicRoom square
+set square.called ^RThe City Town Square^-
+set square.portrait the town square.
+edit square.description
+.wipe
+The town square of the new city differs from the old yard of the pre-ruined Dawnkeep in many ways.  The architecture features many of the modern thatch roofing techniques and an occasional stone gargoyle perching on the arches.  However there are some comforting similarities, such as the wailing cries of the many turnip merchants.  The town square is full, to overflowing, with chatting people from every walk of life.  The mix of sounds, smells and sights add to the metropolitan feel of the new city.
+
+There is a newsboard here.
+(Type 'read news' to read it, and 'post news <subject>' to add messages)
+.end
+transfer square $
+cd /realm/city/square
+load MessageBox newsboard
+transfer @-1 $
+cd @-1
+allow addto
+many newsboard news board

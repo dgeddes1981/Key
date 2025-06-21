@@ -1,0 +1,11 @@
+cd /realm/outside
+load PublicRoom waterfall
+set waterfall.called ^cthe top of the waterfall^-
+set waterfall.portrait the edge of the waterfall.
+set waterfall.relation at
+edit waterfall.description
+.wipe
+The air is filled with a fine mist that floats around in the swirling currents created by the cascading waters of the water fall.  The roar of the water drowns out the sounds of the rest of the world.  You become aware of the height of the waterfall, how very far from the river below that gently meanders to join the Sea of Mist to the east.
+.end
+transfer waterfall $
+cd

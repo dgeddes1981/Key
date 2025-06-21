@@ -1,0 +1,227 @@
+# Forest Online Help v1.00 chapter 5
+cd /online/help
+# (PERMISSIONS) [5] (subtle 23/09/98 v1.00)
+load Screen permissions
+set permissions.title "(PERMISSIONS) [5]"
+set permissions.author subtle
+edit permissions.text
+Permissions
+-----------
+
+It is through the permissions commands that you may specify 'who' may do
+'what'.  For instance, if you wanted to prevent snapper from talking to you,
+you could 'deny snapper tell'.
+
+sub topics
+
+  actions      (5.1)     listing the actions that you've set
+  allow        (5.2)     allowing someone to do something
+  deny         (5.3)     preventing someone from doing something
+
+  player_act   (5.4)     a description of the actions available for players
+  other_act    (5.5)     using the permissions commands on other objects
+  room_act     (5.6)     a description of the actions available for rooms
+  clan_act     (5.7)     a description of the actions available for clans
+
+.end
+many permissions perms 5
+
+load Screen actions
+set actions.title "(PERMISSIONS) [5.1]"
+set actions.author "subtle"
+edit actions.text
+Actions
+-------
+
+The actions command displays a list of the settings for an object.  For
+instance, when I type actions, it might look like this:
+
+This means...
+
+In general, you will only see the actions of your current 'context' when you
+type 'actions'.  In order to see the actions of other objects (for instance,
+the action list for one of your rooms), you will need to change your context
+to that object, first.  The 'room <roomname>' command does this.  You may
+either use 'room <roomname>' (for instance, "room tower", if I had previously
+"construct room tower"), and this will change your context to this room for
+many commands (your prompt will also change to something like '[tower] ->')
+until you type 'end'.  Alternatively, to change your context to an object
+for a single command, you may type 'room <roomname> <command>', for instance
+'room tower actions', which will immediately list the actions for my tower
+without changing my context.  If you are in a clan, you might also find
+that you have commands to view the actions on each rank in a clan, or the
+clan rooms.  The use of these can be explained in more detail by your founder,
+or, if you're game, you can read snapper's technical clan overview.
+
+Player Actions
+--------------
+
+This is a list of the normal actions available on a player.  To see how to
+turn these on and off (by default, or for a specific player), see the allow,
+deny, and default commands.
+
+  tell_act     (5.4.1)   can people can talk to you with 'tell' or 'remote'
+  find_act     (5.4.2)   whether people can find you with 'where' or 'who'
+  friend_act   (5.4.3)   determines if people may friend you or not
+  seePriv_act  (5.4.4)   some people can see your email or florins
+  summon_act   (5.4.5)   if people can 'summon' you to the same room as them
+
+tell_act
+--------
+
+  The tell action permits or prevents someone from talking to you using
+  the "tell", "remote" or "rthink" commands.  If you, for instance,
+  "deny tell", then, by default, *no-one* may talk to you.  If you then
+  were to "allow snapper tell", then he _could_ talk to you.  That is,
+  specific entries for a player override the defaults.  Now, when someone
+  tries to talk to you and can't (either because you are blocking all
+  tells, or because you are blocking them, specifically).  <footnote 15>
+
+find_act
+--------
+
+  The find action permits people to see where you are when you're hiding.
+  People may see where you are with two commands, 'where', and 'who' will
+  sometimes show your location as well.
+
+friend_act
+----------
+  
+  The friend action permits or prevents people from 'friending' you.  If
+  you were a particularly unfriendly person, you may, for instance, simply
+  'deny friend', which means that no-one (aside from those people you have
+  explicitly set 'allow <name> friend' for) may put you on their friends
+  list.  This is different from you putting them on your friends list,
+  however.  A good use of this command might be 'deny friend', 'allow
+  friends friend'.  This would mean that someone can only friend you after
+  you friend them first.
+
+seePrivateInfo_act
+------------------
+
+  The seePrivateInfo action can be used to allow (or disallow) particular
+  people from being able to look up certain 'private' fields on your
+  playerfile.  For instance, if you set your email to private (with the
+  command 'email private', then only people who you have 'allow <name>
+  seePrivateInfo' for will be able to see your email address if they
+  finger you.  (With 'finger <name>').  Oh, su's can see your email
+  as well.  In case you wondered.  They've been instructed not to tell
+  anyone what it is, though, so... you know.
+
+summon_act
+----------
+
+  The summon action permits other people to 'summon' you into the same
+  room that they are in.  It is kind of like a reverse 'join' command.
+  'join subtle' takes you to the room that I am in (if you're permitted
+  to go to that room), 'summon subtle' brings me to the room that you
+  are in.  Provided you're allowed to "summon" me.  Making sense?
+
+
+Other Actions
+-------------
+
+This is a list of the normal actions available on a player.  To see how to
+turn these on and off (by default, or for a specific player), see the allow,
+deny, and default commands.
+
+  modify_act   (5.5.1)   certain people (other than the owner) may make changes
+  move_act     (5.5.2)   whether someone can move this object around
+  possess_act  (5.5.3)   determines whether a person may take ownership
+  delete_act   (5.5.4)   permits or prevents someone from deleting this object
+  addTo_act    (5.5.5)   permits someone to add something to this container
+  removeFrom_act(5.5.6)  to remove something from this container 
+
+
+modify_act
+----------
+
+  The modify action will permit or prevent others from making changes to this
+  object.  For instance, if you were to "room kitchen allow meowcat modify",
+  then meowcat would be free to change the description (or indeed, any other
+  property) of that room as she will.
+
+move_act
+--------
+
+  The move action will permit or prevent others from moving an object around.
+  It is not particularly applicable to rooms or players, however, if one had
+  been given the appropriate commands, they could move a room from one player
+  to another.  They'd need 'addTo' and 'removeFrom' on the two players, as
+  well.  Another action thats going to need to wait for the objects code. ;)
+
+possess_act
+-----------
+
+  You probably don't want to touch this action, either.  Presumably (again,
+  given that the person involved had the appropriate commands), they could
+  take ownership (make it so that it was theirs) of the object.
+
+delete_act
+----------
+
+  Giving someone 'delete' of an object will allow them (provided they have
+  'removeFrom' on the objects parent, for instance the player or room) to
+  erase the object.  Deletion is kind of final, so you know.  Don't take
+  it lightly.
+
+addTo_act
+---------
+
+  This action will allow someone to add an object to this container.  For
+  instance, someone with addTo on a room will be able to add, say, a
+  newsboard.  Someone with addTo on a player is able to add a room to that
+  players rooms.
+
+removeFrom_act
+--------------
+
+  This action will allow or prevent someone from removing something from
+  this container.  Generally, in removing something from a container, you
+  will also need 'move' or 'delete' (depending upon what you're trying to
+  do, exactly) on the object that is being moved as well.
+
+Room Actions
+------------
+
+This is a list of the normal actions available on a room.  To see how to
+turn these on and off (by default, or for a specific player), see the allow,
+deny, and default commands.
+
+  ejectFrom_act(5.5.1)   whether someone can kick someone else out of here
+  enter_act    (5.5.2)   whether someone can come into this room
+
+
+ejectFrom_act
+-------------
+
+  Players with this action enabled on the room they are in are permitted to
+  'eject' other players in the room from it.  It is important to note that
+  there is no check other than this one.  This means that they could kick
+  you out of your own room!  (Of course, you could then revoke their ability
+  to do that...)  Hand out this action with caution.
+
+enter_act
+---------
+
+  Players with this action may come into this room.  Without it, there
+  should not (the code is in betatest, remember) be a way for the player
+  to come into the room.  Unless they're a SU, or something tricky like
+  that, obviously.  The SU's have been instructed not to do such things
+  unless it is absolutely necessary, however, and you should report any
+  breaches of this to staff@realm.progsoc.uts.edu.au.
+
+Clan Actions
+------------
+
+The actions on and in a clan are generally have the same names as the others
+(a clan is, after all, just a container), however, because of their somewhat
+unique structure, these actions have somewhat different meanings.
+
+To start, a clan contains ranks, not players.  Giving someone addTo or
+removeFrom on a clan (on the clan itself) means that that player may create
+a new rank for the clan.  Now, the clan land is a landscape, containing rooms,
+and giving someone (or a rank) addTo or removeFrom on that permits them to
+create new clan rooms or delete clan rooms.
+
+<footnote 15:  It is slightly interesting to note that 'block tells' is an entirely different beast>

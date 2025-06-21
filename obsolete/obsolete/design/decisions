@@ -1,0 +1,38 @@
+
+The registry keeps track of Atoms by integer id.  Some mechanism was
+required to deal with the fact that these id's will just keep getting
+larger.  (ie, somehow support re-use).
+
+Several options were examined:
+
+ - Have a 'compaction' routine that, when the system was shutdown, would
+   scan through all of the data (all atoms stored on disk - the main
+   database plus loaded atoms) with a special ObjectInputStream that just
+   writes what it finds back out - except if it's a Reference, in which case
+   it would update the integer index to whatever new value was required.
+
+ - At boot time, each reference 'registers' itself with the registry, and a
+   reference count of them is maintained.  When objects are loaded & saved,
+   this use count is updated also.  A compaction block consists of going,
+   one by one, through the loaded atoms, loading them in, as the references
+   register themselves, telling them to change their reference if it is out
+   of date.  The system requires a reboot to update the main database.
+   After this is done, the indexes can be all compressed.
+
+The selected system works as follows:
+
+ - Have a 'datestamp' (a long) assosciated with each index.  When a
+   reference stores an index, it also copies down the timestamp that the
+   object in the registry is marked with.  (just a long[index] array).  For
+   every 'get' operation, this timestamp is compared.  if they do not match,
+   this atom has been erased, and the reference self-clears and begins
+   returning null.
+
+   If the reference didn't self clear, this would allow a limited 'delete'
+   and 'undelete' operation (provided indexes aren't reused very quickly).
+   I expect the default implementation will reuse indexes as soon as
+   possible.
+
+   this system doesn't support reordering indexes, but does not require a
+   reset, allowing key to maintain 100% uptime.
+

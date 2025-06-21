@@ -1,0 +1,64 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+package key.swing;
+
+import key.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Startup implements StartupHandler
+{
+	public Startup()
+	{
+	}
+	
+	JButton startupMenuItems[] =
+	{
+		new JButton( "Start Key" ),
+		new JButton( "Administrator Priviledges" ),
+		new JButton( "Execute a KeyScript" ),
+		new JButton( "Exit" )
+	};
+
+	{
+		startupMenuItems[3].addActionListener( new ActionListener()
+		{
+			public void actionPerformed( ActionEvent e )
+			{
+				System.exit( 0 );
+			}
+		} );
+	}
+	
+	public void acceptControl( Main m )
+	{
+		JFrame frame = new JFrame( "Key:  \"building virtual worlds\"" );
+		
+		java.awt.Container cp = frame.getContentPane();
+		
+		JPanel panel = new JPanel();
+		
+		panel.setLayout( new BoxLayout( panel, BoxLayout.Y_AXIS) );
+		panel.setBorder( BorderFactory.createTitledBorder( BorderFactory.createRaisedBevelBorder(), "Administration Menu" ) );
+		
+		for( int i = 0; i < startupMenuItems.length; i++ )
+		{
+			panel.add( startupMenuItems[ i ] );
+		}
+		
+		cp.add( panel );
+		
+		frame.pack();
+		frame.setVisible( true );
+	}
+}

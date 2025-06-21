@@ -1,0 +1,174 @@
+package key;
+
+import key.collections.ObjectCollection;
+
+/**
+ * Ideas for Humanoid class... 
+ *
+ * @author Luca Pancallo - 1999.03.30
+ */
+public class Humanoid extends Atom implements BodyType {
+
+	// You can override this declarations to use different names
+	static String[] limbList = {"head","torso","arm_right","arm_left","leg_right","leg_left",
+									"foot_right","foot_left", "waist", "neck"};
+
+	static String[] wieldLimbList = {"hand_right","hand_left"};
+
+	// total number of limbs
+	int numLimbs=12;
+
+	// total number of limbs that can wield something
+	int numHands=2;
+
+	// hands actually free
+	int freeHands=2;
+
+	// the most vital part of the body (usually torso)
+	int vitalPart=1;
+
+	public static final AtomicElement[] ELEMENTS =
+	{
+		AtomicElement.construct( Humanoid.class, Atom.class, "limbList",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"location names" ),		
+		AtomicElement.construct( Humanoid.class, Atom.class, "wieldLimbList",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"location names in which char can wield an item" ),
+
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[0],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[1],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[2],  
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[3],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[4],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[5],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[6],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[7],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[8],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, limbList[9],
+			AtomicElement.PUBLIC_FIELD,
+			"object being worn on personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, wieldLimbList[0],
+			AtomicElement.PUBLIC_FIELD,
+			"object being wield by personage" ),
+		AtomicElement.construct( Humanoid.class, Atom.class, wieldLimbList[1],
+			AtomicElement.PUBLIC_FIELD,
+			"object being wield by personage" )
+	};
+
+	protected Reference head = Reference.EMPTY;
+	protected Reference torso = Reference.EMPTY;
+	protected Reference arm_right = Reference.EMPTY;
+	protected Reference arm_left = Reference.EMPTY;
+	protected Reference leg_right = Reference.EMPTY;
+	protected Reference leg_left = Reference.EMPTY;
+	protected Reference foot_right = Reference.EMPTY;
+	protected Reference foot_left = Reference.EMPTY;
+	protected Reference hand_right = Reference.EMPTY;
+	protected Reference hand_left = Reference.EMPTY;
+	protected Reference waist = Reference.EMPTY;
+	protected Reference neck = Reference.EMPTY;
+		
+	public static final AtomicStructure STRUCTURE = new AtomicStructure( Atom.STRUCTURE, ELEMENTS );
+
+/**
+ * Can this body wield another item which needs "numLoc" locations?
+ * @return int location in which can wield, -1 if none available
+ */
+public String[] canWieldMore(int numLocNeeded) {
+
+	if ( freeHands-numLocNeeded >= 0 ) {
+
+		// Check for available locations and return them
+		String[] free = new String[numLocNeeded];
+		for ( int i=0; i<wieldLimbList.length; i++) {
+			// if property null it means that we have a Reference.EMPTY = no item in this location
+			if ( getProperty(wieldLimbList[0])==null )
+				free[i]= wieldLimbList[0];
+			// stop search if already found enough free limbs
+			if ( free.length == numLocNeeded )
+				return free;
+		}
+	}
+
+	return new String[0];
+}
+	public AtomicStructure getDeclaredStructure()
+	{
+		return( STRUCTURE );
+	}
+/**
+ * This method was created in VisualAge.
+ * @return key.AtomicElement[]
+ */
+public AtomicElement[] getELEMENTS() {
+	return ELEMENTS;
+}
+/**
+ * This method was created in VisualAge.
+ * @return java.lang.String[]
+ */
+public String[] getLimbList() {
+	return limbList;
+}
+/**
+ * Return total number of limbs
+ * @return int
+ */
+public int getTotalLimbs() {
+	return numLimbs;
+}
+/**
+ * This method was created in VisualAge.
+ * @return java.lang.String[]
+ */
+public String[] getWieldLimbList() {
+	return wieldLimbList;
+}
+/**
+ * Will output a list of worn items:
+ * name of location1: short description of item1,
+ * name of location2: short description of item2,
+ * etc...
+ */
+public void listContents() {
+}
+/**
+ * Notify body that something is now wear at a specific location
+ *
+ * @return boolean true if weared, false if not wearable in this location
+ */
+public boolean setWear(int location, Object item) {
+	return false;
+}
+/**
+ * Notify body that something is now wielded
+ * if location = "" then wield in a random free location
+ *
+ * @param location java.lang.String
+ * @param item java.lang.String
+ */
+public void setWielded(String location, Object item) {
+
+	this.setProperty( location, item );
+	freeHands--;
+}
+}

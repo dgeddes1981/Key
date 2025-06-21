@@ -1,0 +1,145 @@
+<html>
+<head>
+	<title>Key: Home</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta name="Author" content="Paul Mclachlan">
+	<meta name="Description" content="Key is a Java framework for the development of internet based collaborative applications.">
+	<meta name="Keywords" content="collaborative talker moo mud intranet bug tracking issue tracking groupware group CSCW talker chat telnet game mux">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#CD853F" vlink="#55188A" alink="#008000">
+
+<table border=0 align=center cellspacing=10>
+	<tr>
+		<td></td>
+		<td>
+		<center>
+		<a href="index.html"><img src = "images/key-logo.gif" alt="Key Logo" border=0></a>
+		<a href="http://realm.progsoc.uts.edu.au/chilba"><img src = "images/chilba-grown.jpg" alt="(chilba)" border=0></a><p>
+		</center>
+		</td>
+	</tr>
+</table>
+<img src="images/line.gif" width="100%">
+<table border=0 cellspacing=10>
+	<tr>
+	<td valign=top>
+		<div align=center><b>
+		sitemap
+		</b></div><P>
+		<div align=left>
+		<A href="related.html">related links</A>
+		</div><div align=right><i>
+			key&nbsp;worlds<BR>
+			research<BR>
+			compatible&nbsp;systems<BR>
+		</i></div>
+		<P>
+		<div align=left>
+		<A href="download.html">download</A>
+		</div><div align=right><i>
+			latest&nbsp;release<BR>
+			snapshots<BR>
+			recent&nbsp;changes<BR>
+		</i></div>
+		<P>
+		<div align=left>
+		<A href="contrib.html">contributing</A>
+		</div><div align=right><i>
+			how&nbsp;to&nbsp;contribute<BR>
+			buglist&nbsp;&amp;&nbsp;todo<BR>
+			credits<BR>
+		</i></div>
+		<P>
+		<div align=left>
+		<A href="documentation.html">documentation</A>
+		</div><div align=right><i>
+			players&nbsp;manual<BR>
+			setup&nbsp;examples<BR>
+			javadoc&nbsp;API<BR>
+		</i></div>
+	</td>
+	<td valign=top>
+		
+      Key is a multi-user Java based operating system that has been
+      designed in order to support a Virtual World (call it a MUD,
+      a MOO, or a talker).
+<P>
+      Key currently boasts a complete Telnet protocol implementation,
+      support for object property reflection, a transparent storage
+      management mechanism, and a secure advanced permission system
+      (potentially supporting untrusted code).
+<P>
+      Key inherits other advantages from Java: dynamic code loading
+      (fewer resets), garbage collection (stability), platform
+      independence, and easy integration with other Java applications
+      (such as the Jetty servlet compatible web server or the beanshell).
+<P>
+      Implemented virtual world features:
+<P>
+<UL>
+      <LI>playerfiles [name/password/logintime]
+      <LI>friend tracking [fwho, tell friends]
+      <LI>news [newsboard as an object, also global &amp; clan news]
+      <LI>mail [player to player]
+      <LI>basic objects ['look sword', 'get sword', 'use sword']
+      <LI>ranks [superusers, immortals, mages - whatever you call them]
+      <LI>arbitrary groups [and Clans, as a specialisation]
+      <LI>colour [type ('colour friends cyan') and wand ('^ggreen ^rred')]
+      <LI>action permissions [block tells,mail,entering rooms, etc]
+</UL>
+<P>
+      Key has been released under the GNU General Public License.
+	</td>
+	</tr>
+</table>
+
+<table border="3" cellpadding="3" cellspacing="3" width="400">
+<tr>
+        <th>
+        <font face="arial, helvetica" size="2">
+        Member Of <a href="http://members.tripod.com/~mpTOOLS/ring.html">
+        The Open Source Java Web-Ring
+        </a>
+        </font>
+        </th>
+</tr>
+<tr>
+        <th><font face="arial, helvetica" size="1">[<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;id=87;sprev"
+        target="_top">Skip Prev</a>] [<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;id=87;prev"
+        target="_top">Prev</a>] [<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;id=87;next"
+        target="_top">Next</a>] [<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;id=87;skip"
+        target="_top">Skip Next</a>] [<a
+        href="http://www.webring.org/cgi-bin/webring?random;ring=osj123" target="_top">Random</a>]
+        [<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;id=87;next5"
+        target="_top">Next 5</a>] [<a
+        href="http://www.webring.org/cgi-bin/webring?ring=osj123;list" target="_top">List Sites</a>] </font></th>
+</tr>
+</table>
+
+<BR>
+<img src="images/line.gif" width="100%">
+<table align=center width="97%" cellpadding=0 cellspacing=0>
+<tr>
+<td align=left>
+<font size=-1>
+These pages are sponsored by 
+<a href="http://www.progsoc.uts.edu.au">progsoc</a>, on
+<a href="http://realm.progsoc.uts.edu.au/">realm</a>.
+</font>
+</td><td align=right>
+<font size=-1>
+(last modified: <!--#echo var="LAST_MODIFIED" -->, <!--#exec cgi="/cgi-bin/counter" --> hits)
+</font>
+</td></tr>
+</table>
+
+</font>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+cd /realm/ruins
+load PublicRoom yard
+set yard.called ^yThe Ruins of the Courtyard^-
+set yard.portrait wandering through the ruins of Dawnkeep.
+set yard.relation ""
+edit yard.description
+.wipe
+The decayed mess of the main tower of the castle lies before you as you stand in the dirty courtyard.  The courtyard itself is a large, roughly circular area which once separated the castle from the small villages that use to thrive around it.
+
+Looking around the courtyard now, you begin to notice smaller details.  Small empty stalls have been left by various traders <footnote 1>.
+.end
+transfer yard $
+cd

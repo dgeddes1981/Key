@@ -1,0 +1,37 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+
+package key;
+
+/**
+  *
+ */
+public final class ReferenceHolder
+{
+	Reference ref;
+	
+	public ReferenceHolder( Reference r )
+	{
+		ref = r;
+	}
+
+	public Atom get()
+	{
+		try
+		{
+			return( ref.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+		}
+	}
+}

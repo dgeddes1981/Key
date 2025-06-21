@@ -1,0 +1,38 @@
+package key;
+
+/**
+ * Ideas for BodyType class... (a way to customize the body of characters, NPC, etc....)
+ *
+ * @author Luca Pancallo - 1999.03.30
+ */
+public interface BodyType {
+
+
+/**
+ * Can this body wield another item which needs "numLoc" locations?
+ * @return String[] location in which can wield
+ */
+public String[] canWieldMore(int numLoc);
+/**
+ * This method was created in VisualAge.
+ * @return key.AtomicElement[]
+ */
+AtomicElement[] getELEMENTS();
+/**
+ * Return total number of limbs
+ * @return int
+ */
+public int getTotalLimbs();
+/**
+ * Notify body that something is now wear at a specific location
+ *
+ * @return boolean true if weared, false if not wearable in this location
+ */
+public boolean setWear(int location, Object item);
+/**
+ * Notify body that something is now wielded
+ * @param location java.lang.String
+ * @param item java.lang.Object
+ */
+public void setWielded(String location, Object item);
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>KEY - player documentation</title>
+<meta name="Author" content="Paul Mclachlan">
+<meta name="Description" content="Player manual">
+<meta name="Keywords" content="key help faq howto manual">
+<link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#CD853F" vlink="#55188A" alink="#008000">
+<center>
+
+<table border=0 width=95% cellspacing=0 cellpadding=10>
+	<tr>
+		<td>
+			<a href="../">
+			<img src = "../images/key-logo-small.gif" alt="Key Logo" border=0  align="center">
+			</a>
+		</td>
+		
+		<td>
+		<center>
+			<img src = "../images/resources-title.jpg" alt="Key resources" border=0>
+		</center>
+		</td>
+	</tr>
+</table>
+
+</center>
+
+<H1>10. Clans: everything you wanted to know but were afraid to ask</H1>
+<P>
+A clan is a code-supported social structure that includes the concepts of
+rank and land.  The original clans were based upon the Scotland family
+groups that existed in the middle ages.
+<P>
+There are two primary clan concepts: Ranks, and Land.
+<P>
+
+<H3>Ranks</H3>
+<UL>
+	A clan may have up to 6 ranks.  The pre-apocalpyse clans had 4
+	ranks: member, leader, castellan, and founder.  Each of these ranks
+	had different levels of priviledge.
+	<P>
+	<UL>
+		<LI><EM>member</EM>: This was the standard level of clan membership.
+		<LI><EM>leader</EM>: A clan leader could enrol new members.
+		<LI><EM>castellan</EM>: A clan castellan could make members leaders.
+		<LI><EM>founder</EM>: The person who created the clan, could create
+            castellans as well.
+	</UL>
+	<P>
+	Ranks in Key have customisable priviledges and names, meaning that
+	they will be unique for each individual clan.  Your clan founder
+	will be able to provide information on how the ranks of the clan are
+	structured.
+</UL>
+
+<H3>Land</H3>
+<UL>
+	Clans, like players, may also have rooms.  This can add to the
+	atmosphere of the clan, and provide a meeting place for clan
+	members.
+</UL>
+
+<H2>Being in a clan</H2>
+<P>
+While individual clans often have their own rules and commands, some things
+still remain the same.  Generally, the commands to talk in a clan, or view
+the clan message of the day will be similar.  Here is some of the basic
+need-to-know type information for when you first join a clan:
+<P>
+<H3>Talking in a clan</H3>
+<UL>
+	You talk in a clan in a similar way to talking in a room.  You may use
+	the <KBD>say</KBD>, <KBD>emote</KBD> and <KBD>think</KBD> commands with
+	the word 'clan' in front of them, to indicate that they should be sent
+	to everyone in the clan instead of the current room.
+	<P>
+	Alternatively (and, in my opinion, preferably), you could use the
+	shortcut commands: <KBD>c'</KBD> for clan say, <KBD>c:</KBD> for clan
+	emote, <KBD>c~</KBD> for clan think.  (You don't need to hit the shift
+	key on the second character, as <KBD>c;</KBD> and <KBD>c`</KBD> also work).
+	<P>
+	Just to point out the astoundingly obvious, these are the same shortcuts
+	that you use to talk in rooms, but with the letter 'c' before them.
+	<P>
+	Here are some quick examples:
+<PRE>
+-&gt; <KBD>c'hi</KBD>
+(CLAN): subtle says 'hi'
+-&gt; <KBD>c;waves to everyone</KBD>
+(CLAN): subtle waves to everyone
+-&gt; <KBD>c~anyone there?</KBD>
+(CLAN): subtle thinks . o O ( anyone there? )</PRE>
+	<P>
+	If you've red the chapter on colours, you'll know that you can colour
+	your clan channel with a command like '<KBD>colour clan
+	brightyellow</KBD>'.
+	<P>
+</UL>
+<H3>Leaving a clan</H3>
+<UL>
+	It is your right to leave your clan at any time.  To do this, use the
+	'<KBD>clan secede</KBD>' command.  Leaving the clan is not a reversible
+	procedure, although the clan may be willing to re-enrol you if you ask.
+</UL>
+<H3>Viewing the clan message of the day</H3>
+<UL>
+</UL>
+Other clan commands:<BR>
+<PRE>
+trans clanname/room
+clan rooms
+
+</PRE>
+<H2>FAQs</H2>
+<H3>I hate clans and people keep enrolling me / asking to enrol me</H3>
+<UL>
+	You can indicate to everyone that you are unwilling to be enrolled in a
+	clan with the '<KBD>liberate</KBD>' command.  You will appear on the who
+	list as not wishing to be in a clan (hopefully this will stop people
+	asking you about it), and the code will prevent them from enrolling you.
+	<P>
+	The command is a toggle, so if you wish to 'unliberate' yourself in the
+	future, just type it again.
+</UL>
+<P>
+<H2>The noble art of foundership</H2>
+<P>
+The rest of this chapter is a beyond-the-basics look at how a clan is built
+and customised.  It is aimed at clan founders and high-ranking members who
+wish to be able to help in the customisation of the clan.
+<P>
+<H3>Quick HOWTO</H3>
+<UL>
+<CENTER><I>[This section still needs to be written, but here are some pointers
+to how to do stuff.  All these commands will change to something more friendly in the future.]</I></CENTER>
+
+<P><BR>
+<B>Listing the ranks in your clan</B><P>
+You can list the ranks in existance, along with their implies lists, with the '<KBD>clan structure</KBD>' command.  It also shows who is in each rank, but this will probably change in favour of something more useful.
+<P>
+<B>Adding a command to a rank</B><P>
+You add commands to ranks with the '<KBD>clan rank &lt;rank&gt; clan add &lt;rank class&gt; [&lt;optional name&gt;]</KBD>' command.  Most commands already exist somewhere, but say you want to allow leaders to be able to edit the clan motd:
+<P>
+<UL><PRE>
+-&gt; <KBD>clan rank leader clan add EditMotd</KBD></PRE>
+</UL>
+You need to set up the appropriate permissions for them to be able to do this, as well - it isn't just a matter of them having the command.  Look at the chapter on 'context permissions' for information about how to do this.
+<P>
+<B>Taking a command away from a rank</B><P>
+<KBD>clan rank leader clan take editmotd</KBD>
+<P>
+<B>Adding a new rank</B><P>
+<KBD>create rank mynewrankname</KBD>
+<P>
+<B>Destroying a rank</B><P>
+<KBD>clan dissolve mynewrankname</KBD>
+<P>
+<B>Setting the implies property</B><P>
+You probably don't even know what the implies property means, I caution against using it without thinking that you understand it.  (It's okay to use it if you think you understand it but really don't, of course)<BR>
+<KBD>clan rank mynewrankname clan implies</KBD>
+<P>
+<B>Clearing the implies property</B><P>
+<B>Creating a clan room</B><P>
+<B>Destroying a clan room</B><P>
+<B>Enrolling someone into the clan</B><P>
+<B>Removing someone from the clan</B><P>
+<B>Setting the clan homepage</B><P>
+<B>Setting the clan hall room</B><P>
+<B>Setting the clan base rank</B><P>
+<B>Editting the clan MOTD</B><P>
+<P>
+</UL>
+<center>
+<hr>
+
+These pages are sponsored by 
+<a href="http://www.progsoc.uts.edu.au">progsoc</a>, on
+<a href="http://realm.progsoc.uts.edu.au/">realm</a>.
+<BR>(last modified: <!--#echo var="LAST_MODIFIED" -->, <!--#exec cgi="/cgi-bin/counter" --> hits)
+
+</center>
+</body>
+</html>

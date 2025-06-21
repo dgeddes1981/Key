@@ -1,0 +1,108 @@
+/*
+**  stylesheet for Key documents
+*/
+
+BODY
+{
+	font-family: arial, helvetica, sans-serif;
+	color: black;
+	background: white;
+}
+
+A:link
+{
+	color: #cd853f;
+}
+
+A:visited
+{
+	color: #55188A;
+}
+
+A:active
+{
+	color: #008000;
+}
+
+H1
+{
+	color: #191970;
+	font-size: 14pt;
+	font-family: arial, helvetica, sans-serif;
+}
+
+H2
+{
+	color: #191970;
+	font-size: 12pt;
+	font-style: bold;
+	font-family: arial, helvetica, sans-serif;
+}
+
+H3
+{
+	color: #197019;
+	font-size: 12pt;
+	font-style: normal;
+	font-family: arial, helvetica, sans-serif;
+}
+
+PRE
+{
+	font-family: courier;
+	font-size: 12pt;
+}
+
+SPAN.replace
+{
+	color: #ff0000;
+}
+
+TD
+{
+	vertical-align: top;
+	font-family: arial,helvetica,sans-serif;
+}
+
+SPAN.typed
+{
+	color: #bb1919;
+	white-space: nowrap;
+}
+
+KBD
+{
+	color: #bb1919;
+	white-space: nowrap;
+}
+
+SPAN.incomplete
+{
+	background-color: #bbbb19;
+}
+
+SPAN.example
+{
+	color: #197019;
+	font-style: italic;
+}
+
+EM
+{
+	color: #197070;
+}
+
+SPAN.em
+{
+	color: #197070;
+}
+
+P
+{
+	font-family: arial,helvetica,sans-serif;
+}
+
+UL
+{
+	font-family: arial,helvetica,sans-serif;
+}

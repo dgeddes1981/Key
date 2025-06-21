@@ -1,0 +1,91 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Main,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  18Jul97     subtle       subclassed to Forest
+**  28Jul97     subtle       enhanced logging
+**
+*/
+
+package key;
+
+import java.net.*;
+import java.io.*;
+import java.util.*;
+import java.lang.*;
+
+public class Main
+{
+	public static void main( String args[] )
+	{
+		boolean creation = false;
+		boolean forest = false;
+		
+		for( int i = 0; i < args.length; i++ )
+		{
+			if( args[i].equalsIgnoreCase( "creation" ) )
+				creation = true;
+			else if( args[i].equalsIgnoreCase( "forest" ) )
+				forest = true;
+			else if( args[i].equalsIgnoreCase( "debug" ) )
+				Key.DEBUG_MODE = true;
+		}
+		
+		//System.setSecurityManager( new Security() );
+		
+		try
+		{
+			File db = new File( "database" );
+			Key key;
+			Registry registry;
+			
+				//  what a kludge
+			Key.creation = creation;
+			Registry.baseDirectory = Key.confirmedDirectory( "distinct" );
+			
+			if( db.exists() )
+			{
+				Key.bootLog( "Loading '" + db.getPath() + "'..." );
+				registry = (Registry) Key.loadObject( db );
+				//key = (Key) Key.loadObject( db );
+				key = Key.instance();
+			}
+			else if( creation )
+			{
+				registry = new Registry();
+				if( forest )
+					key = (Key) Factory.makeAtom( Forest.class );
+				else
+					key = (Key) Factory.makeAtom( Key.class );
+			}
+			else
+			{
+				System.err.println( "Database file '" + db.getPath() + "' does not exist." );
+				System.err.println( "Use 'java key.Main creation' to create new files" );
+				return;
+			}
+			
+			key.start();
+		}
+		catch( Exception e )
+		{
+			System.out.println( e.toString() );
+			e.printStackTrace( System.out );
+		}
+		
+		//bootLog( "stopping startup thread..." );
+		//Thread.currentThread().stop();
+	}
+}

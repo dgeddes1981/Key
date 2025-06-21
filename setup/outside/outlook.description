@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom outlook
+set outlook.called ^cOverlooking the City^-
+set outlook.portrait the outlook.
+set outlook.relation at
+edit outlook.description
+.wipe
+You are standing at the edge of the lookout on the mountain that overlooks the city.  The breeze is rather brisk and the visibility is excellent.  All around you lies the vast expanse of the realm.  From the Marshland in the distant north to the ruins of Dawnkeep to the south and the beautiful coastal regions of the east.  The whole world appears to be at your feet.
+
+You see Gill Road wind its way down the side of the mountain to the fishing village.  To the south you can see the gorge that cuts through the rocky terrain.  Below you is the Great Southern Road that leads into the City and just off to your left is a pathway that leads to the top of the waterfall.  You also notice an ancient track that leads towards the Vale.
+.end
+transfer outlook $
+cd

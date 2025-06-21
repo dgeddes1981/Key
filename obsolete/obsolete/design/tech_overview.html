@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Key Project Technical notes</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (X11; I; Linux 2.0.13 i486) [Netscape]">
+   <META NAME="Author" CONTENT="Paul Mclachlan">
+   <META NAME="Description" CONTENT="This is an in-progress collection of technical notes for the Key Project.">
+   <META NAME="Keywords" CONTENT="key technical notes">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#CD853F" VLINK="#55188A" ALINK="#008000">
+
+<H2 ALIGN=CENTER><U><FONT COLOR="#800000">Key Project Technical Notes</FONT></U></H2>
+
+<CENTER><P><B><FONT COLOR="#008000">October 1996</FONT></B></P></CENTER>
+
+<CENTER><P><FONT COLOR="#008000">by Paul Mclachlan<BR>
+aka subtle</FONT></P></CENTER>
+
+<H3>
+<HR WIDTH="100%"></H3>
+
+<H3><FONT COLOR="#191970">communication:&nbsp; effects and splashing</FONT></H3>
+
+<H3><FONT COLOR="#191970">symbol matching:&nbsp; the getSymbol()&nbsp;routine</FONT></H3>
+
+<UL>
+<LI>transient symbols</LI>
+</UL>
+
+<H3><FONT COLOR="#191970">the nature of an atom</FONT></H3>
+
+<UL>
+<LI>readonly/reference and atomic properties</LI>
+</UL>
+
+<H3><FONT COLOR="#191970">reverse references</FONT></H3>
+
+<H3><FONT COLOR="#191970">qualifiers</FONT></H3>
+
+<H3><FONT COLOR="#191970">the telnet protocol</FONT></H3>
+
+<H3><FONT COLOR="#191970">interactive connections and paragraphs</FONT></H3>
+
+<H3><FONT COLOR="#191970">the scheduler and events</FONT></H3>
+
+<H3><FONT COLOR="#191970">registries</FONT></H3>
+
+<H3><FONT COLOR="#191970">a container</FONT></H3>
+
+<H3><FONT COLOR="#191970">the latent cache</FONT></H3>
+
+<H3><FONT COLOR="#191970">accessor methods</FONT></H3>
+<P>Accessor methods were deliberately not used in many circumstances.  The intention is
+to make all these public fields protected when the JDK1.2 becomes widely available and
+we can use reflection on protected and private fields.  In any case, accessors are
+avoided within the same package for speed reasons.</P>
+
+<H3><FONT COLOR="#191970">trie's</FONT></H3>
+
+<P>A Trie, while probably not an original concept, is something I&nbsp;developed
+for the unique problem of partially matching a word, given the definitive
+first section of the word. For instance, if a player wished to 'examine
+subtle', they need only type the smallest amount of information necessary
+to get this across (for an unambiguous meaning).</P>
+
+<P>And so, in all likelyhood, 'ex sub' could well be enough. In order to
+do this efficiently, I&nbsp;devised what I&nbsp;call a 'Trie', a name I&nbsp;adopted
+from the algorithm which inspired the idea, also called a Trie. (The two
+algorithms are effectively identical, it is really only a matter of scale).</P>
+
+<P>More information on the original Trie can be found in Ian Oliver's book,
+&quot;Programming Classics:&nbsp;Implementing the World's Best Algorithms&quot;.</P>
+
+<P>My implementation of the algorithm makes several assumptions, the most
+important of which is that <B>no key will ever contain non-alphabetic characters.</B>
+The other assumption is that names are essentially dissimilar; that the
+heys contained by the database have a realtively even spread - that they're
+not all very close to another.</P>
+
+<P>The second seems a reasonable assumption to make about the names people
+choose for themselves, and the second, a reasonable restriction to impose.
+And so we shall.</P>
+
+<H3><FONT COLOR="#191970">rooms, exits and a players location</FONT></H3>
+
+<H3><FONT COLOR="#191970">permission checking and actions</FONT></H3>
+
+</BODY>
+</HTML>

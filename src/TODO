@@ -1,0 +1,912 @@
+------------------------------  major todo list  -----------------------------
+
+checklist:
+	parent for set to superclass
+	ff = unix
+	redundant methods removed
+	security checks on public methods
+	transient fields for load/save
+	remove loadFrom/writeTo
+
+---  command list re-write  ---
+
+clear thread name when returned to pool
+	or add thread specific variables
+
+survey code?
+
+"deny mage delete"
+
+Jetty webserver can't be stopped (all threads killed) properly.
+
+inventory isn't an object collection?
+
+you can 'allow clan tell' but not 'deny clan tell' or 'default clan'
+
+credits:  aiffiona (helpfiles) koschei, etc. sym for socials
+
+no global 'wall to all' command for shutdown's...  or have a shutdown
+warning, or something.
+
+block objects makes you drop all your objects?
+
+'they have new mail'
+'mail sent' commands
+
+AssociativeReferences - references that can hold simple state (or even not
+so simple state, I suppose)  also, do something about standard (unnamed)
+references, or something.
+
+might be able to do some kind of SoftReference thing with Reference objects
+- and even better - make it optional for JDK1.2 people only?
+  - not finished, but started
+
+can implement a cache in Registry - after so many ticks, save and swap
+object out to a soft reference.  if the object is referenced again,
+bring it back to a strong reference (so it has to be saved again)
+
+clan implied ranks aren't being loaded properly - see output when they're
+switched out.
+	--  think fixed
+
+delete a clan with the founder online, they stay in the appropriate ranks
+for that clan, somehow (esp council channel)
+	--  think fixed
+
+limits on the length of a key?  (enforced by atom in setKey()?)
+	--  done, we'll have to see the effect it has.
+
+[stryker]: anyone can make exits in public rooms.. eg.
+ check the tavern
+    --  make exits just objects that aren't approved for public rooms - 
+	--  hence, problem solved.
+
+do substitutes (%) on plans, etc.  or maybe use colour codes to do the
+substitutes on ids.  So you can put who is examining your plan in the
+description.  "Oi, slide, don't look at my plan!"
+
+consider combining all lists (friends/inform/beep/prefer) into one
+"assosciative collection' list thing.  make it easier to emulate 'list'
+command, also smaller & easier to manage than having a 'beep' list.  stems
+from requiring "beep" to select 'inform', for instance.  if we do this, how
+do we 'inform friends', though?  but at least 'beep' and 'inform' need to be
+in one.
+
+EmailSetters are $unlinked$ in the scheduler.  Make the scheduler a
+non-reference container so it can have references or hold atoms proper.
+	-- fixed
+
+maybe rename 'setParent' to 'changeParent' - to indicate that you can't set
+the parent to something the atom isn't already in the member set of?
+
+emails are never freed from memory, since the 'removeElementAt' call doesn't
+call setParent to clear parents??
+	--  fixed, not tested, problem not tested
+
+'move' is still a little buggy if you pass it funny args.
+
+also, make it so you can't "Thing::get" objects that are in that room
+because it's their parent - only references.  This means that you can't get
+exits.  nah.  bad, since some 'bags' and 'scabbards' and the like will have
+to exist properly in the room too.
+
+!!!ensure that if you "move" a reference, the reference gets moved, and if you
+"move" a real atom, the real atom gets moved.  tricky.
+	-- yep
+
+containers that are both reference & non-reference at the same time.  when
+add to a container, if "move", then you add & setParent.  if copy, just add
+& notify.
+if cp to another container, just add & notify.  if move, add, setparent,
+remove, in that order.  should work.
+	-- yep
+
+"lucky dip" bags (santa bags) for objects.  swords with scabbards.  "use
+watch" just to call the 'time' command?  Make a command object that
+specifies commands to execute when actions are done?  should all objects
+work this way?
+
+you can shout when you're blocking them, same with tell
+
+kill "remove" and "removev" (remove verb) commands to combine.  need some
+kind of planning on how UI for this is going to work.
+
+room command organisation - they're all a huge mess.  categorise or
+something.
+
+okay, all those context changers should limit the commands that may be
+executed in them by being category comms.  "cd" obviously doesn't, and you
+obviously already know what you're doing if you cd around.
+
+	maybe, instead of 'getcontext', they should just use the caller variable
+	from context command and have an interface that gets from that.
+
+	this would.. prevent confusion when cd is in use w/ admins.  but what
+	about actions - we need those to be usable from the current context,
+	don't we?
+
+	yes, but they're a special case.  "describe" and those stupid commands
+	should be user-only, and stuck in the category comms, w/o reference to
+	context.  permission commands can be called from them - so category cats
+	still need to have a context switcher.
+
+	maybe don't use caller w/ interface to determine what atom to do it on -
+	maybe just use the interface to determine whether or not to use the
+	current context.  better?  maybe we shouldn't put 'describe' in the
+	default context?  no, just don't allow changing of modes into something
+	permanently, rquire "room" prefix each time? yuck.
+
+	okay, keep current system, but don't put 'through' in the basic
+	commandset, so it won't get called by accident.  don't allow residents
+	to change contexts directly - only through constrained category
+	commands.
+
+qualifier lists never seem to shrink.  ever.  once somethings there, it will
+be listed as 'normal' if you try to kill it.
+
+also, do transparent names and a couple of custom colour codes for that
+stuff.
+
+permissions broken on "boot <name>" from your own rooms.
+	--  believe fixed
+
+extra line on bottom of plan / description
+
+private florins, hidden time - implement & have seePrivateInfo override.
+also - have a private edit section - for addresses, phone numbers, etc.
+	--  need a privacy policy.
+
+have actions that can't be changed from their defaults except with 'expert'
+set.  Such as 'find', and 'tell', since these have other commands that do
+the same thing and it could get confusing. (ie, hide and 'block tells').
+
+"finger jkl" doesn't return output
+	--  fixed
+
+joinedTo field in Container - that can be set via methods, not just
+argument().  Also, maybe make it a subclass of container - we don't need
+Thing's with a joinedTo, or players, for that matter.
+
+"with sword smite rock" (objects against objects)
+
+objects that have optional positions - left or right finger, etc.
+
+-> sitesbanned
+Error: key.UnexpectedResult: key.OutOfDateReferenceException: index 477 has a timestamp of 0, 
+   not 496
+key.UnexpectedResult: key.OutOfDateReferenceException: index 477 has a timestamp of 0, not 496
+        at key.ReferenceEnumeratorFilter.isValid(ReferenceEnumeratorFilter.java:51)
+        at key.util.FilteredEnumeration.scanNext(FilteredEnumeration.java:44)
+        at key.util.FilteredEnumeration.nextElement(FilteredEnumeration.java:64)
+        at key.commands.SitesBanned.run(SitesBanned.java:57)
+        at key.Player.command(Player.java:1557)
+        at key.Player.run(Player.java:1211)
+        at key.InteractiveConnection.run(InteractiveConnection.java:72)
+        at java.lang.Thread.run(Thread.java)
+	--  huh?  assume fixed unless we see it again
+
+Sun Dec 20, 1998 9:11:16: Koschei - no method of changing a room's title
+
+Sun Dec 20, 1998 9:14:29: Box - 'f me' seems to display an extra line ... also plans have a blank line after them
+
+
+Sun Dec 20, 1998 10:59:24: Koschei - hide
+Sun Dec 20, 1998 11:00:03: Koschei - hide - makes look, orient,join, emote, etc not work
+	--  fixed
+
+Mon Dec 21, 1998 2:39:51: subtle - no output on 'finger slide', still.  hmm
+	--  believe fixed
+
+Mon Dec 21, 1998 6:52:50: subtle - 'inform clan' shows everyone who's in a clan, not just yours
+	--  fucken what?  test again, please
+
+Mon Dec 21, 1998 6:57:53: subtle - on clan rank creates, the rank isn't added properly - the parent is $
+
+Sun Dec 20, 1998 9:21:11: Koschei - ignore
+Sun Dec 20, 1998 9:55:17: Koschei - "council" could mention which clan the founders are the founder of
+Sun Dec 20, 1998 10:56:43: Koschei - multiple mail recipients "post bemused,box ook!"
+
+do radical shell optimisations (see notebook) involving abstracting
+talker command execute / parse stuff from player into seperate location - 
+similarly w/ web & other methods of accessing key.  Use player as a
+container & as an auth.
+
+remove smartass on "with subtle" command.
+	--  done
+
+remove categorycommand - use modal instead.  Implement modalcomm support in
+player matching class.  maybe do the radical auth idea, too.  it should be
+fairly small work, although conceptually large.
+	--  done?
+
+no indent on the 'ls' command.
+
+have a threadpool for animated atoms to use.  subclass Thread to do it, with
+the 'run()' method returning it to the threadpool if appropriate for a
+wakeup call? 
+	--- nah.  horrible and possibly bugridden
+
+who doesn't have a block list (friends, shouts, etc)
+
+change clan prefix to include the ()'s, so people can customise it.
+
+fix commands code that accesses getPermissionList() to use getImmutablePL if
+appropriate / required (particularly for finger etc).  "getImmPermList"
+shouldn't be required just for a permission check, btw.
+
+Targets.java - need to override add() to do permission check - the person
+adding must be able to target that group already themselves.  (maybe even
+more than that, since SU's shouldn't be able to make other SU's).
+
+not possible to set a primitive of type 'datetime'?
+
+delete /players causes a problem - it is deleted, although there is a warning
+about it being explicitly locked.  Go figure.
+
+modify commands so that they look up the real lengths of the properties
+they're setting using the atomic special stuff, in particular, "prompt"
+
+test prompt command properly - all variantions, so no surprises when using
+command in funny ways.
+
+tidy up ConnectPort stuff - it's ugly and doesn't work and I don't trust it
+at all. have a 'maximum number of connections', and some kind of throttle.
+
+------------------------------------
+
+enforce sitebans in checkaccept code.
+enforce playerbans in... connectingplayer?  nah, probably Player.connectTo
+would be better.
+
+--- objects ---
+
+commands:
+	"create object" command that is just a shortcut to help the putting of it in
+	/realm.objects, etc.
+	
+	inventory
+	
+	sell/buy ?  room cmds
+	withdraw?
+
+general commands:  "verb_inventory/room", "verb_inventory", "very_room_only"
+	 - have a 'reference' to where to check for the object - or maybe
+	 - a reference container of the places to check for the object - generally
+	 - containing just a reference to ~me.inventory and ~here
+
+some kind of "Filter" collection supporting inner classes - allows further
+decoupling of Atom references and collection.
+	--  could then also make ReferenceEnumeratedThing a non-public class?
+
+-------
+paragraph protection.  on a "set" of a paragraph property, ensure that the
+limits (of a text paragraph) aren't exceeded.  Also, enforce it in the
+editor for a nicer interface:  implement the limits ... how? in the set()
+accessor methods for the objects.  this way is better since... it can't be
+overridden anywhere, but doesn't restrict things too much or require huge
+processing on the AtomicElement's part (ie, .. a special type of limited
+atomic element...) actually, a limited atomic element might be much nicer...
+--------
+
+tableparagraph - do not allow direct access to columns[] array. - security
+risk.
+
+tidy up where the constants for MAX_DESCRIPTION_LINEs should go (atm, in
+Player and Room and etc, etc).
+	--  best is probably to have commands/Describe query what the limit is
+	on the atom that is being editted.  maybe have a 'getSpecial' on
+	AtomicElement?
+	--  finish modifying commands/* just like Describe.java
+	-- query the structure
+	--  for maximums.
+	-- Done for Describe.java
+	-- Done for Edit.java (please test)
+	-- Do some kind of limits for Screen - need to do them in Edit.java too.
+
+constructed() is called after Atom readObject(), not after all readObjects()
+have been done for all subclasses - should be fixed by KeyInputStream, I think.
+	--  this leads to another problem: clan's aren't being loaded for people
+	the way they should be.
+
+could use a security check for read from disk - only allow KeyInputStream to do it?
+-- ie, must be on stack frame somewhere?  -- no, must be on at a certain point
+- inside user code isn't acceptable (otherwise could be bypassed by having bad
+  code within the readObject() method, for instance)
+
+need a AtomicSpecial for strings, too, and integers (maximum/minimum values?)
+durations? (ie, a limit on the max timezone value?)
+
+do keyscript language - a parser allowing proper 'sets' and prints and
+stuff?  need to be able to parse in datetimes, among other things.
+
+prevent untrusted code from arbitrarily creating atoms - indeed, probably
+just prevent it from creating atom's at all - problem: some commands
+require containers, etc.
+	--  maybe have every object created count against a players quota... that
+	--  way, the objects can't create too much, but system objects are okay.
+
+Also, in Security manager, do Thread based trusted/untrusted security much
+better than just checking to see if it is a player running.
+
+stop user code from just sync'ing the entire registry to a network
+connection and replicating that way.  hard, since interface implementation
+requires the public writeExternal methods... - maybe do permission check
+before permitting it.
+
+limits for a container based on parent?  ie, mailbox usings property limits
+in player, player uses limits in Residents?
+
+add string limits on all properties in Player class, including idle messages
+and the like.
+
+limits on homepage URL size and email address size to be addressed in those classes
+
+change "clan structure" command to include commandsets and land.
+
+resolve conflict between "remove mail" and "remove <clothing item>"
+
+"AssosciativeCollection" - idea, put a value in with each thing put
+in a container as well.  good for the voting system, at least.
+	--  watch "instanceof Reference" style code in the Collections,
+	--  ugly hack will break it.  Make sure you delegate real collection
+	--  work to the other collections (duh).
+	--
+	--  Have an AssosciationEnumerator class to return things - better,
+	--  do a FilterEnumerator (general) and use that, w/ an inner class.
+
+Put key utility classes in a 'chilba' package.  eg, LinkedList, 
+FilterEnumerator, MultiEnumerator, Trie, CloneableStringTokenizer - put
+on a web page called "Java API additions".
+
+fix security manager to actually work
+
+how to stop objects sending nasty codes to players?
+	nasty codes can't be detected necessarily just by bytecode examination,
+	since they can be built using a byte array or whatnot.
+	a '\r' is a nasty code, since it bypasses our count of lines for TextParagraph
+--  solution: scan any created 'string'.  scan bytecode constants, and put a
+    runtime check on any "new string" method in the loaded bytecode.
+--  or, doofus, you could scan the string as they are passed into the system
+- ie, in the send routine, for instance.  Maybe have 'trusted' strings and
+ 'untrusted strings' - those that come from other class loaders
+
+add a "current system timezone & time" string to the bootup procedure - allow
+the timezone to be changed...?
+
+do timezones with ID strings
+
+some exceptions should log (like AccessViolation).  logfile should depend
+on how serious it is (which object the violation is on).  A violation on Player
+isn't serious really, but on Registry or Key is a lot more.
+
+private email addresses should be enforced somewhere other than the code (ie,
+not in commands/Who.java, but in Player.java or EmailAddress.java)
+--  probably just move complete generation to player.java for speed, also
+    in examine and finger screens.  same idea as "aspect" code for room looks
+
+change the florins system - pass Player the other player and the amount - 
+must have permission to modify the giving player in order to update florin
+counts
+	--  test
+
+category command that re-passes things through if it isn't matched
+	--  rewrite command matching and executing process to allow:
+	--  : the use of arguments to these commands (ie, no findCommand) routine
+	--  : the generation of lists of the available subcommands for each command.
+
+examine the effects of having DirectedBroadcast extend Broadcast instead of
+Directed.  In particular - if you "whisper snap,sub hi" - you don't get multi's
+to reply with.
+
+make StringSet into a Thing, adapt read & description methods.
+
+add "color" and "colors" to the basic setup
+
+"lock" and "unlock" verbs.
+
+should 'locking' a door be a two-way thing, or just one way (inside-out) - or
+should we make them lock both exits?
+
+"mail" helper echo command.
+
+integrate key with ACL/permissions system in Java.
+
+update the finger and examine screens to be more keyish - more stats and stuff.
+
+exceptions seem kind of all over the place - put them into subpackages where
+possible, too?
+
+how about a PackageId class in each package, identifying it?
+
+instead, fix objects to accept verbs, and code a general 'verb' command
+that looks up the appropriate method (through reflection) and executes it.
+
+add "use, drink, etc" to setup/basic.ks
+
+"give" and "drop" for objects should maybe move the actual atom to the new
+location?
+
+morphing objects
+
+does recap work with named references?
+
+fix time and login statistics in order to have all fields read-only that
+need to be read-only. prevents spoofing of object code.  also, don't
+permit arbitrary connect() and disconnect() calls - make it trusted
+package stuff.
+
+help 6 is ugly
+
+from J:
+you might want a room with a message board, and a place for people to drop
+stuff /pick up, but you don't want people picking up your messageBox and
+walking away with it.
+
+test get() and drop() & drop while wearing & "drop all".
+
+test that get and get all work
+
+multiples of objects in "look" listings. - need a whole seperate way to
+pluralise descriptions.  ugh.
+
+looking at other players: avatar support
+
+aliasing on a per-player basis.  basically server-side macros?
+	--  problems: what about arguments and the like?  allow full substitution?
+	--  atm, use a client
+
+"commands mage", "commands adept" style args to commands
+
+perhaps some support for a PATH style variable to determine order
+in which command lists are scanned.
+
+rename: homepage -> webpage
+
+a special 'inspect' that uses reflection to determine appropriate verbs (ie,
+"special verbs: read, look, open, close, lock, unlock").
+
+inspect for MaterialContainer should output information showing that this
+is the verbs provided by the container, and these are provided by the texture.
+
+test that messageboxs read and exits "use and look" properly, I had to change
+it
+
+clever inspect
+morphing objects
+object tutorial (include own code)
+
+
+--- finish ---
+
+watching the output scroll past for sufficiently large output hangs the 
+process.
+
+have a "data" atom, that stores or gets information from a file.  also use a
+'log' atom to represent logs, and have log files indexed for quick reversing of
+them for a vlog, and also paging of them, for the same reasons.
+
+colour code for linking to other help pages, or something.
+
+make the logs system better.  make it able to create directories implicitly
+(ie, "room_convo/hall", "clans/wolf/records") and have "vlog <directory>"
+display the contents, just like "vlog" does at the moment.
+
+from J:
+finger and examine don't seem to return any errors if the player doesn't
+exist/ is not online.
+
+from J:
+> Anybody and alter the actions of any room, well at least I, pleb snapper,
+> can alter the taverns' perms.  I changed it to allow addTo and removeFrom so
+> sue could pick up a banana I made (load Prop banana)
+
+"getPermissionList()" style routines are -huge- security risks, since once
+they've got the class, they can do pretty much whatever they want with them.
+
+remove dual commands (ie, remove .staticcommandlist and just use .commands)
+for things.
+
+privs command, showing all ranks.
+
+florins from forest
+
+-> c;
+Format: citizen <player>
+
+how to get into clanland?  ie, visit?  how to create rooms etc in clanland
+probably make 'visit' use shortcuts instead of /players
+
+improve 'columnparagraph' to do automatic resizing of the columns like in EW
+
+fix examine and finger screens
+
+multi-lingual support.
+
+for web: authentication of connections & persistant connections
+
+fix commandsets.  remove .staticcommandlist, and add a .inherit property in
+each commandlist.   Also have the code scan the inventory for 'worn' objects,
+so that commands can be assosicated with objects, but only while they're being
+worn.
+
+"read next", "read previous".  also "new and read" flags on messages.
+"new" mail flag
+
+multi reply and ereply
+
+code to prevent spam
+
+loginscript command for residents.
+
+where to see peoples url's?
+
+decouple "Trie" from main code - use a "Multiple" interface or something, to
+represent any set of string keyed objects.
+
+make player's messagebox point to a suitable material (although, it should
+never be 'read' or 'looked at', since it doesn't really exist, might not be
+necessary)
+
+remove META on limit checking on containers.
+
+remove early beyond detection on permissionlists
+
+allow offline changes of a players status within a clan, but NOT additions
+to the clan.  (ie, can't enrol, but can make leader)
+	--  use more general 'offers' system.
+
+add permissions.  should check permission to add/remove a reference to an object
+as well as delete, etc.
+
+make permissions check more static to permit a 'null' permissionList until
+some modification has to be made?
+
+make permissions check for 'targetOnly' - to prevent players from changing
+limits on things that they own: it only allows targetting based on ranks and
+beyond, not based on permission lists, ownership, or equality. also, have a
+boolean method for the main check, particularly for, for instance, containers,
+where we might want to use || to do some changes.  (such as, can remove from
+container if permission from container || permission from object.  can only
+ever add to container if permission from container && permission from object.
+also restructure atom permissions.  'move' is stupid; define exactly what each
+permission means.
+
+the target system needs to be protected - to stop anyone creating a rank and
+using it to target something.  probably protect by only allowing an addition to
+targets when you can already target that rank or thing
+
+  need permissions for:
+
+    modify (change fields)
+    refer (add/remove references to the object in containers or properties
+	       stops, for instance, players from referring to a particular commandlist
+		   in order to trick the system: since it can never be set)
+    delete (permission to delete the atom, esp. remove it from it's parent container)
+	possess (permission to change who owns the atom.  this is stupid, remove it.  you
+	         just have to be the current owner or target in order to allow this)
+
+in Key, need a permission for 'viewlogfile'.
+
+do permissionlists for clans work?  ie, "allow wolf addto"?  think so.
+
+"block idlemsgs" does it exist in key?
+
+email registry, and name registry, etc, for ICQ user searches
+
+"saved" buffer if a connection is dropped during editting - like snapshot in quark
+
+for advanced terminals add a "delimit" character/command that can assosciate
+(for the terminal) which output goes with which command it executed - this way
+it can "examine subtle", and put it in the correct popup window, or something.
+
+resize in tf 4.0 beta 2 doesn't work.
+
+manual wordwrap thingy - for kojak.
+
+what happens to implicit references if an atom is deleted?  may it be deleted?
+ - probably better to restrict implicit references to within one hierarchy in
+   these instances - and properties only, where they can't be deleted, really.
+   An extra lookup in a permissionlist check won't kill us - permission checks
+   are huge anyway.
+
+central "reference" repository while loading... allowing for replacements
+  of other references to things - the less Reference objects floating around,
+  the better?  what about the name changes some references seem to go through?
+ --  this is kind of in place.  perhaps something that doesn't replace
+ --  non-named references with named ones would be nice as well.
+
+some way to allow 'inform' and 'friend' to work without loading the atom?
+	--  low priority - perhaps
+
+add support for "delete #444" style commands: abstract "delete" and "many" to
+a fully qualified identifier search thingy.
+
+a better newbie setup that asks questions like term type?
+
+a 'session' style command?
+
+a better newbie log in that shows who's online and where they are, as well as
+some basic commands?
+	--  done, "orient"
+fix it up to to 'new mail' checking.  more notification on login : you have new
+mail, you are blocking X,Y,Z, 7 friends online, you have data in your saved
+buffer, etc. put in orient command
+
+add hints for "check rooms" commands in check - ie, point to "rooms" command.
+
+add codes:
+
+  ^00 through ^99 for custom colours, although probably unnecessary to have
+  whole array filled
+
+  ^{ opening for 'intelligent terminals', format:
+  		^{ <type> <data> ^}
+  eg:
+
+  	^{Ahttp://realm.progsoc.uts.edu.au/forest^}   type A is 'anchor'
+    ^{Ehelp 3^}   type E is 'echo' - if clicked, type this back into the buffer
+
+
+Make a "log" class to use instead of Key
+
+newbiebans don't work.?
+
+site alpha's don't work?  (maybe something to do with factory stuff?)
+
+for email verify, add a hyperlink that can do it as well.  (ie, make it easier)
+
+fix need for dual names of properties in construct() method for atomic
+elements (ie, "aka", "aka")
+
+document shortcut keys:
+
+	~ to the shortcuts container - playernames, common aliases
+	$ is 'null' or 'nothing'.  (for matching empty named things (punctuation),
+	  or setting values to null.
+	# is reserved for id numbers (Registry lookups)
+
+--- elegance ---
+
+can make some methods of Network/Internet/Site better if we make Internet it's
+own singleton - not something contained from Key...
+
+remove the distinction between isAtomic() and isReference() in AtomicElement -
+this is stupid now that they mean the same thing.
+
+documentation:
+
+	User (forest style):
+		command reference
+		tutorial(s) HTML
+	
+	Expert/Coder
+		API
+		high level overview (guide)
+		Tutorial
+	
+	Administrator
+		Startup/Shutdown + basic tasks
+
+Accessor For each package, to allow AtomicElement to access package-protected
+variables - is it needed?
+
+remove Type, because it's stupid and unnecessary?
+ - better to not protect expert users from Key class types?
+ - prevention of instantiation and the like will be part of the package system.
+
+use security manager to prevent user code from accessing network or whatever
+when it doesn't go through trusted code.
+
+need Jar and HTTP PUT for code upload
+	--  signed jar's are particularly nasty.
+
+remove implicit references in player: they'r eprobably not required & make it
+slower
+	--  um.  maybe.  some of them are used a lot, too, maybe just decrease
+	--  them.
+
+how to do a 'bounce' command?  keep a repository of all the objects in the
+registry that are of type 'room'?  how about everything of type 'player' for
+timeouts?
+
+permissions:
+	- don't allow anyone to refer to any object, ie, for commandlists
+
+default permissions:
+	room: allow addto and removefrom for everyone?  or have "Get" and "drop"
+	      bypass traditional security restrictions - else people with code can
+		  just remove stuff at a whim.
+
+code room weight or encumberance?
+
+	clan: don't allow people to reference the clan unless they're in the clan.
+
+Help on show flags
+
+room movement splashes are cached until the end of a turn, ie: "subtle and 2 guards enter from the north"? -- communication instant
+
+replies to multi-tells haven't been done yet.
+
+custom colour codes
+
+pluralising listings of objects in a room
+
+how to prevent spam?
+
+player avatars getting linked into the room - move a players description to
+there?
+
+combat system
+
+large rooms: one object with locations attached to the references of things.
+
+make the default objects in / properties, not objects inside the container:
+advantage of not being deletable
+
+make realm a subclass of clan?
+
+'history' command (it will be missed, otherwise)
+
+each resident may have two non-public (unlinked) rooms?
+
+registry dump utility
+
+avatar support
+
+redef 'finger' 'examine', etc.
+
+session command using cookies
+
+voting system
+
+card games?
+
+a way to add to a container w/o a permission check or load of the atom
+(for pfile conversions?)
+
+make 'block' a two way thing - you can't send, either.
+
+resource accounting somehow
+	- no reply from JRes dude.
+
+--- references ---
+
+a reference should exist to one thing and one thing alone.  That way we can
+have a "solid reference", which just points to a normal tag, or a "weak
+reference" that uses a string id to point to a tag.  a reference should be weak
+if it passes through a transit atom, or if it passes through a cached atom
+(that can be swapped back to disk).  Everything should be double coupled in
+this manner - even references to parents.  In this case, is there a point to
+Tag's at all?:
+	
+	they allow solid references to cachable atoms that can be transparently
+	removed, ie, weak references.  since the tag is just a placeholder and
+	can be swapped out at any time.
+	
+	if we index every item on the program by it's number in a giant online
+	array (arrays are faster than hashtables, consume less memory, and we can
+	compact the system from time to time.  a compaction would store the
+	changes, and then scan through everything in the system telling it to
+	update them.  fairly easy stuff) -- does this affect the decision?  an
+	array lookup for a number is probably just as fast as a cached lookup, and
+	certainly smaller, so this is a better idea for 'solid references' (that
+	don't go through transient things).
+
+remove the concept of a 'parent': Issues:
+	keep centralised hierarchy for order, but have lazy clearing of references.
+	use 'tag' as something kept in memory maybe after the atom has been cleared
+	make it smaller and cuter.  lose reference-reverse linked list: but maybe
+	not reverse scapes linked list, since its nice to be able to notify scapes
+	ASAP about someone logging out.  container notification isn't required,
+	however, since lazy will be fine.
+
+	lazy implemented as a the Tag's being stored, and if 'getActual()' (or
+	prolly just 'get' these days) returns null, then pretend the thing was
+	never found in the first place.  Don't typically pass around tag's, since
+	then work may be being done when the thing isn't available any longer... ?
+	ugh.  maybe need yet another loose coupling here so we can pass tags around
+	to not have to load offline-players all the time.  or fancy 'isAvailable()'
+	style methods after it is retrieved from any collection or property type
+	thing.
+
+linked list to single-linked list for memory footprint?
+
+if disconnect during login script, wipe login script.  use a atext() style
+construct so editor can do it too.
+
+"which tree do you want to climb today?"
+
+Sat Apr 17, 1999 20:04:48: sabrewulf - lack of a newline at the end of the main help file (help w/ no argument)
+Sat Apr 17, 1999 20:13:06: sabrewulf - 'room name' in the main room gives me 'Access Violation while IC: sabrewulf trying to modify /realm/city/garden', which is fine and dandy, but now my prompt's stuck as [garden] -Forest->
+Sat Apr 17, 1999 22:07:10: sabrewulf - 'connectroom .' should prolly throw an error message back
+
+--- optimisation ---
+
+trie "TrieEntry" not required if only symbols are being passed in...
+
+fix atom to allow permissionList to be null (and just use defaults) - also the commands that modify it... just use pass-through methods instead of getPermissionList()
+
+allow multiple atoms per permission list?  (ie, have shared permission lists)
+  -  use implicit references to handle ??  unsure.
+
+store part-atoms in the same file as the main atom -- comment -- approaching
+database style behaviour, which we shouldn't do half-heartedly.  atm just use
+the filesystem.
+
+--- minor config ---
+
+add a paragraph (with substitutions) for the email setter, so the message can be
+changed.
+
+add a paragraph to be sent when a player logs off
+
+--- other major ---
+
+have a secret key (chosen by the admins of a talker) to prevent people
+uploading classes & databases from different systems & using them.
+
+user documentation: installation & configuration, helpfiles, and tech.
+
+talean support, with graphics & sound & custom protocols
+
+make error messages better by explicitly catching exceptions and writing them,
+removing and "e.toString()" style code, especially for system-level java classes
+
+email registry
+ident code
+
+--- package creation ---
+
+create packages.  build 'talker' package, 'forest' package?.  have a factory
+class kick them all off (which factory to use to build 'talker' players, for
+instance, as opposed to community players, or whatever)
+
+getDeclaredField allows access to protected methods:  change all fields to
+protected.  (this will break commands & other packages, but they were? 
+maybe going away anyway)
+
+
+---  release 1  ---
+
+split into forest., illusions. type packages
+split into smaller packages
+inet services: finger, SMTP, POP, HTTP
+user file storage
+JDK1.2	security - protected fields or better
+
+some kind of unit seperation, hiding additional properties of players for
+each talker, maybe with global factories that can do seperate packages?
+
+termcap support?  (ie, convert termcap to .class files?)
+-------------------------------  voting system  ------------------------------
+
+
+------------------------------  minor todo list  -----------------------------
+
+"pipe say siempre,joe schnarfs you"
+
+probably first and most importantly: customisation of the email verification
+notice?  is that only possible with a recompile?
+
+Mon Jan 19, 1998 14:12:38: full name required for whisper (e.g. "whisper brax
+hallo" doesn't work)
+
+Wed Jan 21, 1998 3:19:23: command: time: how do you change "key has been ..." to
+something else (at least the 'key' part)?
+	--  not completely fixed.  need to search and check we're using
+	--  getName() in Key class for all instances.
+
+Wed Jan 21, 1998 3:25:14: it's incredibly difficult, nay near impossible, to
+remove someone from the staffChannel (which we still have not worked out how to
+colour).
+	--  do we need an admin command to remove someone from an arbitrary
+	--  scape?  does this work yet?
+
+Wed Jan 21, 1998: 3:32:33: the homepage doesn't show on either x or f.
+
+
+11.. viewing who is banished and the reserved name list?
+
+
+
+ vim:tw=76:

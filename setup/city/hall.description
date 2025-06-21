@@ -1,0 +1,13 @@
+cd /realm/city
+load PublicRoom hall
+set hall.called ^RThe Great Hall (rm 1/509)^-
+set hall.portrait the fire in the Great Hall.
+set hall.relation by
+edit hall.description
+.wipe
+The walls of the grand hall disappear into the inky blackness far above your head.  The fire in the hearth hungrily licks at the dry wood, casting long shadows along a sea of cobbled stone.  Placed around the warm and cheery fire are several comfy looking armchairs.  People crowd together and talk in groups, backs turned away from the damp, sharing ideas and swapping stories with each other.
+
+You feel an incredible urge to sit down, relax and join in.
+.end
+transfer hall $
+cd

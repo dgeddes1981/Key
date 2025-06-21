@@ -1,0 +1,342 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: WebConnectPort,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.net.*;
+import java.io.*;
+import java.util.Date;
+import java.util.Vector;
+import java.util.StringTokenizer;
+
+/**
+  *  This class is a thread which opens and binds a port,
+  *  creating new instances of 'InteractiveConnectionion' to
+  *  deal with each connection request that comes in.
+ */
+
+public class WebConnectPort extends Daemon
+{
+	private static final long serialVersionUID = -3320377023206281762L;
+	public static final AtomicElement[] ELEMENTS =
+	{
+		AtomicElement.construct( WebConnectPort.class, Paragraph.class, "notFound",
+			AtomicElement.PUBLIC_FIELD,
+			"the output when the requested URI is not found" ),
+		AtomicElement.construct( WebConnectPort.class, Paragraph.class, "badRequest",
+			AtomicElement.PUBLIC_FIELD,
+			"the output when the URI is badly formatted" ),
+		AtomicElement.construct( WebConnectPort.class, Paragraph.class, "notImplemented",
+			AtomicElement.PUBLIC_FIELD,
+			"the output when the URI is badly formatted" ),
+		AtomicElement.construct( WebConnectPort.class, Integer.TYPE, "port",
+			AtomicElement.PUBLIC_FIELD,
+			"the port number this service binds to" )
+	};
+	
+	public static final AtomicStructure STRUCTURE = new AtomicStructure( Daemon.STRUCTURE, ELEMENTS );
+	
+		//  sleep for 5 minutes when we exceed our limit of connections
+	public static final int SLEEP_DURATION = 5 * 60 * 1000;
+
+	protected Paragraph notFound = new TextParagraph( "<HTML><HEAD><TITLE>Object not found</TITLE></HEAD><BODY><CENTER><B>The object you requested does not exist or is not accessible via the web</B></CENTER></BODY></HTML>" );
+	protected Paragraph badRequest = new TextParagraph( "<HTML><HEAD><TITLE>Bad Request</TITLE></HEAD><BODY><CENTER><B>Invalid URL</B></CENTER></BODY></HTML>" );
+	protected Paragraph notImplemented = new TextParagraph( "<HTML><HEAD><TITLE>Method not implemented</TITLE></HEAD><BODY><CENTER><B>Unknown method</B></CENTER></BODY></HTML>" );
+	
+	public int port;
+	private transient ServerSocket socket = null;
+	
+	public WebConnectPort()
+	{
+	}
+	
+	public WebConnectPort( int portNumber )
+	{
+		port = portNumber;
+	}
+	
+	public WebConnectPort( Object key, int portNumber )
+	{
+		port = portNumber;
+		setKey( key );
+	}
+	
+	public AtomicStructure getDeclaredStructure()
+	{
+		return( STRUCTURE );
+	}
+
+	public void argument( String args )
+	{
+		if( args.length() > 0 )
+		{
+			try
+			{
+				port = Integer.parseInt( args );
+			}
+			catch( NumberFormatException e )
+			{
+				throw new IllegalArgumentException( "'" + args + "' is not an integer port number" );
+			}
+		}
+	}
+	
+	public void run()
+	{
+		try
+		{
+			serveRequests();
+		}
+		catch( Throwable t )
+		{
+			if( t instanceof ThreadDeath )
+				throw (ThreadDeath) t;
+			else
+				Log.fatal( this, t.toString() );
+		}
+	}
+	
+	private static final String CONNECTION_LOG = "www_conn";
+	
+	private void serveRequests()
+	{
+		try
+		{
+			socket = new ServerSocket( port );
+		}
+		catch( java.io.IOException e )
+		{
+			Log.log( CONNECTION_LOG, e.toString() );
+			stop();
+			return;
+		}
+		
+		InetAddress ourAddress = socket.getInetAddress();
+		
+		String hn = ourAddress.getHostName();
+		Log.log( CONNECTION_LOG, "'" + hn + " " + port + "' initialised" );
+		
+		WebConnection tc = null;
+		Socket thisConnection = null;
+		
+		try
+		{
+			while( true )
+			{
+				try
+				{
+					thisConnection = socket.accept();
+				}
+				catch( java.net.SocketException e )
+				{
+						//  this almost certainly means we've been killed
+					socket.close();
+					break;
+				}
+				
+				try
+				{
+					tc = new WebConnection( thisConnection, this );
+				}
+				catch( IOException e )
+				{
+					continue;
+				}
+				catch( LimitExceededException e )
+				{
+						//  generally means we've exceeded our
+						//  limit of sockets, or something
+						//  really funny has happened
+					try
+					{
+						Thread.sleep( SLEEP_DURATION );
+					}
+					catch( InterruptedException ex )
+					{
+					}
+					
+					continue;
+				}
+				
+				Site site = tc.getSite();
+				
+				if( !site.connectionsAllowed() )
+				{
+						//  META: change this
+					handleSiteban( tc );
+					
+					tc.close();
+				}
+				else
+				{
+					tc.start();
+				}
+				
+					//  clean up our references so that they
+					//  can be garbage collected
+				tc = null;
+				thisConnection = null;
+				
+				yield();
+			}
+		}
+		catch( Exception e )
+		{
+			if( Key.isRunning() )
+			{
+				Log.debug( this, e.toString() + " during scan" );
+				e.printStackTrace( System.out );
+			}
+		}
+	}
+	
+	public void handleSiteban( WebConnection wc )
+	{
+	}
+	
+	public void handleConnection( WebConnection wc )
+	{
+		try
+		{
+			String line = wc.input();
+			
+			StringTokenizer st = new StringTokenizer( line );
+			
+			if( st.hasMoreTokens() )
+			{
+				String cmd = st.nextToken();
+				
+				if( cmd.equalsIgnoreCase( "get" ) )
+				{
+					if( st.hasMoreTokens() )
+					{
+						String where = st.nextToken();
+						String proto = null;
+						
+						if( st.hasMoreTokens() )
+						{
+							proto = st.nextToken();
+							
+							System.err.println( "WC rc: " + line );
+							
+							if( proto.startsWith( "HTTP/" ) )
+							{
+								String nextLine;
+								
+								do
+								{
+									nextLine = wc.input();
+									System.err.println( "WC rc: " + nextLine );
+								} while( nextLine.length() > 0 );
+							}
+						}
+						
+						try
+						{
+							Object o = new Search( where, Key.instance() ).result;
+							
+							if( o instanceof WebAccessible )
+							{
+								printHeaders( wc, "200 OK" );
+								
+								WebAccessible wa = (WebAccessible) o;
+								
+								wc.println( "Content-type: " + wa.getContentType() );
+								wc.println( "" );
+								
+								wc.send( wa.getContent( st.hasMoreTokens() ? st.nextToken( "" ) : "" ) );
+							}
+							else if( o instanceof Paragraph )
+							{
+								printHeaders( wc, "200 OK" );
+								wc.println( "Content-type: text/html" );
+								wc.println( "" );
+								wc.send( (Paragraph) o );
+							}
+							else
+							{
+								printHeaders( wc, "404 Object Not Found" );
+								
+								wc.println( "Content-type: text/html" );
+								wc.println( "" );
+								
+								wc.send( notFound );
+							}
+						}
+						catch( InvalidSearchException e )
+						{
+							printHeaders( wc, "404 Object Not Found" );
+							
+							wc.println( "Content-type: text/html" );
+							wc.println( "" );
+							
+							wc.send( notFound );
+						}
+					}
+					else
+					{
+						printHeaders( wc, "400 No arguments" );
+						wc.println( "Content-type: text/html" );
+						wc.println( "" );
+						wc.send( badRequest );
+					}
+				}
+				else
+				{
+					printHeaders( wc, "501 Not implemented" );
+					wc.println( "Content-type: text/html" );
+					wc.println( "" );
+					wc.send( notImplemented );
+				}
+			}
+			else
+			{
+				printHeaders( wc, "400 Bad Request " );
+				wc.println( "Content-type: text/html" );
+				wc.println( "" );
+				wc.send( badRequest );
+			}
+		}
+		catch( Exception e )
+		{
+			System.err.println( e.toString() );
+		}
+		finally
+		{
+			try
+			{
+				wc.flush();
+				wc.close();
+			}
+			catch( Exception ex )
+			{
+			}
+			
+			wc.stop();
+		}
+	}
+	
+	public void printHeaders( WebConnection wc, String result ) throws IOException
+	{
+		wc.println( "HTTP/1.0 " + result );
+		wc.println( "Server: Key" );
+		wc.println( "Date: " + (new Date()).toString() );
+	}
+}

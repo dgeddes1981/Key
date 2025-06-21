@@ -1,0 +1,96 @@
+package key.objects;
+
+import key.*;
+
+import java.util.StringTokenizer;
+
+/**
+ * Basic weapon class
+ *
+ * @author Luca Pancallo - 1999.03.30
+ */
+public class Weapon extends Material {
+
+	// You can override this declarations to use different names
+	static String[] categoryResource = { "category1","category2" };
+	static String[] typeResource = { "type1","type2" };
+
+	public static final AtomicElement[] ELEMENTS =
+	{
+		AtomicElement.construct( Weapon.class, Integer.class, "weaponCategory",
+			AtomicElement.PUBLIC_FIELD,
+			"the category of this weapon" ),
+		AtomicElement.construct( Weapon.class, Integer.class, "weaponType",
+			AtomicElement.PUBLIC_FIELD,
+			"the type of this weapon" ),
+		AtomicElement.construct( Weapon.class, Boolean.class, "isMagic",
+			AtomicElement.PUBLIC_FIELD,
+			"flag a magic weapon" ),
+		AtomicElement.construct( Weapon.class, Integer.class, "magicDamage",
+			AtomicElement.PUBLIC_FIELD,
+			"additional magic damage done by this weapon" ),
+		AtomicElement.construct( Weapon.class, Integer.class, "damage",
+			AtomicElement.PUBLIC_FIELD,
+			"the damage done by this weapon" )
+
+	};
+	
+	public static final AtomicStructure STRUCTURE = new AtomicStructure( Material.STRUCTURE, ELEMENTS );
+
+	// Category (blunt, pierce, etc...)
+	public int weaponCategory;
+
+	// Type (sword, sabre, hammer, etc....)
+	public int weaponType;
+
+	// Is a magic weapon? (usually magic weapons do not deteriorate)
+	public boolean isMagic;
+
+	// amount of normal damage inflicted by this weapon
+	public int damage;
+
+	// amount of additional magic damage done by weapon
+	public int magicDamage;
+
+	// location which wields this weapon (usually right or left hand)
+	public int wielded;
+
+	String fullPortrait = "undescribed";
+/**
+ * Weapon constructor comment.
+ */
+public Weapon() {
+
+	weaponCategory = 1;
+
+	weaponType = 1;
+
+	isMagic = false;
+
+	// default to 1 damage
+	damage = 1;
+	magicDamage = 0;
+}
+	public AtomicStructure getDeclaredStructure()
+	{
+		return( STRUCTURE );
+	}
+/**
+ * This method was created in VisualAge.
+ * @return java.lang.String
+ * @param p key.Player
+ */
+public String getFullPortrait(key.Player p) {
+	return fullPortrait;
+}
+/**
+ * This method must be overridden by subclasses. ( used by Material.defaultWield() )
+ * return -1 if you want that the object cannot be wielded.
+ *
+ * @return int
+ */
+public int numWieldLocations( Player p ) {
+	
+	return 1;
+}
+}

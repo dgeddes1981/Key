@@ -1,0 +1,574 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Tag,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  08Aug98     subtle       start of history
+**
+*/
+
+package key;
+
+import java.io.*;
+import java.util.Enumeration;
+import java.util.Vector;
+
+/**
+  * META: split into different classes for space (ie, less fields)
+ */
+public class Tag implements Serializable,Symbol,LatentlyCached,Searchable
+{
+	Atom memory;
+	
+	/**
+	  * Liquidity is how fluidly things are switched back out
+	  * of ram and onto disk.  Each 1 means that it will last
+	  * an additional cycle of the LatentCache
+	 */
+	public static final int LIQUIDITY = 1;
+	
+	public Tag( Atom m )
+	{
+		memory = m;
+	}
+	
+	private void readObject( ObjectInputStream ois ) throws IOException
+	{
+		try
+		{
+			ois.defaultReadObject();
+		}
+		catch( ClassNotFoundException e )
+		{
+			throw new UnexpectedResult( e.toString() );
+		}
+		
+		reverseReferences = new Vector( 0, 3 );
+	}
+	
+	private void writeObject( ObjectOutputStream oos ) throws IOException
+	{
+		Atom savedMemory = memory;
+		
+		if( disk != null )
+		{
+			memory = null;
+			//System.out.println( "attempting to skip writing " + savedMemory.toString() );
+		}
+		//else
+			//System.out.println( "--- begin tag of " + memory.toString() );
+		
+		oos.defaultWriteObject();
+		
+		memory = savedMemory;
+		//System.out.println( "--- end tag of " + memory.toString() );
+	}
+	
+	public Object getKey()
+	{
+		return( memory.key );
+	}
+	
+	public String getName()
+	{
+		return( memory.getName() );
+	}
+	
+	/**
+	  *  Only really meant to be called from
+	  *  Atom
+	 */
+	public void setKey( Object newkey )
+	{
+		memory.setKey( newkey );
+	}
+	
+	void setParent( Parent p, int type )
+	{
+		memory.setParent( p, type );
+	}
+	
+	public Parent getParent()
+	{
+		return( parent );
+	}
+	
+	public int getParentType()
+	{
+		return( parent_type );
+	}
+	
+	/**
+	  *  Called to tell the atom thats its being
+	  *  referenced by the referrer.
+	 */
+	public void addReference( Referrer r )
+	{
+		memory.addReference( r );
+	}
+	
+	public void removeReference( Referrer r )
+	{
+		memory.removeReference( r );
+	}
+	
+	public final Enumeration references()
+	{
+		return( memory.references() );
+	}
+	
+	public final int referenceCount()
+	{
+		return( memory.referenceCount() );
+	}
+	
+	public Atom getActual()
+	{
+		return( memory );
+	}
+	
+	public final boolean isLoaded()
+	{
+		return( memory != null );
+	}
+	
+	public void search( Search s ) throws InvalidSearchException
+	{
+		s.result = memory;
+	}
+	
+	public String getId()
+	{
+		return( memory.getId() );
+	}
+}
+
+class CacheTag extends Tag
+{
+	File disk;
+	Object key;
+	Parent parent;
+	private transient int parent_type;
+	protected transient Vector reverseReferences;
+	
+	/**
+	  * Liquidity is how fluidly things are switched back out
+	  * of ram and onto disk.  Each 1 means that it will last
+	  * an additional cycle of the LatentCache
+	 */
+	public static final int LIQUIDITY = 1;
+	
+	public CacheTag()
+	{
+		this( null, null, "" );
+	}
+	
+	public CacheTag( String theName )
+	{
+		this( null, null, theName );
+	}
+	
+	public CacheTag( File f, String theName )
+	{
+		this( f, null, theName );
+	}
+	
+	public CacheTag( File f, Atom m, String theName )
+	{
+		memory = m;
+		setKey( theName );
+		reverseReferences = new Vector( 0, 3 );
+		
+		setFile( f );
+
+		if( isLoaded() && hasFile() )
+			Key.getLatencyCache().addToCache( this );
+	}
+	
+	public CacheTag( Atom m )
+	{
+		this( null, m, "" );
+	}
+	
+	public CacheTag( File f, Atom m )
+	{
+		this( f, m, "" );
+	}
+	
+	private void readObject( ObjectInputStream ois ) throws IOException
+	{
+		try
+		{
+			ois.defaultReadObject();
+		}
+		catch( ClassNotFoundException e )
+		{
+			throw new UnexpectedResult( e.toString() );
+		}
+		
+		reverseReferences = new Vector( 0, 3 );
+	}
+	
+	private void writeObject( ObjectOutputStream oos ) throws IOException
+	{
+		Atom savedMemory = memory;
+		
+		if( disk != null )
+		{
+			memory = null;
+			//System.out.println( "attempting to skip writing " + savedMemory.toString() );
+		}
+		//else
+			//System.out.println( "--- begin tag of " + memory.toString() );
+		
+		oos.defaultWriteObject();
+		
+		memory = savedMemory;
+		//System.out.println( "--- end tag of " + memory.toString() );
+	}
+	
+	public final Object getKey()
+	{
+		return( key );
+	}
+	
+	public final String getName()
+	{
+		return( key.toString() );
+	}
+	
+	/**
+	  *  Only really meant to be called from
+	  *  Atom
+	 */
+	public void setKey( Object newkey )
+	{
+		key = newkey;
+		
+		if( disk != null )
+		{
+			disk.renameTo( new File( disk.getParent(), (String) newkey ) );
+		}
+		
+		//Key.debug( this, "name set to " + newkey );
+	}
+	
+	final void setParent( Parent p, int type )
+	{
+		parent = p;
+		parent_type = type;
+	}
+	
+	final Parent getParent()
+	{
+		return( parent );
+	}
+	
+	final int getParentType()
+	{
+		return( parent_type );
+	}
+	
+	/**
+	  *  Called to tell the atom thats its being
+	  *  referenced by the referrer.
+	 */
+	public void addReference( Referrer r )
+	{
+		reverseReferences.addElement( r );
+	}
+	
+	public void removeReference( Referrer r )
+	{
+		reverseReferences.removeElement( r );
+	}
+	
+	public final Enumeration references()
+	{
+		return( reverseReferences.elements() );
+	}
+	
+	public final int referenceCount()
+	{
+		return( reverseReferences.size() );
+	}
+	
+	private boolean duringLoad = false;
+	
+	public Atom getActual()
+	{
+		if( memory == null )
+		{
+			synchronized( this )
+			{
+				Atom loading;
+				
+				if( duringLoad )
+					throw new UnexpectedResult( "recursive call to getActual()" );
+				try
+				{
+					duringLoad = true;
+					
+					if( disk == null )
+					{
+						duringLoad = false;
+						return( null );
+					}
+					
+					System.out.println( "retrieving " + getName() );
+					
+					loading = (Atom) Key.loadObject( disk );
+					
+					memory = loading;
+					
+					if( loading != null )
+					{
+							//  this tidies up some of the Trie stuff
+						//loading.partialLoad();
+						
+							//  I'm not really sure why we're calling this...
+							//  full resolve is useful to get the objects
+							//  owner...
+						//loading.resolve();
+						//loading.fullResolve();
+						loading.setTag( this );
+						
+						System.out.println( "adding to lcache " + getName() );
+						Key.getLatencyCache().addToCache( this );
+					}
+				}
+				catch( Throwable t )
+				{
+					System.out.println( "error during getActual: " + t.toString() );
+					t.printStackTrace( System.out );
+					if( t instanceof ThreadDeath )
+						throw (ThreadDeath) t;
+					else
+						Key.debug( this, t.toString() + " during tag load" );
+					
+					return null;
+				}
+				finally
+				{
+					duringLoad = false;
+				}
+			}
+		}
+		else
+			idleTicks = LIQUIDITY;
+		
+		return( memory );
+	}
+	
+	public void sync() throws IOException
+	{
+		if( memory != null )
+		{
+			if( disk == null )
+				throw new UnexpectedResult( "sync() called on a tag with no file" );
+			else
+			{
+				boolean mip = memory instanceof Player;
+				
+				if( !mip || (mip && ((Player)memory).willSync()) )
+				{
+					System.out.println( "syncing " + getName() );
+					
+					synchronized( this )
+					{
+						Key.storeObject( memory, disk );
+					}
+				}
+			}
+		}
+		
+		reverseReferences.trimToSize();
+	}
+
+	public final boolean isLoaded()
+	{
+		return( memory != null );
+	}
+
+	public final boolean hasFile()
+	{
+		return( disk != null );
+	}
+
+	public final File getFile()
+	{
+		return( disk );
+	}
+	
+	public void erase()
+	{
+		Key.getLatencyCache().removeFromCache( this );
+		disk = null;
+	}
+	
+	public void setFile( File f )
+	{
+		if( hasFile() )
+			throw new UnexpectedResult( "attempting to reassign a file inside a tag" );
+		else
+		{
+			synchronized( this )
+			{
+				disk = f;
+			}
+			
+			if( isLoaded() && hasFile() )
+				Key.getLatencyCache().addToCache( this );
+		}
+	}
+	
+	public void search( Search s ) throws InvalidSearchException
+	{
+		s.result = getActual();
+	}
+	
+	/*
+	public void loadFrom( DataInput from ) throws IOException
+	{
+		if( hasFile() )
+			throw new UnexpectedResult( "Attempting to loadFrom in single file Tag" );
+		else if( isLoaded() )
+			throw new UnexpectedResult( "Attempting to loadFrom in loaded Tag" );
+		else
+		{
+			synchronized( this )
+			{
+				try
+				{
+					memory = (Atom) Key.instance().loadObject( from );
+					memory.setTag( this );
+				}
+				catch( ClassNotFoundException e )
+				{
+					throw new UnexpectedResult( e.toString() );
+				}
+				catch( ClassNotStorableException e )
+				{
+					throw new UnexpectedResult( e.toString() );
+				}
+				catch( InstantiationException e )
+				{
+					throw new UnexpectedResult( e.toString() );
+				}
+				catch( IllegalAccessException e )
+				{
+					throw new UnexpectedResult( e.toString() );
+				}
+			}
+		}
+	}
+	
+	public void writeTo( DataOutput to ) throws IOException
+	{
+		synchronized( this )
+		{
+			if( isLoaded() )
+			{
+				//Key.instance().storeObject( memory, to );
+			}
+			else
+				throw new UnexpectedResult( "writeTo called on unloaded Tag" );
+		}
+	}
+	*/
+
+	int idleTicks = LIQUIDITY;
+	
+	public boolean modified()
+	{
+		return( (idleTicks > 0) || (!memory.canSwap()) );
+	}
+
+	public void resetModify()
+	{
+		if( memory.canSwap() )
+			idleTicks--;
+	}
+
+	public synchronized void deallocate()
+	{
+		//System.out.println( "swapping out tag " + getName() );
+		
+		if( memory != null )
+		{
+			try
+			{
+				sync();
+				memory.swapout();
+				memory = null;
+			}
+			catch( IOException e )
+			{
+				Key.debug( this, e.toString() + " while swapping out atom " + getName() + " - not swapped." );
+				e.printStackTrace( System.out );
+			}
+		}
+	}
+
+	/**
+	  *  An integer key implies that an integer follows
+	  *  and will be loaded
+	 */
+	public static final int INTEGER_KEY = 1;
+	
+	/**
+	  *  A string key implies that a string follows and
+	  *  will be loaded
+	 */
+	public static final int STRING_KEY = 2;
+
+	/**
+	  *  An other key implies that a classname
+	  *  follows, as well as the key being 'storable'
+	 */
+	public static final int OTHER_KEY = 3;
+	
+	/**
+	  *  An AliasListKey.
+	 */
+	public static final int ALIAS_KEY = 4;
+	
+	public final int getKeyType()
+	{
+		if( key instanceof String )
+			return( STRING_KEY );
+		else if( key instanceof Integer )
+			return( INTEGER_KEY );
+		else if( key instanceof AliasListKey )
+			return( ALIAS_KEY );
+		else
+			return( OTHER_KEY );
+	}
+	
+	public String getId()
+	{
+		if( parent != null )
+		{
+			switch( parent_type )
+			{
+				case AtomicElement.PARENT_TYPE:
+					return( parent.getId() + "." + getName() );
+				case Container.PARENT_TYPE:
+					return( parent.getId() + "/" + getName() );
+			}
+		}
+		
+		return( Key.unlinkedString + getName() );
+	}
+}

@@ -1,0 +1,236 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: WebConnection,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import key.web.Converter;
+
+import java.net.Socket;
+import java.net.InetAddress;
+import java.io.*;
+import java.util.Enumeration;
+import java.util.StringTokenizer;
+
+/**
+ */
+public class WebConnection
+extends SocketIC
+{
+	public static final String CRLF = "\r\n";
+	public static final int INPUT_BUFFER = 640;
+	private transient WebConnectPort www;
+	
+	/**
+	  *  The constructor must take a socket as its sole
+	  *  argument
+	  *
+	  * @param s The socket that the connection is on
+	 */
+	public WebConnection( Socket s, WebConnectPort wcp ) throws IOException
+	{
+		super( s );
+		www = wcp;
+		inBuffer = new char[INPUT_BUFFER+2];
+		
+			//  since we don't have a null constructor, we can't
+			//  be created by the factory: this is our concession.
+		Factory.postCreateProcess( this );
+	}
+	
+	public void send( Paragraph p )
+	{
+		try
+		{
+			output.write( Converter.convert( p ) );
+			output.flush();
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	private int lastCharWas = -1;
+	char[] inBuffer;
+	
+	/**
+	  * This function blocks until a line of input is
+	  * recieved.  Think of it as being much like the
+	  * input statement in BASIC of old. *shudder*
+	 */
+	public String input()
+	{
+		try
+		{
+			int where=0;
+			char b=' ';
+			
+			output.flush();
+			
+			do
+			{
+				int i;
+				
+					//  continuously skip until a CR or LF
+					//  when the buffer runs out
+				if( where >= INPUT_BUFFER )
+				{
+					output.write( "414 Request-URI too long" + CRLF );
+					close();
+					throw new IOException( "too long" );
+				}
+				else
+					i = inputStream.read();
+				
+				if( i != -1 )
+					b = (char) i;
+				else
+					throw new IOException( "connection closed" );
+				
+				if( b >= 32 && b <= 126 )    //  valid ascii characters only
+				{
+					inBuffer[where++] = (char) b;
+				}
+				else if( b == 8 || b == 127 )
+				{
+					if( where > 0 )
+						where--;
+				}
+			} while( !((b == '\r') && !(lastCharWas == '\n')) && !((b == '\n') && !(lastCharWas == '\r' )) );
+
+			lastCharWas = b;
+			
+			return( new String( inBuffer, 0, where ) );
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	public void parseToHTML( String message, boolean replaceCR )
+	{
+		try
+		{
+			output.write( Converter.convert( message, replaceCR ) );
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	public boolean check()
+	{
+		return( false );
+	}
+	
+	public void run()
+	{
+		www.handleConnection( this );
+		www = null;
+	}
+	
+	public final void sendLine()
+	{
+		try
+		{
+			output.write( "<HR>" + CRLF );
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	public final String hiddenInput( String prompt )
+	{
+		return( input() );
+	}
+	
+	public final String input( String prompt )
+	{
+		return( input() );
+	}
+	
+	public final void blankLine()
+	{
+		try
+		{
+			output.write( "<BR>" + CRLF );
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	public final void sendSubliminal( String message, int duration, int frequency )
+	{
+	}
+
+	public final void send( String message )
+	{
+		parseToHTML( message, true );
+	}
+	
+	public final void send( String message, int a, int b, int c, int d, boolean r )
+	{
+		parseToHTML( message, true );
+	}
+	
+	public final void sendRaw( String message )
+	{
+		parseToHTML( message, true );
+	}
+
+	public final void println( String message )
+	{
+		try
+		{
+			output.write( message + CRLF );
+		}
+		catch( IOException e )
+		{
+			close();
+			throw new NetworkException( e );
+		}
+	}
+	
+	public final void send( char qualifier, String message )
+	{
+		parseToHTML( qualifier + message, true );
+	}
+	
+	public final void send( Paragraph para, boolean okayToPage )
+	{
+		send( para );
+	}
+	
+	public final boolean isPaging()
+	{
+		return( false );
+	}
+}

@@ -1,0 +1,341 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>KEY - player documentation</title>
+<meta name="Author" content="Paul Mclachlan">
+<meta name="Description" content="Player manual">
+<meta name="Keywords" content="key help faq howto manual">
+<link rel="stylesheet" href="default.css" type="text/css">
+</head>
+
+<body text="#000000" bgcolor="#FFFFFF" link="#CD853F" vlink="#55188A" alink="#008000">
+<center>
+
+<table border=0 width=95% cellspacing=0 cellpadding=10>
+	<tr>
+		<td>
+			<a href="../">
+			<img src = "../images/key-logo-small.gif" alt="Key Logo" border=0  align="center">
+			</a>
+		</td>
+		
+		<td>
+		<center>
+			<img src = "../images/resources-title.jpg" alt="Key resources" border=0>
+		</center>
+		</td>
+	</tr>
+</table>
+
+</center>
+
+<H1>7. Basic Permissions: who can do what</H1>
+<P>
+It is through the permissions commands that you may specify 'who' may do
+'what'.  For instance, if you wanted to prevent snapper from talking to you,
+you could '<KBD>deny snapper tell</KBD>'.
+<P>
+The permissions system in Key is extremely powerful, providing an
+implementation something known as 'Access Control Lists' in computing.
+<P>
+This chapter introduces you to the basics of using this permission system
+for yourself.  When you start building rooms seriously, or want to configure
+a clan, you should also read the chapter on contextual permissions.
+<UL>
+	<H2>Overview</H2>
+	The permission system revolves around two key elements: <SPAN
+	class=example>actions</SPAN> and <SPAN class=example>entities</SPAN>.
+	An action is something that an entity may try and do to you.
+	<P>
+	Some examples of entities include <SPAN class=example>players</SPAN>,
+	<SPAN class=example>clans</SPAN>, and the pseudo-groups '<SPAN
+	class=example>friends</SPAN>', and '<SPAN
+	class=example>everyone</SPAN>'.
+	<P>
+	Some examples of actions include <SPAN class=example>tell</SPAN>, <SPAN
+	class=example>find</SPAN>, and <SPAN
+	class=example>seePrivateInfo</SPAN>.
+	<P>
+	You may set a permission entry (<SPAN class=example>allow</SPAN>, <SPAN
+	class=example>deny</SPAN>, or <SPAN class=example>default</SPAN>) for
+	any combination of these.
+	<P>
+	For instance, you can stop someone talking to you with a combination of
+	<SPAN class=example>player</SPAN> and <SPAN class=example>tell</SPAN>,
+	using a command such as '<KBD>deny snapper tell</SPAN>'.
+	'snapper' is the entity, 'tell' is the action, and 'deny' is the
+	permissions you're setting.
+	<P>
+	This is probably a little bit confusing, so here are some more examples:
+	<TABLE>
+		<TR>
+		<TD><KBD>allow&nbsp;snapper&nbsp;find</KBD></TD>
+		<TD>This means that snapper will be able to find out where you are
+		(important for the 'where' command and 'join' commands) even when
+		you're hiding.</TD>
+		</TR><TR>
+		<TD><KBD>allow&nbsp;snapper&nbsp;seePrivateInfo</KBD></TD>
+		<TD>This means that snapper will be able to see your email address
+		even when you set it to be private with "<KBD>email private</KBD>".</TD>
+		</TR>
+	</TABLE>
+	
+	<H2>Actions, Allow and Deny</H2>
+	So far, our commands have only modified the permissions for one person.
+	The '<KBD>actions</KBD>' command shows what your current
+	permissions look like:
+	<PRE>
+-&gt; <KBD>actions</KBD>
+--------------------------------------------  actions for sLiDe  ---
+1 entry in the list:
+snapper -  [Allow: find, seePrivateInfo] [Deny: tell]
+
+--------------------------------------------------------------------
+Allow: [friend, tell]
+Deny: [summon, seePrivateInfo, find]
+--------------------------------------------------------------------</PRE>
+	At the top, you can see the modifications that we made for snapper.  The
+	list at the bottom shows the default values for each of your available
+	actions.
+	<P>
+	If someone doesn't have a specific entry on the list then these actions
+	are used for them.  That means that joey can tell to me but cannot find
+	me when I'm hiding.
+	<P>
+	To change these defaults you still use the allow and deny commands.
+	<P>
+	Let us pretend that you're deep in conversation in your room and you
+	don't want anybody to be able to send tells to you:
+	<PRE>
+-&gt; <KBD>deny tell</KBD>
+Everyone can no longer tell sLiDe
+-&gt; <KBD>actions</KBD>
+--------------------------------------------  actions for sLiDe  ---
+1 entry in the list:
+snapper -  [Allow: find, seePrivateInfo]  [Deny: tell]
+
+--------------------------------------------------------------------
+Allow: [friend]
+Deny: [summon, seePrivateInfo, tell, find]
+--------------------------------------------------------------------</PRE>
+	Once we're done with our conversation, remember to allow people to talk
+	to you again!
+	<PRE>
+-&gt; <KBD>allow tell</KBD>
+Everyone can now tell sLiDe</PRE>
+	
+	<H2>Default</H2>
+	'<KBD>Default</KBD>' is the command that complements allow
+	and deny.  Default clears an entry from the permission list, meaning
+	that that entry will revert to the defaults listed at the bottom.
+	<P>
+	There are two ways to use this command, '<KBD>default
+	&lt;name&gt; &lt;action&gt;</KBD>', and '<KBD>default
+	&lt;name&gt;</KBD>'.
+	<P>
+	Here is a script based example of the first, to clear a specific action:
+	<PRE>
+-&gt; <KBD>actions</KBD>
+--------------------------------------------  actions for sLiDe  ---
+1 entry in the list:
+snapper -  [Allow: find ,seePrivateInfo]  [Deny: tell]
+
+--------------------------------------------------------------------
+Allow: [friend, tell]
+Deny: [summon, seePrivateInfo, find]
+--------------------------------------------------------------------
+-&gt; <KBD>default snapper tell</KBD>
+snapper no longer has a specific entry for 'tell sLiDe'
+-&gt; <KBD>actions</KBD>
+--------------------------------------------  actions for sLiDe  ---
+1 entry in the list:
+snapper -  [Allow: find ,seePrivateInfo]
+
+--------------------------------------------------------------------
+Allow: [friend, tell]
+Deny: [summon, seePrivateInfo, find]
+--------------------------------------------------------------------</PRE>
+	
+	As you can see, the "[Deny: tell]" has disappeared from the permission
+	list.  As tell is currently defaulting to allow (see the second last
+	line), snapper will now be able to talk to me.
+	<P>
+	You use the second form of default to wipe an entire person from your
+	permission list:
+	<PRE>
+-&gt; <KBD>default snapper</KBD>
+snapper no longer has a specific entry on sLiDe
+-&gt; <KBD>actions</KBD>
+--------------------------------------------  actions for sLiDe  ---
+No list entries
+--------------------------------------------------------------------
+Allow: [friend, tell]
+Deny: [summon, seePrivateInfo, find]
+--------------------------------------------------------------------</PRE>
+	With those four commands (<KBD>allow</KBD>, <KBD>deny</KBD>,
+	<KBD>default</KBD>, <KBD>actions</KBD>) you know everything you will ever
+	need to know about manipulating permission lists on Key.
+	<H2>Available actions:</H2>
+	<P>
+	Here is a list of the available actions, along with a brief explanation
+	of what they are for:
+	<UL>
+		<H3>tell:</H3>
+		<UL>
+			This permission permits or prevents people from talking to you
+			directly with commands such as '<KBD>tell</KBD>',
+			'<KBD>remote</KBD>', or '<KBD>rthink</KBD>'.  
+			Useful permutations include:
+			<P>
+			<KBD>deny snapper tell</KBD> - prevents snapper
+			from talking to you.  Good if you think snapper is an annoying
+			$#)*(.
+			<BR>
+			<KBD>allow snapper tell</KBD> - allows snapper to
+			talk to you even if you have set 'deny tell'.
+			<BR>
+			<KBD>default snapper tell</KBD> - clears snappers
+			tell entry from your list.
+		</UL>
+
+		<H3>find:</H3>
+		<UL>
+			This permission only comes into play when you hide with the
+			'<KBD>hide</KBD>' command.  When you do that, you
+			may allow individuals to be able to see your location and join
+			you even though you're hiding.  Useful permutations include:
+			<P>
+			<KBD>allow snapper find</KBD> - allows snapper to
+			find you even if you are hiding.
+			<BR>
+			<KBD>default snapper find</KBD> - prevents snapper
+			from finding you if you are hiding.  (This works because you
+			shouldn't ever have a reason to 'allow find', as this is the
+			same as just not hiding in the first place.)
+		</UL>
+
+		<H3>seePrivateInfo:</H3>
+		<UL>
+			This permission allows individuals to see certain parts
+			of your profile even when they are set as private.  At the
+			moment, this only consists of your email address, however it
+			could be extended in the future to include your private florin
+			count, or your hidden time.  Useful permutations include:
+			<P>
+			<KBD>allow snapper seePrivateInfo</KBD> - allows
+			snapper to see your email address even when it's set to private.
+			<BR>
+			<KBD>default snapper seePrivateInfo</KBD> -
+			prevents snapper from seeing anything on your profile that is
+			set to private.  (As with find, there isn't any need to change
+			the default values for this action).
+		</UL>
+		
+		<H3>summon:</H3>
+		<UL>
+			This permission allows others to 'summon' or 'grab' you.
+			Essentially, this entails them forcibly moving you from wherever
+			you are to where they are.  You might want some of your friends
+			to be able to grab you into their rooms for a talk, for
+			instance.
+			<P>
+			<KBD>allow summon</KBD> - allows everyone to grab
+			you.
+			<BR>
+			<KBD>deny summon</KBD> - (The default).  Prevents
+			people from grabbing you.
+			<BR>
+			<KBD>allow snapper summon</KBD> - Unconditionally
+			allows snapper to grab you, even if you have 'deny summon'
+			turned on.
+			<BR>
+			<KBD>deny snapper summon</KBD> - Unconditionally
+			prevents snapper from grabbing you, even if you have 'allow
+			summon' turned on.
+			<BR>
+			<KBD>default snapper summon</KBD> - snapper will
+			be able to grab you only if you have 'allow summon' turned on.
+		</UL>
+
+		<H3>friend:</H3>
+		<UL>
+			I've saved my favourite to last.  This action can be used to
+			prevent people from friending you.  By default, everyone is
+			allowed to friend you.  You can disable this with <KBD>deny
+			friend</KBD>.  Make sure your read the 'neat
+			tricks' section at the end of this chapter if you think you like
+			the idea of stopping people from friending you.
+		</UL>
+	</UL>
+
+	<H2>Available entities (or 'neat tricks')</H2>
+	
+	Here is a list of the available entities, along with some ideas for how
+	to use them.
+
+	<UL>
+		<H3>players:</H3>
+		<UL>
+			Obviously you can use any players name on your permission list.
+			This has been the basis for all of our examples so far (poor
+			snapper) since it is the closest to the old EW behaviour.
+		</UL>
+
+		<H3>friends:</H3>
+		<UL>
+			Thats right!  You can put the pseudo-group 'friends' on your
+			permission list.  How about these ideas:
+			<BR>
+			<KBD>allow friends summon</KBD> - If you use this
+			with 'deny summon', only your friends will be able to grab you.
+			<BR>
+			<KBD>allow friends seePrivateInfo</KBD> - If you
+			set your email address to private, only your friends will be
+			able to see it.
+			<BR>
+			And my favourite, <KBD>allow friends friend</KBD>
+			- When used with 'deny friend', only people that you have
+			already friended can friend you back.  (Note: if two people have
+			this on, someone will have to turn it off if you want to make
+			each other friends).
+		</UL>
+
+		<H3>clans:</H3>
+		<UL>
+			Clans can be put on your permission list, as well.   Here are
+			some ideas:
+			<BR>
+			<KBD>deny wolf tell</KBD> - people in clan wolf
+			can't talk to you.
+			<BR>
+			<KBD>allow wolf seePrivateInfo</KBD> - people in
+			clan wolf can see your email address even when it's private.
+		</UL>
+
+		<H3>groups and ranks:</H3>
+		<UL>
+			The available set of system groups depends upon the
+			administrators of the talker.  There might be, for instance, a
+			group for newbies, or a group for people who have volunteered to
+			help others out with problems.  For all I know, there could be
+			groups for people interested in lycanthropy.  The administrator
+			can provide you with a list of the available groups, and maybe
+			even create some for you, if you've got ideas.
+		</UL>
+	</UL>
+</UL>
+
+<center>
+<hr>
+
+These pages are sponsored by 
+<a href="http://www.progsoc.uts.edu.au">progsoc</a>, on
+<a href="http://realm.progsoc.uts.edu.au/">realm</a>.
+<BR>(last modified: <!--#echo var="LAST_MODIFIED" -->, <!--#exec cgi="/cgi-bin/counter" --> hits)
+
+</center>
+</body>
+</html>
+

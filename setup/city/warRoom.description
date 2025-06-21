@@ -1,0 +1,10 @@
+cd /realm/city
+load PublicRoom warroom
+set warroom.called ^RThe War Room^-
+set warroom.portrait the War room.
+edit warroom.description
+.wipe
+You are in a room decorated with shields and tapestries of war.  In the centre of the room sits a large table with a bright light suspended in mid air.  On closer observation you notice that on the table is a minature model of the realm.  In the model you can see little figures that represent each person.  You look hard and see a little model of a person standing over a table of a model of a room decorated with shields and tapestries of war...
+.end
+transfer warroom $
+cd

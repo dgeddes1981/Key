@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Key Project Technical notes: Tries</TITLE>
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (X11; I; Linux 2.0.13 i486) [Netscape]">
+   <META NAME="Author" CONTENT="Paul Mclachlan">
+   <META NAME="Description" CONTENT="This is an in-progress collection of technical notes for the Key Project.">
+   <META NAME="Keywords" CONTENT="key technical notes">
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#CD853F" VLINK="#55188A" ALINK="#008000">
+
+<H2 ALIGN=CENTER><U><FONT COLOR="#800000">Key Project Technical Notes:
+Tries</FONT></U></H2>
+
+<H2 ALIGN=CENTER><B><FONT COLOR="#008000">October 1996</FONT></B></H2>
+
+<CENTER><P><FONT COLOR="#008000">by Paul Mclachlan<BR>
+aka subtle</FONT></P></CENTER>
+
+<H3>
+<HR WIDTH="100%"></H3>
+
+<H3><FONT COLOR="#191970">Introduction to tries</FONT></H3>
+
+<P>A trie, while probably not an original concept, is something I&nbsp;developed
+for the unique problem of partially matching a word, given the definitive
+first section of the word. For instance, if a player wished to 'examine
+subtle', they need only type the smallest amount of information necessary
+to get this across (for an unambiguous meaning).</P>
+
+<P>And so, in all likelyhood, 'ex sub' could well be enough. In order to
+do this efficiently, I&nbsp;devised what I&nbsp;call a 'trie', a name I&nbsp;adopted
+from the algorithm which inspired the idea, also called a trie. (The two
+algorithms are effectively identical, it is really only a matter of scale).</P>
+
+<P>More information on the original trie can be found in Ian Oliver's book,
+&quot;Programming Classics:&nbsp;Implementing the World's Best Algorithms&quot;,
+ISBN 0-13-100413-1.</P>
+
+<H3><FONT COLOR="#191970">Assumptions</FONT></H3>
+
+<P>My implementation of the algorithm makes several assumptions, the most
+important of which is that <B>no key will ever contain non-alphabetic characters.</B>
+The other assumption is that names are essentially dissimilar; that the
+heys contained by the database have a realtively even spread - that they're
+not all very close to another.</P>
+
+<P>The second seems a reasonable assumption to make about the names people
+choose for themselves, and the second, a reasonable restriction to impose.
+And so we shall.</P>
+
+<H3><FONT COLOR="#191970">The structure of a Trie</FONT></H3>
+
+<P>A Trie is ultimately a recursive data structure, very similar to a tree.
+As the leaves of the tree, a trie has the letters of the alphabet. On each
+leaf may rest an element, or another branch.</P>
+
+<P>A simple trie, with only one element ('snapper') in it, looks like this:</P>
+
+<PRE>         A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                                             |
+                                          snapper</PRE>
+
+<P>Now, if we add 'subtle' to the Trie: </P>
+
+<PRE>         A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                                             |
+                 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                                           |             |
+                                        snapper        subtle
+</PRE>
+
+<P>And you can see that the tree grows. </P>
+
+<P>There is a special case, and that is where we insert two conflicting
+names, such that one ends before the conflict is resolved. I refer to this
+as the 'at' case. For example, where we to insert 'sub' and 's' as keys
+into the system: </P>
+
+<PRE>  A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                                      |
+      A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                                              |
+                                             sub
+</PRE>
+
+<P>But where can we insert the 's'? The only conceivable spot has already
+been occupied by a Trie.</P>
+
+<P>The solution was to create one more hole off the trie, called 'at' -
+which allows for this case, and allows us to hang an additional element,
+seperate from the array off the class.</P>
+
+<H3><FONT COLOR="#191970">Searching</FONT></H3>
+
+<P>To look up an individual element, we simply check the first letter of
+the key, and examine the contents of that reference. If it's an element
+- we're finished. If its another Trie, we must pass the request down to
+the next trie, so that it may check the next letter along in the string.</P>
+
+<P>If the provided key is too short to uniquely match an element, it is
+trivial to extract the matching elements for feedback to the user. This
+allows for sessions such as:</P>
+
+<PRE>-&gt; examine sub</PRE>
+
+<PRE>Multiple matches:  subtle and subzero</PRE>
+
+<P>The increased feedback that this structure makes available on a failed
+search is a useful feature in such an online system.</P>
+
+<H3><FONT COLOR="#191970">Inserting &amp;&nbsp;Removing</FONT></H3>
+
+<P><FONT COLOR="#000000">One of the better (and important)&nbsp;features
+of the trie is its dynamic growth. The trie will only ever use as much
+space as it needs.</FONT></P>
+
+<H3><FONT COLOR="#191970">Exceptions</FONT></H3>
+
+<P>The Java trie implementation owns two exception classes:</P>
+
+<UL>
+<LI><B>NonUniqueKeyException</B>: Occurs if you try to insert the same
+key twice. </LI>
+
+<LI><B>BadTrieIndexException</B>: Occurs if you attempt to pass non-alphabetic
+characters to the trie in the key.</LI>
+</UL>
+
+<H3><FONT COLOR="#191970">Efficiency</FONT></H3>
+
+<P>A search, even without the full key is extremely fast when compared
+to a hash table or the worst case linked list, for the simple reason that
+in most cases you don't even need a full key (string)&nbsp;compare.</P>
+
+<P>Insertion, deletion, and iteration are relatively slow.</P>
+
+<P>The trie data structure can also be <I>huge</I> when compared to more
+traditional data structures. With this consideration, I&nbsp;ran a small
+test where the names from the current <I>Forest</I> playerfiles (5989 names)
+were placed into a trie, and the results examined. There were 2,896 trie
+data structures created, and the mean depth of the trie search was 3.6
+characters.</P>
+
+<P>With these results, even with no class overhead, the trie would use
+the equivalent of 27 x 2896 references; this would amount to several hundred
+kilobytes. As a trie structure this large would only ever exist in the
+system in once place at any one time, this is acceptable, given that the
+system is not geared towards memory efficiency.</P>
+
+<P>Since I expect that searching and iteration will be the more common
+actions on the data structure (at least in its use here), a linked list
+will often be used in conjunction with the trie, slowing down insertion
+and deletion even further, but not significantly increasing memory usage.
+This list can be used as a method of quickly iterating through the available
+elements.</P>
+
+</BODY>
+</HTML>

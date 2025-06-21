@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.06 [en] (X11; I; Linux 2.0.35 i586) [Netscape]">
+   <META NAME="Author" CONTENT="Paul Mclachlan">
+   <META NAME="Description" CONTENT="This is an for the Key Project.">
+   <META NAME="Keywords" CONTENT="key">
+   <TITLE>Key Project</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#FFFFFF" LINK="#CD853F" VLINK="#55188A" ALINK="#008000">
+
+<CENTER>
+<H2>
+<U><FONT COLOR="#800000">Key Project</FONT></U></H2></CENTER>
+
+<CENTER><B><FONT COLOR="#008000">October 1996</FONT></B>
+<P><FONT COLOR="#008000">by Paul Mclachlan</FONT>
+<BR><FONT COLOR="#008000">aka subtle</FONT></CENTER>
+
+<BR>&nbsp;
+<H3>
+
+<HR WIDTH="100%"></H3>
+
+<H3>
+<FONT COLOR="#191970">superstructure overview</FONT></H3>
+<FONT COLOR="#000000">The system superstructure is that broad framework
+that ties Atoms together.&nbsp; By way of contrast, the system substructure
+is the makeup of the Atoms themselves.</FONT><FONT COLOR="#000000"></FONT>
+<P><FONT COLOR="#000000">There are several basic classes</FONT>
+<UL>
+<LI>
+<FONT COLOR="#000000">Factory</FONT></LI>
+
+<UL><FONT COLOR="#000000">A singleton that controls the construction of
+Atoms</FONT></UL>
+
+<LI>
+<FONT COLOR="#000000">Registry</FONT></LI>
+
+<UL><FONT COLOR="#000000">A singleton that assosciates Atoms with their
+indexes.&nbsp; It also manages loading and saving Atoms to disk.</FONT></UL>
+
+<LI>
+<FONT COLOR="#000000">Reference(s)</FONT></LI>
+
+<UL><FONT COLOR="#000000">A&nbsp;reference is a persistent method for pointing
+to an Atom.</FONT></UL>
+
+<LI>
+<FONT COLOR="#000000">Atom(s)</FONT></LI>
+
+<UL><FONT COLOR="#000000">The building block of the core makeup of the
+system.</FONT></UL>
+</UL>
+<FONT COLOR="#000000">There are several basic operations that this superstructure
+takes care of:</FONT>
+<OL>
+<LI>
+<FONT COLOR="#000000">Creating a new standalone Atom</FONT></LI>
+
+<OL><FONT COLOR="#000000"></FONT>&nbsp;</OL>
+
+<LI>
+<FONT COLOR="#000000">Creating a new part atom</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Loading a distinct atom from disk</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Swapping a distinct atom to disk</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Registering an atom part</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">De-registering an atom part</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Registering a temporary atom</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">De-registering a temporary atom</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Loading the core system from disk</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Writing the core system to disk</FONT></LI>
+
+<LI>
+<FONT COLOR="#000000">Destroying an atom</FONT></LI>
+</OL>
+<FONT COLOR="#000000"></FONT>
+<BR><FONT COLOR="#000000"></FONT>&nbsp;
+</BODY>
+</HTML>

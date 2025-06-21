@@ -1,0 +1,15 @@
+cd /realm/outside
+load PublicRoom arches
+set arches.called ^cStone Arches^-
+set arches.portrait contemplating ancient mysteries at the stone arches.
+set arches.relation ""
+edit arches.description
+.wipe
+Before you stands seven stone archways.  Their origin and purpose lost to the world.  Each archway is very well worn by the elements.  Dispite the forces of nature, the runes etched into the surface of the stone defy the laws of the reason and logic. 
+
+Some say that they are the gateway that the Creators errected after spawning the world.  Others say that they are shrines to ancient wizards.  Still others say that they are a hoax.  No one really knows except for those who built them.
+
+You see a path that leads into the peaks of the mountains and an old road that leads further south and gets lost in the hills.
+.end
+transfer arches $
+cd

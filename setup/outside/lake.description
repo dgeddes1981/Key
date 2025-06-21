@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom lake
+set lake.called ^bLake Tranquility^-
+set lake.relation near
+set lake.portrait a lake most tranquil.
+edit lake.description
+.wipe
+The still waters of the lake make the perfect place for friends to sit with each other on the grassy shore and talk the hours away.  Small sailing boats cut through the surface of the water with ease and the mild breeze extends the sails out in all their coloured beauty.  A truely relaxing location.
+
+The stream that feeds the lake trickles lazily to the east.  The lake runs into the gorge wearing the its' floor smooth.
+.end
+transfer lake $
+cd

@@ -1,0 +1,13 @@
+cd /realm/outside
+load PublicRoom vale
+set vale.called ^cThe Vale^-
+set vale.portrait somewhere in the vale.
+set vale.relation "" 
+edit vale.description
+.wipe
+The wide open space of the vale gives you the sensation of freedom.  The sun shines bathing all in the vale in a warm blanket of relaxation.  The day is so clear that it appears that you can see from one end of the realm to the other.  Facing North you can see a gorge.  To the East you see the tranquil waters of the lake.  To the South the ground becomes very hilly and you cannot see what lies beyond that way, rubble lines the ground.
+
+In the very centre of the vale you can see what appears to be black granite arches.  You have an unsettling urge drawing you there.  Your feet itch to tread upon the trail.
+.end
+transfer vale $
+cd

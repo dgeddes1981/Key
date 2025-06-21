@@ -1,0 +1,12 @@
+cd /realm/city
+load PublicRoom study
+set study.called ^RThe Library Study^-
+set study.portrait the study
+edit study.description
+.wipe
+The study is a large dusty room filled with long wooden tables and benches.  Looking on the table you notice ancient names etched into the wood.  You are filled with a sense of awe as you realise that this is where the great ones sat and studied the mystical ways.  On a raised platform you spy a simple, yet ornate, lectern holding a large open tome.  As you walk up the stairs of the platform it seems that the number of stairs keeps growing and you never get any closer to the podium.
+
+You descend the steps and take a seat on the old benches and dream of the day when you might be able to see what is written in the book.
+.end
+transfer study $
+cd

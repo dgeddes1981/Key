@@ -1,0 +1,148 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: AtomicProperty,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.io.IOException;
+import java.io.DataOutput;
+import java.io.DataInput;
+import java.util.Date;
+
+/**
+  *  Use this class if you want an ATOM to be stored in a property.
+  *
+  *  This class *does* reset the parent of the atom
+  *
+  *  NB:  _NOT_ if you want a *reference* to an atom to be stored here,
+  *       then you should use a ReferenceProperty like everyone else ;p~
+ */
+public class AtomicProperty extends DataProperty implements Parent
+{
+	/**
+	  * @param propertyOf which atom this property is a property of
+	 */
+	public AtomicProperty( String name, Type theType, Atom parent )
+	{
+		super( name, theType, parent );
+	}
+
+	public AtomicProperty( String name, Type theType, Atom propertyOf, Object theValue ) throws TypeMismatchException
+	{
+		this( name, theType, propertyOf );
+		set( theValue );
+	}
+
+	protected void checkType( Type type )
+	{
+		if( !( type.isA( Type.ATOM ) ) )
+			throw new UnexpectedResult( "trying to create an AtomicProperty with a type (" + type.getName() + ") that isn't an atom" );
+	}
+
+	public void set( Object o ) throws TypeMismatchException
+	{
+		if( value != null )
+			((Atom)value).dispose();
+		
+		super.set( o );
+
+		if( value != null )
+		{
+			((Atom)value).setKey( name );
+			((Atom)value).setOwner( parent.getOwner() );
+			((Atom)value).setParent( this );
+		}
+	}
+	
+	public void writeTo( DataOutput to ) throws IOException
+	{
+		Key.storeObject( (Storable) value, to );
+	}
+	
+	/**
+	  *  You need to have the property class set up *before*
+	  *  calling this command
+	 */
+	public void loadFrom( DataInput from ) throws IOException
+	{
+		Atom newVal = null;
+		try
+		{
+			newVal = (Atom) Key.loadObject( from );
+		}
+		catch( ClassNotFoundException e )
+		{
+			Key.debug( this, e.toString() );
+			return;
+		}
+		catch( ClassNotStorableException e )
+		{
+			Key.debug( this, e.toString() );
+			return;
+		}
+		catch( InstantiationException e )
+		{
+			Key.debug( this, e.toString() );
+			return;
+		}
+		catch( IllegalAccessException e )
+		{
+			Key.debug( this, e.toString() );
+			return;
+		}
+		
+		if( Key.verbose )
+			Key.debug( this, "loading " + getParentId() + name + " into newVal" );
+		
+		set( newVal );
+	}
+	
+	public void noLongerReferencing( Atom a )
+	{
+		if( a == value )
+			value = null;
+		else
+			Key.debug( this, "noLongerReferencing called for an atom that we're not referencing" );
+	}
+	
+	public String getParentId()
+	{
+		return( parent.getId() + "." );
+	}
+
+	public String toString()
+	{
+		if( value != null )
+			return( value.toString() );
+		else
+			return( Key.nullString );
+	}
+
+	public void resolve()
+	{
+		if( value != null )
+			((Atom)value).resolve();
+	}
+	
+	public void fullResolve()
+	{
+		if( value != null )
+			((Atom)value).fullResolve();
+	}
+}

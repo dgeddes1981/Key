@@ -1,0 +1,186 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+package key.sql;
+
+import key.*;
+import java.sql.*;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.*;
+import java.util.Vector;
+
+import postgresql.largeobject.*;
+
+public final class Storage
+{
+	public static final String JDBC_DRIVER = "postgresql.Driver";
+	public static final String JDBC_URL = "jdbc:postgresql:key";
+	public static final String JDBC_USER = "subtle";
+	public static final String JDBC_PASSWORD = "just";
+	
+	private static boolean enabled = false;
+	
+	static Connection db;
+	static Statement st;
+	static LargeObjectManager blobManager;
+	
+	static
+	{
+		if( key.Main.CONNECT_TO_DATABASE )
+		{
+			try
+			{
+				Class.forName( JDBC_DRIVER );
+				
+				try
+				{
+					db = DriverManager.getConnection( JDBC_URL, JDBC_USER, JDBC_PASSWORD );
+					st = db.createStatement();
+					blobManager = ((postgresql.Connection)db).getLargeObjectAPI();
+					Log.bootLog( "Connected to " + JDBC_URL );
+					enabled = true;
+				}
+				catch( Exception e )
+				{
+					Log.debug( Storage.class, "Could not connect to database: " + e.getMessage() );
+				}
+			}
+			catch( ClassCastException e )
+			{
+				Log.debug( Storage.class, "SQL driver not found, database support disabled" );
+			}
+			catch( Exception e )
+			{
+				Log.debug( Storage.class, "Miscellaneous exception initialising SQL: " + e.toString() );
+			}
+		}
+	}
+	
+	public static void initialiseDB()
+	{
+	}
+	
+	public static void storeObject( Atom a )
+	{
+		if( !enabled )
+			return;
+		
+		final StringBuffer fieldNames = new StringBuffer();
+		final Vector fieldValues = new Vector();
+		
+		try
+		{
+			scanAllFields( a.getClass(), a, fieldNames, fieldValues );
+			
+			//System.err.println( "Stored object: " + a.getId() );
+			//System.err.println( "Fields:\n" + fieldNames.toString() + "\n" );
+			//System.err.println( "Values:\n" + fieldValues.toString() + "\n" );
+			
+			//  Table definition:
+			//  -----------------
+			//      create table atoms
+			//      (
+			//        index int,
+			//        timestamp int,
+			//        serialisedData bytea
+			//      );
+			//  -----------------
+			
+			byte[] ba;
+			
+			{
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				ObjectOutputStream oos = new ObjectOutputStream( baos );
+				oos.writeObject( a );
+				ba = baos.toByteArray();
+				oos.close();
+				baos.close();
+			}
+			
+			PreparedStatement ps = db.prepareStatement( "insert into atoms values (?,?,?)" );
+			ps.setInt( 1, a.getIndex() );
+			ps.setInt( 2, a.getTimestamp() );
+			ps.setBytes( 3, ba );
+			ps.executeUpdate();
+			ps.close();
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace( System.out );
+			throw new UnexpectedResult( e.toString() );
+		}
+	}
+	
+	public static void scanAllFields( Class start, Object parent,
+	                                  StringBuffer fieldNames,
+									  Vector fieldValues )
+	throws Exception
+	{
+		{
+			Field[] fields;
+			
+			fields = start.getDeclaredFields();
+			
+			for( int i = 0; i < fields.length; i++ )
+			{
+				Field f = fields[i];
+				
+				try
+				{
+					int mod = f.getModifiers();
+					
+					if( !Modifier.isTransient( mod ) && !Modifier.isStatic( mod ) )
+					{
+						Object sub = null;
+						
+						try
+						{
+							sub = f.get( parent );
+						}
+						catch( IllegalAccessException e )
+						{
+							if( parent instanceof SQLStorable )
+								sub = ((SQLStorable)parent).retrieveField( f );
+							else
+								System.err.println( "WARNING: Field skipped in storage due to access exception.  Field " + f.toString() + " on " + parent.getClass().getName() );
+						}
+						
+						fieldNames.append( f.getName() );
+						fieldNames.append( "," );
+						
+						if( sub == null )
+							fieldValues.addElement( null );
+						else
+							fieldValues.addElement( sub );
+					}
+				}
+				catch( Exception e )
+				{
+					Log.error( "Factory", e );
+					throw new UnexpectedResult( e );  //  this line temporary
+				}
+			}
+		}
+		
+		{
+			Class root;
+			
+			root = start.getSuperclass();
+			
+			if( root != null )
+			{
+				scanAllFields( root, parent, fieldNames, fieldValues );
+			}
+		}
+	}
+}

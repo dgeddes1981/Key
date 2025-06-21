@@ -1,0 +1,14 @@
+cd /realm/city
+load PublicRoom council
+set council.called ^RThe Council Chambers^-
+set council.portrait the Council Chambers.
+edit council.description
+.wipe
+A large domed room, with no apparent square architecture has walls lined with various Coats of Arms from the Clans that make up the Council.  A large double wooden door seems to be the only way in and out of this room, and in times of closed meetings, a large wooden plank is set across the doors, barring access to the room.  The bar now lies laying upright, next to the door on the right.
+
+Light filters in from the dome above, a semi-transparent material providing visability during the daytime, and around the walls in between the Coats of Arms are torches, for night time meetings.  The Dome seems to almost glow...
+
+The streams of light fall onto the large table that lies in the middle of the room.  This table is the Council Gathering Table and each Clan's Founder has a seat here.  At this table, each Founder is considered to have an equal voice, except for the Regent, who's chair at the head of the table, is finely carved with ornate symbols and animals.  Inlaid dragons and wolves are seen to shift within the chair's frame, hinting at the magic possibilities of its creators.
+.end
+transfer council $
+cd

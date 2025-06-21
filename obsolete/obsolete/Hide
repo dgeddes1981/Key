@@ -1,0 +1,75 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  Class: hide
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  05Jul97     GJW         Hide created
+*/
+
+package key.commands;
+
+import key.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
+
+public class Hide extends Command
+{
+	public Hide()
+	{
+		setKey( "hide" );
+		usage = "[on|off]";
+	}
+	
+	public void run( Player p, StringTokenizer args, String fullLine, CategoryCommand caller, InteractiveConnection ic, Flags flags ) throws IOException
+	{
+			//  I am really starting to get bored writing toggle stuff
+		String toggle;
+		
+		if( args.hasMoreTokens() )
+		{
+			toggle = args.nextToken();
+
+			if( toggle.equalsIgnoreCase( "on" ) )
+			{
+					//  the player wants to hide
+				p.setHiding( true );
+				ic.sendFeedback( "Everybody counts to 10 while you hide." );
+			}
+			else if( toggle.equalsIgnoreCase( "off" ) )
+			{
+					//  the player doesn't want to hide
+				p.setHiding( false );
+				ic.sendFeedback( "You stop hiding." );
+			}
+			else
+				usage( ic );
+		}
+		else
+		{
+				//  no options passed so just invert what their current state is
+			if( p.isHiding() )
+			{
+					// they are hidden and want to be 'unhidden'
+				p.setHiding( false );
+				ic.sendFeedback( "You stop hiding." );
+			}
+			else
+			{
+					// hide them
+				p.setHiding( true );
+				ic.sendFeedback( "Everybody counts to 10 while you hide." );
+			}
+		}
+	}
+}

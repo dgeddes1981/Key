@@ -1,0 +1,3198 @@
+package key;
+
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+*/
+
+import key.primitive.*;
+import key.util.LinkedList;
+import key.util.FilteredEnumeration;
+import key.util.MultiEnumeration;
+import key.util.RecursiveEnumeration;
+import key.util.CircularBuffer;
+import key.collections.StringKeyCollection;
+
+import java.io.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+import java.util.Hashtable;
+import java.util.Vector;
+import key.effect.*;
+import key.util.StringTokenizer;
+import key.commands.Go;
+
+/**
+  *  The player class holds all the player specific information, such as
+  *  eachs players title, password, and received email.
+ */
+public final class Player
+extends Container
+implements Targetable,CommandContainer,Interactive,Splashable
+{
+	private static final long serialVersionUID = 8665452585164135888L;
+
+	public static final int MAX_PLAN_LINES = 6;
+	public static final int MAX_PLAN_BYTES = MAX_PLAN_LINES * 80;
+	public static final int MAX_DESCRIPTION_LINES = 22;
+	public static final int MAX_DESCRIPTION_BYTES = MAX_DESCRIPTION_LINES * 80;
+	
+	public static final int MAX_PROMPT_LENGTH = 20;
+	public static final int MAX_TITLE_LENGTH = 60;
+	public static final int MAX_PREFIX_LENGTH = 10;
+	public static final int MAX_AKA_LENGTH = 20;
+	public static final int MAX_IDLEMSG_LENGTH = 70;
+	public static final int MAX_BLOCKMSG_LENGTH = 70;
+	public static final int MAX_BLOCKINGMSG_LENGTH = 70;
+	public static final int MAX_LAST_CONNECT_FROM_SITE_LENGTH = 70;
+	public static final int MAX_LOGIN_SCRIPT_LENGTH = 70;
+	public static final int MAX_CONNECT_MSG_LENGTH = 40;
+	public static final int MAX_OLD_LOGIN_LENGTH = 50;
+	public static final int MAX_MODE_LENGTH = 50;
+	
+	public static final int MAX_TERMINAL_NAME_LENGTH = 25;
+	
+	private static final AtomicElement[] ELEMENTS =
+	{
+		AtomicElement.construct( Player.class, String.class,
+		    "password",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the players password" ),
+		AtomicElement.construct( Player.class, String.class,
+		    "prompt", "prompt",
+			AtomicElement.PUBLIC_FIELD,
+			"the players prompt",
+			AtomicSpecial.StringLengthLimit( MAX_PROMPT_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"title", "title",
+			AtomicElement.PUBLIC_FIELD,
+			"a string that sometimes comes after the players name",
+			AtomicSpecial.StringLengthLimit( MAX_TITLE_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"mode", "mode",
+			AtomicElement.PUBLIC_FIELD,
+			"a string that is prepended to every line typed",
+			AtomicSpecial.StringLengthLimit( MAX_MODE_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"prefix", "prefix",
+			AtomicElement.PUBLIC_ACCESSORS,
+			"a string that sometimes comes before the players name",
+			AtomicSpecial.StringLengthLimit( MAX_PREFIX_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"aka", "aka",
+			AtomicElement.PUBLIC_FIELD,
+			"'also known as', another name for the player",
+			AtomicSpecial.StringLengthLimit( MAX_AKA_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"loginMsg", "loginMsg",
+			AtomicElement.PUBLIC_FIELD,
+			"Message appended to informs on login (prefix with ': ')",
+			AtomicSpecial.StringLengthLimit( MAX_CONNECT_MSG_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"logoutMsg", "logoutMsg",
+			AtomicElement.PUBLIC_FIELD,
+			"Message appended to informs on logout (prefix with ': ')",
+			AtomicSpecial.StringLengthLimit( MAX_CONNECT_MSG_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, TextParagraph.class,
+			"description", "description",
+			AtomicElement.PUBLIC_FIELD,
+			"a description of the player",
+				//  a players description is limited to 22 lines and 80*22 bytes
+				//  also set in commands.Describe.java - redundant atm
+			AtomicSpecial.TextParagraphLengthLimit( MAX_DESCRIPTION_BYTES,
+			                                          MAX_DESCRIPTION_LINES ) ),
+		AtomicElement.construct( Player.class, TextParagraph.class,
+			"plan", "plan",
+			AtomicElement.PUBLIC_FIELD,
+			"the players plan",
+			AtomicSpecial.TextParagraphLengthLimit( MAX_PLAN_BYTES,
+			                                        MAX_PLAN_LINES ) ),
+		AtomicElement.construct( Player.class, Gender.class,
+			"gender",
+			AtomicElement.PUBLIC_FIELD,
+			"the players gender" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"quiet",
+			AtomicElement.PUBLIC_FIELD,
+			"if true, the player will never be 'beeped'" ),
+		AtomicElement.construct( Player.class, Integer.TYPE,
+			"age",
+			AtomicElement.PUBLIC_FIELD,
+			"the players age" ),
+		AtomicElement.construct( Player.class, Integer.TYPE,
+			"florins",
+			//AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			AtomicElement.PUBLIC_FIELD,
+			"the amount of money the player has" ),
+		AtomicElement.construct( Player.class, Humanoid.class,
+			"body",
+			AtomicElement.PUBLIC_FIELD,
+			"the player body" ),
+		AtomicElement.construct( Player.class, Inventory.class,
+			"inventory",
+			AtomicElement.PUBLIC_FIELD,
+			"the objects the player has" ),
+		AtomicElement.construct( Player.class, NoKeyContainer.class,
+			"objects",
+			AtomicElement.PUBLIC_FIELD,
+			"the individual objects the player has" ),
+		AtomicElement.construct( Player.class, String.class,
+			"forcedTerminal", "forcedTerminal",
+			AtomicElement.PUBLIC_FIELD,
+			"the terminal that the user has forced the use of",
+			AtomicSpecial.StringLengthLimit( MAX_TERMINAL_NAME_LENGTH, false, false ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"idleMsg", "idleMsg", 
+			AtomicElement.PUBLIC_FIELD,
+			"the message output when the player is idle",
+			AtomicSpecial.StringLengthLimit( MAX_IDLEMSG_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"blockMsg", "blockMsg",
+			AtomicElement.PUBLIC_FIELD,
+			"the message output when a message to this player is blocked",
+			AtomicSpecial.StringLengthLimit( MAX_BLOCKMSG_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"blockingMsg", "blockingMsg",
+			AtomicElement.PUBLIC_FIELD,
+			"the message output when this player is blocking all messages",
+			AtomicSpecial.StringLengthLimit( MAX_BLOCKINGMSG_LENGTH, false, true ) ),
+		AtomicElement.construct( Player.class, Duration.class,
+			"timezone",
+			AtomicElement.PUBLIC_FIELD,
+			"the time-offset of this player compared to local time" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"isIdle",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player is currently idle" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"hidden",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player is currently hidden" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"liberated",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player can't be enrolled in a clan" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"brief",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player wants shorter output" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"privateEmail",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player wants an unlisted email address" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"citizen",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player is a citizen" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"expert",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player is in expert mode" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"hideTime",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player has hidden his logintime" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"newmail",
+			AtomicElement.PUBLIC_FIELD,
+			"true if the player might have unread mail (check on next login)" ),
+		AtomicElement.construct( Player.class, Integer.TYPE,
+			"titleTolerance",
+			AtomicElement.PUBLIC_FIELD,
+			"the largest number of people in the room with a verbose list" ),
+		AtomicElement.construct( Player.class, DateTime.class,
+			"banishedUntil",
+			AtomicElement.PUBLIC_FIELD,
+			"the date at which the player will be unbanished" ),
+		AtomicElement.construct( Player.class, String.class,
+			"banishType", "banishType",
+			AtomicElement.PUBLIC_FIELD,
+			"how the player is banished, 'S' for siteban too, 'B' otherwise",
+			AtomicSpecial.StringLengthLimit( 1, false, false ) ),
+		AtomicElement.construct( Player.class, String.class,
+			"lastConnectFrom", "lastConnectFrom",
+			AtomicElement.PUBLIC_FIELD,
+			"the last site the player connected from",
+			AtomicSpecial.StringLengthLimit( MAX_LAST_CONNECT_FROM_SITE_LENGTH, false, false ) ),
+		AtomicElement.construct( Player.class, CommandList.class,
+			"commands",
+			AtomicElement.PUBLIC_FIELD | AtomicElement.ATOMIC,
+			"the players personal command list" ),
+		AtomicElement.construct( Player.class, CommandList.class,
+			"specialCommands",
+			AtomicElement.PUBLIC_FIELD,
+			"the players custom command list" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"canSave",
+			AtomicElement.PUBLIC_FIELD,
+			"true iff the player has permission to write to disk" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"staff",
+			AtomicElement.PUBLIC_FIELD,
+			"true iff the player is a member of the talker staff" ),
+		AtomicElement.construct( Player.class, MessageBox.class,
+			"mailbox",
+			AtomicElement.PUBLIC_FIELD | AtomicElement.ATOMIC,
+			"the players local mailbox" ),
+		AtomicElement.construct( Player.class, TimeStatistics.class,
+			"loginStats",
+			AtomicElement.PUBLIC_FIELD,
+			"the players login statistics" ),
+		AtomicElement.construct( Player.class, ConnectionStatistics.class,
+			"connectionStats",
+			AtomicElement.PUBLIC_FIELD,
+			"the players connection statistics" ),
+		AtomicElement.construct( Player.class, Friends.class,
+			"friends",
+			AtomicElement.PUBLIC_FIELD | AtomicElement.ATOMIC,
+			"the players friend list" ),
+		AtomicElement.construct( Player.class, Group.class,
+			"prefer",
+			AtomicElement.PUBLIC_FIELD | AtomicElement.ATOMIC,
+			"the players common mis-tell preferences" ),
+		AtomicElement.construct( Player.class, InformList.class,
+			"inform",
+			AtomicElement.PUBLIC_FIELD | AtomicElement.ATOMIC,
+			"this player wants to know when this list of people are online" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+			"informEveryone",
+			AtomicElement.PUBLIC_FIELD,
+			"this player wants to know when everyone connects" ),
+		AtomicElement.construct( Player.class, Clan.class,
+			"clan",
+			AtomicElement.PUBLIC_FIELD,
+			"the clan that the player is in" ),
+		AtomicElement.construct( Player.class, Room.class,
+			"home",
+			AtomicElement.PUBLIC_FIELD,
+			"the players home room" ),
+		AtomicElement.construct( Player.class, Room.class,
+			"location",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the players current location" ),
+		AtomicElement.construct( Player.class, Realm.class,
+			"realm",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the players current realm" ),
+		AtomicElement.construct( Player.class, Room.class,
+			"lastPublicRoomLocation",
+			AtomicElement.PUBLIC_FIELD,
+			"the players last location while in a public room" ),
+		AtomicElement.construct( Player.class, Room.class,
+			"loginRoom",
+			AtomicElement.PUBLIC_FIELD,
+			"the players requested login room" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+		    "saved",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"true if this player has been written to disk (at least once)" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+		    "beyond",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"true if this player has beyond access" ),
+		AtomicElement.construct( Player.class, Integer.TYPE,
+		    "scapeCount",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the number of scapes this player is in" ),
+		AtomicElement.construct( Player.class, Integer.TYPE,
+		    "rankCount",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the number of ranks this player is in" ),
+		AtomicElement.construct( Player.class, InteractiveConnection.class,
+		    "connection",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY,
+			"the connection for this player (or null if not connected)" ),
+		AtomicElement.construct( Player.class, String.class,
+		    "titledName",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY |
+			AtomicElement.GENERATED,
+			"the name and title of this player" ),
+		AtomicElement.construct( Player.class, String.class,
+		    "possessiveName",
+			AtomicElement.PUBLIC_ACCESSORS | AtomicElement.READ_ONLY |
+			AtomicElement.GENERATED,
+			"the name of this player with 's appended" ),
+		AtomicElement.construct( Player.class, EmailAddress.class,
+		    "email",
+			AtomicElement.PUBLIC_FIELD,
+			"the email address of this player" ),
+		AtomicElement.construct( Player.class, Webpage.class,
+		    "homepage",
+			AtomicElement.PUBLIC_FIELD,
+			"the homepage of this player" ),
+		AtomicElement.construct( Player.class, Site.class,
+		    "bannedWithSite",
+			AtomicElement.PUBLIC_FIELD,
+			"the site that was banned along with this player" ),
+		AtomicElement.construct( Player.class, Boolean.TYPE,
+		    "showFlags",
+			AtomicElement.PUBLIC_FIELD,
+			"if this player is seeing tell codes " ),
+		AtomicElement.construct( Player.class, String.class,
+		    "oldLoginTime", "oldLoginTime",
+			AtomicElement.PUBLIC_FIELD,
+			"old EW forest login time",
+			AtomicSpecial.StringLengthLimit( MAX_OLD_LOGIN_LENGTH, false, false ) ),
+		AtomicElement.construct( Player.class, String.class,
+		    "loginScript", "loginScript", 
+			AtomicElement.PUBLIC_FIELD,
+			"pipe seperated list of commands to be executed at login",
+			AtomicSpecial.StringLengthLimit( MAX_LOGIN_SCRIPT_LENGTH, false, false ) ),
+	};
+	
+		//  this class is immutable and final, therefore this is safe
+	public static final AtomicStructure STRUCTURE = new AtomicStructure( Container.STRUCTURE, ELEMENTS );
+	
+	public static final int DEFAULT_MAX_OBJECTS = 4;
+	public static final int DEFAULT_MAX_MAIL = 20;
+	public static final int DEFAULT_MAX_FRIENDS = 50;
+	public static final int DEFAULT_MAX_PREFER = 10;
+	public static final int DEFAULT_MAX_INFORM = 50;
+	public static final int MAX_NAME = 16;
+	public static final int MIN_NAME = 3;
+
+	public static final int SHOWFLAG_DIRECTED = 0;
+	public static final int SHOWFLAG_FRIENDS = 1;
+	public static final int SHOWFLAG_ROOM = 2;
+	public static final int SHOWFLAG_SHOUTS = 3;
+	public static final int SHOWFLAG_ENTER = 4;
+	public static final int SHOWFLAG_LEAVE = 5;
+	public static final int SHOWFLAG_LOGIN = 6;
+	public static final int SHOWFLAG_LOGOUT = 7;
+	public static final int SHOWFLAG_BLOCKING = 8;  // name blocks the clan chan
+	
+	public static final char[] SHOWCHARS =
+		{ '>', '*', '-', '!', ')', '(', '}', '{', '#' };
+	
+	/** The players connection */
+	transient InteractiveConnection ic;
+	
+	/** The players location */
+	//  some confusion about this vs the property - I think the
+	//  property might be the 'last public room' location.
+	transient Room location;
+	
+	transient Reference realm;
+	
+	/** The current context for the player */
+	transient Atom context;
+	
+	/** a reverseReference style linked list of the scapes this player is in */
+	transient Vector reverseScapes;
+	
+	public static final int MAX_HISTORY_LINES = 10;
+	
+	/** a list of communication to/from this player */
+	private transient CircularBuffer history;
+	
+	/**
+	  *  This is not the definitive reference as to the ranks a player is in,
+	  *  although it is reasonable to expect that it is up to date.  This
+	  *  data structure gets updated by Rank.java as players are added and
+	  *  removed to a rank.  It is used to load Ranks into memory as a player
+	  *  comes online, allowing them to detect that the Player has come online,
+	  *  and link them into the rank if they wish.
+	 */
+	Vector reverseRanks = new Vector( 5, 5 );
+	
+	/** a list of the people in the multi to reply to */
+	transient LWPlayerGroup replyList;
+	
+	/** a linkedList of qualifier ref's */
+	QualifierList qualifierList;
+	
+	/** Whether the player is 'beyond' (account access) or not */
+	private boolean beyond;
+	private boolean canPage = true;
+	
+	boolean saved;
+
+	boolean showFlags;
+	
+	boolean wordwrap = true;
+	
+	//--- system accessable properties ---//
+	private Password password = new Password();
+	String prompt = "-> ";
+	String title = " the newbie, so please treat me nicely";
+	String mode = null;
+	String prefix = "";
+	String aka = "";
+	TextParagraph description = new TextParagraph();
+	TextParagraph plan = new TextParagraph();
+	Gender gender = Gender.NEUTER_GENDER;
+	boolean quiet = false;
+	int age = 0;
+	int florins = 0;
+	String forcedTerminal = null;
+	String idleMsg = "";
+	String blockMsg = "";
+	String blockingMsg = "";
+	String loginMsg = "";
+	String logoutMsg = "";
+	Duration timezone = new Duration();
+	boolean isIdle = false;
+	boolean hidden = false;
+	boolean liberated = false;
+	boolean brief = false;
+	boolean privateEmail = true;
+	boolean citizen = false;
+	boolean expert = false;
+	boolean hideTime = false;
+	boolean newmail = false;
+	boolean informEveryone = false;
+	int titleTolerance = 10;
+	DateTime banishedUntil = null;
+	String banishType = "";
+	String lastConnectFrom = "";
+	Reference commands = Reference.EMPTY;
+	Reference specialCommands = Reference.EMPTY;
+	String oldLoginTime = "";
+	
+	boolean canSave = true;
+	boolean staff = false;
+	
+		//  it isn't a security violation to have these fields public,
+		//  as they are final, and they look after their own immutability.
+	public final TimeStatistics loginStats = (TimeStatistics) Factory.makeAtom( TimeStatistics.class, "loginStats" );
+	public final ConnectionStatistics connectionStats = (ConnectionStatistics) Factory.makeAtom( ConnectionStatistics.class, "connectionStats" );
+
+	public final Friends friends = (Friends) Factory.makeAtom( Friends.class, "friends" );
+	public final Group prefer = (Group) Factory.makeAtom( Group.class, "prefer" );
+	public final InformList inform = (InformList) Factory.makeAtom( InformList.class, "inform" );
+	public final Inventory inventory = (Inventory) Factory.makeAtom( Inventory.class, "inventory" );
+	public final NoKeyContainer objects = (NoKeyContainer) Factory.makeAtom( NoKeyContainer.class, "objects" );
+	public final MessageBox mailbox = (MessageBox) Factory.makeAtom( MessageBox.class, "mailbox" );
+
+	public Reference body = Reference.EMPTY;
+
+	Reference clan = Reference.EMPTY;
+	Reference room = Reference.EMPTY;
+	Reference lastPublicRoomLocation = Reference.EMPTY;
+	Reference loginRoom = Reference.EMPTY;
+	Reference home = Reference.EMPTY;
+	String loginScript = "orient|l";
+	
+	EmailAddress email = new EmailAddress();
+	Webpage homepage = new Webpage();
+	Reference bannedWithSite = Reference.EMPTY;
+	//--- end accessable properties ---//
+	
+	static char originatorCode = 'o';
+	
+	/**  Codes used for % replacements when this player does a command */
+	transient String[] codes;
+
+	/**  Used to store the information which allows the 'repeat' command to work */
+	transient Repeated repeat;
+	
+		//  for detecting the player idling out in the latencycache
+	private transient LatentlyCached latentCacheHook;
+	
+	//public static final int MAX_IDLE_TICKS = 1;
+	//public static final int MAX_IDLE_TICKS = 5;
+	public static final int MAX_IDLE_TICKS = 10;
+	private transient int idleTicks;
+	
+	private transient int connecting = 0;
+	protected transient int lagAmount = 0;
+	protected transient boolean lagOnce = false;
+	protected transient boolean discard = false;
+
+	private transient String idlePrompt;
+	
+	private transient boolean isafk = false;
+	
+	private transient int commandLoopCount = 0;
+	
+	private transient boolean disconnecting = false;
+	
+	//---  actions  ---//
+	
+	protected static StringKeyCollection staticActions;
+	public static Action tellAction;
+	public static Action findAction;
+	public static Action friendAction;
+	public static Action summonAction;
+	public static Action seePrivateInfoAction;
+	
+	static
+	{
+		staticActions = new StringKeyCollection();
+		findAction = newAction( Player.class, staticActions, "find", false, false );
+		friendAction = newAction( Player.class, staticActions, "friend", false, false );
+		seePrivateInfoAction = newAction( Player.class, staticActions, "seePrivateInfo", false, false );
+		summonAction = newAction( Player.class, staticActions, "summon", false, false );
+		tellAction = newAction( Player.class, staticActions, "tell", false, false );
+	}
+	
+	private static int totalPlayers;
+	
+	private static final Paragraph planHeading = new HeadingParagraph( "plan", HeadingParagraph.RIGHT );
+	
+	// --  cookies aren't saved, but are kind of cool
+	// --  for whatever you want to use them for.  Generally
+	// --  saving state during seperate commands is a good
+	// --  thing.
+
+	private transient Hashtable cookies;
+	private transient long[] spamThrottle;
+	private transient int[] spamViolations;
+	private static final int[] THROTTLE_THRESHOLD = { 0, 3 };
+	private static final int[] THROTTLE_PENALTY = { 1000, 2000 };
+	public static final int NUMBER_OF_THROTTLES = 2;
+	
+	/**  Constructs a player */
+	Player()
+	{
+		setLimit( DEFAULT_MAX_OBJECTS );
+		
+		ic = null;
+		location = null;
+		realm = Key.instance().getDefaultRealm().getThis();
+		beyond = false;
+		saved = false;
+		
+			//  this now static
+		//originatorCode = new Character( 'o' );
+
+		init();
+		qualifierList = new QualifierList();
+		
+		showFlags = true;
+		
+		mailbox.setLimit( DEFAULT_MAX_MAIL );
+		friends.setLimit( DEFAULT_MAX_FRIENDS );
+		prefer.setLimit( DEFAULT_MAX_PREFER );
+		inform.setLimit( DEFAULT_MAX_INFORM );
+		
+			//  just a default so that a new player *has* some commands...
+		commands = ((Atom) Key.instance().commandSets.getElement( "base" )).getThis();
+		
+			//  set up some default permissions
+			//  generally, its okay to talk to people & friend them
+		permissionList.allow( tellAction );
+		permissionList.allow( friendAction );
+		
+			//  and its okay to send them email
+		mailbox.getPermissionList().allow( Container.addToAction );
+		inventory.getPermissionList().allow( Container.addToAction );
+	}
+	/**
+	  *  Called just before a broadcast event.  It prevents
+	  *  spamming broadcast channels.  The type is the
+	  *  'type' of the channel.  Each channel type has different
+	  *  throttle rates (the more public, generally, the less
+	  *  tolerant we are of 'spam' type communication.
+	 */
+	public final void aboutToBroadcast( int type )
+	{
+		long a = System.currentTimeMillis() / 1000;
+		
+		if( (a - THROTTLE_THRESHOLD[type]) <= spamThrottle[type] )
+		{
+			try
+			{
+				spamViolations[type]++;
+				
+				if( spamViolations[type] > 13 )
+				{
+					for( int i = 0; i < NUMBER_OF_THROTTLES; i++ )
+						spamViolations[type] = 0;
+					
+					ic.send( "^hYou have been broadcasting too quickly.^-" );
+					ic.send( "^hPlease talk a little slower and be more lag.friendly in the future.^-" );
+					disconnect();
+				}
+				else
+				{
+					if( spamViolations[type] > 3 )
+					{
+						Thread.sleep( THROTTLE_PENALTY[type] );
+						spamThrottle[type]++;
+					}
+					else if( spamViolations[type] > 10 )
+					{
+						throw new LimitExceededException( "You are sending communication too quickly.  Please be lag.friendly and wait a few seconds between says, shouts and tells." );
+					}
+				}
+			}
+			catch( InterruptedException e )
+			{
+			}
+		}
+		else
+		{
+			if( a - spamThrottle[type] > 10 )
+				spamViolations[type] = 0;
+			else
+			{
+				if( spamViolations[type] > 0 )
+					spamViolations[type]--;
+			}
+			
+			spamThrottle[type] = a;
+		}
+	}
+	public void addHistoryLine( String s )
+	{
+		history.addElement( s );
+	}
+	public void addMail( Letter l ) throws NonUniqueKeyException,BadKeyException
+	{
+		mailbox.add( l );
+		
+		newmail = true;
+		
+		if( connected() )
+		{
+			ic.sendSystem( "New mail from " + l.from + ", '" + l.description + "'.  Use 'read mail 1' to read this message." );
+			ic.flush();
+		}
+	}
+	void addReverseRank( Rank r )
+	{
+		reverseRanks.addElement( r.getThis() );
+		System.out.println( "added revrank '" + r.getName() + "' to player " + getName() );
+	}
+	public final void afk( boolean v )
+	{
+		permissionList.check( modifyAction );
+		isafk = v;
+	}
+	/**  A players aspect is its description when looked at */
+	public Paragraph aspect()
+	{
+		return( description );
+	}
+	/**
+	  *  Players always own themselves
+	 */
+	void assignInitialOwner()
+	{
+		owner = getThis();
+	}
+	/**  Called when a password entry is required  */
+	public boolean authenticate( InteractiveConnection ic ) throws IOException,PasswordEntryCancelled
+	{
+		return( password.check( getName(), ic ) );
+	}
+	public void beep()
+	{
+		if( connected() && !quiet )
+			ic.beep();
+	}
+	void beginConnect()
+	{
+		connecting++;
+	}
+	public boolean brief()
+	{
+		return( brief );
+	}
+	public boolean canMakeFriend( Player p )
+	{
+			//  this one just does a straight check (doesn't check groups, ranks,
+			//  or whatever).
+		//return( permissionList.check( p.getThis(), friendAction ) );
+		return( permissionList.permissionCheck( friendAction, false, false ) );
+	}
+	boolean canSwap()
+	{
+		return( !(connected() || (connecting > 0)) );
+	}
+	public boolean checkNewMail()
+	{
+		return( newmail );
+	}
+	public void clearNewMail()
+	{
+		newmail = false;
+	}
+	void clearTransient()
+	{
+		super.clearTransient();
+		
+		if( connected() )
+			disconnect();
+	}
+	/**
+	  *  This routine kind of doubles up with CategoryCommand,
+	  *  but searches many more places than CategoryCommand
+	  *  does.  Searches the current context + others
+	 */
+	public void command( String fullLine, InteractiveConnection ic, boolean query )
+	{
+		if( commandLoopCount > 5 )
+		{
+			ic.sendError( "Too many command loops." );
+			return;
+		}
+		
+		commandLoopCount++;
+		
+		StringTokenizer args = new StringTokenizer( fullLine.trim() );
+		Commandable match = null;
+		String command;
+		CommandList cl = null;
+		Commandable last = null;
+		Commandable lastUnique = null;
+		Command.Match lastcm = null;
+		StringTokenizer argsFor = null;
+		
+		int highest_loop_count = -1;
+		
+		if( !args.hasMoreTokens() )
+			return;
+		
+		command = args.nextToken();	//  the first word
+		
+			//  attempt to find a matching command:
+		
+scan:	for( Enumeration e = getCommandLists(); e.hasMoreElements(); )
+		{
+			try
+			{
+				last = match;
+				match = (Commandable) ((CommandList) e.nextElement()).getExactElement( command );
+				if( last != match )
+					lastUnique = last;
+				//ic.send( "set last to " + last + ",   new match is " + match );
+			}
+			catch( ClassCastException t )
+			{
+				Log.error( "during command matching", t );
+				match = null;
+			}
+			
+			if( match != null )
+			{
+				StringTokenizer args_backup = (StringTokenizer) args.clone();
+				
+				if( match.recloneArgs() )
+				{
+						//  take a copy of the arguments
+						//  now in case we need to repass
+						//  them to the command if it doesn't
+						//  match later.
+					argsFor = (StringTokenizer) args.clone();
+				}
+				else
+					argsFor = null;
+				
+				int loop_count = 0;
+				
+				do
+				{
+					if( highest_loop_count < loop_count )
+					{
+							//  this is the furthest we've matched
+							//  this command - get an error string
+							//  in case we don't find a good match
+						Command.Match cm = match.getFinalMatch( this, args );
+						
+						lastcm = cm;
+						
+						if( cm.match != match )
+							lastUnique = match;
+						
+						last = match;
+						match = cm.match;
+						//ic.send( "set 2 last to " + lastUnique + ",  new match is " + match );
+						
+						highest_loop_count = loop_count;
+					}
+					else
+					{
+						last = match;
+						match = match.getMatch( this, args );
+						if( last != match )
+							lastUnique = last;
+						//ic.send( "set 3 last to " + last + ",  new match is " + match );
+					}
+					
+					if( match == last )
+					{
+						if( argsFor != null )
+							args = argsFor;
+						
+						break scan;
+					}
+					else if( match == null )
+					{
+						args = args_backup;
+						continue scan;
+					}
+					else
+					{
+						if( match.recloneArgs() )
+						{
+								//  take a copy of the arguments
+								//  now in case we need to repass
+								//  them to the command if it doesn't
+								//  match later.
+							argsFor = (StringTokenizer) args.clone();
+						}
+						else
+							argsFor = null;
+					}
+				} while( loop_count++ < 5 );
+				
+					//  I don't do infinite loops on general
+					//  principle in code like this.  This
+					//  will limit the damage of a circular
+					//  routine.
+				throw new LimitExceededException( "too many modal commands" );
+			}
+		}
+		
+				//  check the exits in the players current room
+		if( match == null && location != null && lastcm == null )
+		{
+			Object o = location.getElement( command );
+			
+			if( o instanceof Exit )
+			{
+				Go.useExit( this, (Exit) o, ic, args, null );
+				return;
+			}
+		}
+		
+		if( match == null && lastcm != null && lastcm.lastchance != null )
+		{
+			if( lastcm.lastchance.recloneArgs() )
+			{
+				last = match;
+				match = lastcm.lastchance;
+				if( last != match )
+					lastUnique = last;
+				//ic.send( "set 4 last to " + last + ",   new match is " + match );
+				if( argsFor != null )
+					args = argsFor;
+			}
+		}
+		
+		if( match != null )
+		{
+			CategoryCommand caller;
+			
+			try
+			{
+				caller = (CategoryCommand) lastUnique;
+			}
+			catch( ClassCastException t )
+			{
+				caller = null;
+			}
+			
+			if( match.isDisabled() )
+			{
+				ic.sendFailure( "This command has been temporarily deactivated" );
+				return;
+			}
+			
+			if( query )
+			{
+				if( caller != null )
+					ic.sendFeedback( caller.getWhichId() + "  ->  " + match.getWhichId() );
+				else
+					ic.sendFeedback( match.getWhichId() );
+				
+				return;
+			}
+			
+			try
+			{
+				if( caller != null )
+					caller.runCommand( match, this, args, fullLine, ic, null );
+				else
+					match.run( this, args, fullLine, caller, ic, null );
+			}
+			catch( NotEnoughParametersException t )
+			{
+					//  do nothing other than signal an error
+					//  state (ie, return code != 0, if we
+					//  were in unix.  we're not, so nothing)
+			}
+			catch( Exception t )
+			{
+				if( connected() )
+				{
+					if( t instanceof UserOutputException )
+						((UserOutputException)t).send( ic );
+					else
+					{
+						ic.sendError( "Error: " + t.toString() );
+						
+						if( expert )
+							ic.printStackTrace( t );
+						else
+							t.printStackTrace();
+					}
+				}
+			}
+			catch( Error t )
+			{
+				ic.sendError( t.toString() );
+				
+				if( expert )
+					ic.printStackTrace( t );
+				
+				Log.error( t );
+				throw t;
+			}
+		}
+		else
+		{
+			if( lastcm != null )
+				ic.sendError( lastcm.getErrorString() );
+			else
+				ic.sendError( "Cannot find command '" + command + "'" );
+		}
+	}
+	/**  true if the player is connected */
+	public boolean connected()
+	{
+		return( ic != null );
+	}
+	/**
+	  *  Called to connect a player to an interactive connection.
+	  *
+	  *  <ul>
+	  *  <li>splashes everyone on the program, letting them know this person
+	  *      has connected.
+	  *  <li>tells the Key object to link this player into the online players
+	  *  <li>locks this players soul into memory
+	  *  <li>updates the players statistics (tells the loginStats to begin
+	  *  <li>tells the interactive connection which player to unidle (this) when
+	  *      a command is entered.
+	  *  </ul>
+	 */
+	public synchronized void connectTo( InteractiveConnection connection ) throws NonUniqueKeyException,BadKeyException
+	{
+			//  safety.  should almost certainly have the authenticate here
+		permissionList.check( modifyAction );
+		
+		if( connected() )
+		{
+			throw new UnexpectedResult( "already connected" );
+		}
+		
+		Key.instance().linkPlayer( this );  //  do this first - this is the one
+		                                    //  that will throw the exceptions
+		ic = connection;
+		
+			//  this is the bit that restored their
+			//  terminal parameters to the overridden ones
+		if( ic instanceof TelnetIC )
+		{
+			TelnetIC tic = (TelnetIC) ic;
+			if( forcedTerminal != null )
+				tic.forceTerminal( forcedTerminal );
+			
+			tic.setCanPage( canPage );
+			tic.setWordwrap( wordwrap );
+		}
+		
+		{
+				//  only if they've connected before
+			if( lastConnectFrom.length() > 0 && loginStats.lastConnection != null )
+			{
+				ic.send( "\n\nYou last connected at " + loginStats.lastConnection.toString( this ) + ",\nfrom: " + lastConnectFrom );
+			}
+		}
+		
+			//  update the onSince time to now
+		lastConnectFrom = ic.getFullSiteName();
+		loginStats.startConnection();
+		
+			//  begin un-idling the player
+		ic.startUnIdling( this );
+		
+		if( latentCacheHook == null )
+		{
+			latentCacheHook = new LatentlyCached()
+			{
+					//  don't you dare add anything to this routine to stop
+					//  certain players idling out: it needs to be as small
+					//  and fast as possible.  Put it in 'resetModify'
+					//  if you must.
+				public final boolean modified()
+				{
+					return( idleTicks > 0 );
+				}
+				
+				public void resetModify()
+				{
+					idleTicks--;
+						
+						//  we used to have an idle warning here, but that
+						//  isn't a good idea (people use trigger macros on
+						//  it.  Increased possible 'idle' time to one hour
+						//  to compensate for the lack.
+					//if( idleTicks == 1 && connected() )
+					//	ic.sendError( "\n\n" );
+					//
+					//if( I don't want to idle out as often )
+					//  make idleTicks bigger, and remember not to do it
+					//  every single time (idle everyone out, eventually)
+				}
+				
+				public synchronized void deallocate()
+				{
+					if( connected() )
+					{
+						ic.sendFeedback( "\n\n\nYou have been idle for too long, disconnecting." );
+						disconnect();
+					}
+				}
+			};
+		}
+		
+		Key.getLatencyCache().addToCache( latentCacheHook );
+		
+		Thread.yield();
+		
+			// 	exile: when they reconnect they are no longer idle
+		isIdle = false;
+	}
+	public boolean containsAction( Action a )
+	{
+		return( staticActions.contains( a ) || super.containsAction( a ) );
+	}
+	/**
+	  *  Returns the number of rooms the player has
+	 */
+	public final int countRooms()
+	{
+		int i = 0;
+		
+		for( Enumeration e = elements(); e.hasMoreElements(); )
+		{
+			if( e.nextElement() instanceof Room )
+				i++;
+		}
+
+		return( i );
+	}
+	/**
+	  *  Called to terminate a players connection.
+	  *
+	  *  <ul>
+	  *  <li>stops time recording
+	  *  <li>takes the player out of the room that they're in
+	  *  <li>removes the player from the online list of players in Key
+	  *  <li>splashes everyone that the player is disconnecting
+	  *  <li>closese the interactive connection
+	  *  <li>stops the thread
+	  *  </ul>
+	 */
+	public synchronized void disconnect()
+	{
+		permissionList.check( modifyAction );
+		
+		if( disconnecting )
+			return;
+		
+		if( connected() )
+		{
+			try
+			{
+				ic.flush();
+			}
+			catch( Exception e )
+			{
+			}
+			
+			try
+			{
+				disconnecting = true;
+				InteractiveConnection dcd = ic;
+				
+				Key.getLatencyCache().removeFromCache( latentCacheHook );
+				
+				florins += (int) loginStats.getTimeSinceConnection().getHours();
+				
+				loginStats.endConnection();
+				
+				if( Key.isRunning() )
+				{
+					{
+						String message = location.getLogoutMessage();
+						
+						putCode( originatorCode, getName() );
+						message = Grammar.substitute( message, getCodes() );
+						
+						(new key.effect.Leave( this, location, message )).cause();
+					}
+					
+					(new key.effect.Logout( this, getName() + " has disconnected^@" + logoutMsg + "^$" )).cause();
+				}
+				
+				int rss = reverseScapes.size();
+				while( rss > 0 )
+				{
+					Scape s = (Scape) reverseScapes.elementAt( 0 );
+					
+					try
+					{
+						s.unlinkPlayer( this );
+					}
+					catch( NonUniqueKeyException t )
+					{
+						Log.error( "while removing ourselves from scapes", t );
+						reverseScapes.removeElement( s );
+					}
+					catch( BadKeyException t )
+					{
+						Log.error( "while removing ourselves from scapes", t );
+						reverseScapes.removeElement( s );
+					}
+					
+						//  over engineering to prevent an infinite loop here
+					int nrs = reverseScapes.size();
+					if( nrs == rss )
+					{
+						Log.error( "did not seem to remove scape as intended: please analyse algorithm" );
+						reverseScapes.removeElement( s );
+						nrs = reverseScapes.size();
+						if( nrs == rss )
+						{
+							Log.error( "as above, but even more curious" );
+							break;
+						}
+					}
+					
+					rss = nrs;
+				}
+				
+				try
+				{
+						//  sync it only if we're a temporary atom atm.
+					if( Registry.instance.getStorageTypeIndex( index, timestamp ) == Registry.STORAGE_TEMPORARY )
+						sync();
+				}
+				catch( IOException e )
+				{
+					dcd.send( e.toString() + " occured while trying to save your character" );
+					Log.error( "while saving player " + getName(), e );
+				}
+				finally
+				{
+					dcd.close();
+				}
+			}
+			catch( Exception t )
+			{
+				Log.error( "during Player::disconnect", t );
+			}
+			finally
+			{
+				ic.stopUnIdling();
+				
+				ic.close();
+				ic = null;
+				location = null;
+				idleTicks = 0;
+				
+				if( !willSync() )
+					dispose();
+				
+				disconnecting = false;
+			}
+		}
+		else
+			throw new UnexpectedResult( "disconnecting a non-connected player" );
+	}
+	void ejected( Room from, Effect enter, Effect leave )
+	{
+		Room wanted = Key.instance().getConnectRoom( this );
+		
+		if( leave != null )
+			leave.cause();
+		
+		moveTo( wanted );
+		enter.cause();
+		roomLook();
+	}
+	void endConnect()
+	{
+		if( connecting > 0 )
+			connecting--;
+	}
+	public synchronized void enrolIntoClan( Clan newClan )
+	{
+		Clan old = getClan();
+		
+			//   this will be a problem if we ever do
+			//   untrusted coding - they could simply
+			//   enrolIntoClan( null ) & enrolIntoClan( newC )
+			//   to get around the whole thing.
+		if( old != null && newClan != null )
+			throw new AccessViolationException( this, getName() + " is already in clan " + old.getName() + ", and cannot be enrolled into a new clan until they leave." );
+		else
+		{
+			if( newClan == null )
+			{
+				clan = Reference.EMPTY;
+				
+					//  check to ensure the old clan isn't still
+					//  on the inform list
+				try
+				{
+					inform.removeClanInform( old );
+				}
+				catch( BadKeyException e )
+				{
+				}
+				catch( NonUniqueKeyException e )
+				{
+				}
+			}
+			else
+				clan = newClan.getThis();
+		}
+	}
+	protected void finalize() throws Throwable
+	{
+		super.finalize();
+		
+		totalPlayers--;
+	}
+	/**
+	  *  Returns the action corresponding to the
+	  *  supplied name.  This routine will need to
+	  *  be overriden by sub-classes using actions.
+	 */
+	public Action getAction( String name )
+	{
+		Action a = (Action) staticActions.get( name );
+
+		if( a == null )
+			return( super.getAction( name ) );
+		else
+			return( a );
+	}
+	public Enumeration getActions()
+	{
+		return( new MultiEnumeration( staticActions.elements(), super.getActions() ) );
+	}
+	public Password getActualPassword()
+	{
+		permissionList.check( modifyAction );
+		return( password );
+	}
+	public int getAge()
+	{
+		return( age );
+	}
+	public String getAka()
+	{
+		return( aka );
+	}
+	public boolean getBeyond() { return( beyond ); }
+	public String getBlockingMsg()
+	{
+		return( blockingMsg );
+	}
+	public String getBlockMsg()
+	{
+		return( blockMsg );
+	}
+	public boolean getCanSave()
+	{
+		return( canSave );
+	}
+	/**
+	  *  Returns an enumeration of enumerations of the
+	  *  modal commands this player has access to that
+	  *  matches a certain prefix string.  The enumeration
+	  *  contains Object[2] in each element.  The first
+	  *  is the matched commandcontainer, the second is
+	  *  the top level parent of that command container,
+	  *  usually indicating the providing rank or scape.
+	 */
+	public Enumeration getCategoryCommandsMatching( java.util.StringTokenizer args )
+	{
+		//if( !args.hasMoreTokens() )
+			//throw new UnexpectedResult( "No arguments to getCategoryCommandsMatching specified" );
+		
+		//String first = args.nextElement();
+		
+		Vector path = null;
+		CommandList cl = null;
+		Vector result = new Vector( 16, 16 );
+		
+		if( args != null && args.hasMoreTokens() )
+		{
+			path = new Vector( 6, 6 );
+			
+			do
+			{
+				path.addElement( args.nextToken() );
+			} while( args.hasMoreTokens() );
+		}
+		
+		//if( path.size() == 0 )
+			//throw new UnexpectedResult( "No arguments to getCategoryCommandsMatching specified" );
+		
+scan:	for( Enumeration e = getCommandLists(); e.hasMoreElements(); )
+		{
+			cl = (CommandList) e.nextElement();
+			
+			if( cl == null )
+				continue;
+			
+			CommandList top = cl;
+			Object match = null;
+			
+			if( path != null )
+			{
+				for( Enumeration f = path.elements(); f.hasMoreElements(); )
+				{
+					match = cl.getExactElement( (String) f.nextElement() );
+					//ic.send( "DEBUG TODO new2 match is " + match );
+					
+					if( match instanceof CommandContainer )
+					{
+						if( f.hasMoreElements() )
+						{
+								//  set up the loop to repeat
+							cl = ((CommandContainer)match).getCommandList();
+							
+							if( cl == null )
+								continue scan;  //  no more from this modal
+						}
+						else
+							break;  //  just an optimisation, not reqd.
+					}
+					else
+						continue scan;  //  not enough in this modal
+				}
+			}
+			
+			Object[] o = new Object[2];
+			o[0] = match;
+			o[1] = top;
+			
+				//  if we get here, we have a matching CommandContainer
+			result.addElement( o );
+		}
+		
+		if( path != null )
+			path.setSize( 0 );
+		
+		return( result.elements() );
+	}
+	public final Clan getClan()
+	{
+		try
+		{
+			return( (Clan) clan.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			clan = Reference.EMPTY;
+			return( null );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".clan wrong (reset)", e );
+			clan = Reference.EMPTY;
+			return( null );
+		}
+	}
+	public final String[] getCodes()
+	{
+		return( codes );
+	}
+	//---  commands  ---//
+	/**
+	  *  A shortcut, since matching it from the
+	  *  string could be prohibitively slow
+	 */
+	public final CommandList getCommandList()
+	{
+		try
+		{
+			return( (CommandList) commands.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			commands = Reference.EMPTY;
+			return( null );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".commands wrong (reset)", e );
+			commands = Reference.EMPTY;
+			return( null );
+		}
+	}
+	/**
+	  *  Returns an ordered list of the commands that this
+	  *  Player has access to.
+	  *
+	  *  I believe this isn't being used.
+	Enumeration getCommands()
+	{
+			//  technically, this Observer might only be used
+			//  by the Commands class - so we probably should just
+			//  have a method that returns the above delayed enumeration
+		return(
+			new RecursiveEnumeration(
+				getCommandListEnumerations(),
+				false,  //  don't recurse deeply
+				null  //  no observer required to just enumerate
+			)
+		);
+	}
+	 */
+	
+	/**
+	  *  Returns an enumeration of enumerations of the
+	  *  commands this player has access to.
+	  *
+	  *  I believe this isn't being used
+	 */
+	Enumeration getCommandListEnumerations()
+	{
+		return(
+			new FilteredEnumeration(
+				getCommandLists(),
+				new FilteredEnumeration.Filter()
+				{
+					public boolean isValid( Object element, Enumeration enum )
+						{ return( true ); }
+					
+					public Object replace( Object element, Enumeration enum )
+					{
+						if( element instanceof CommandList )
+							return( ((CommandList)element).elements() );
+						else
+							return( null );
+					}
+				}
+			)
+		);
+	}
+	/**
+	  *  Returns an enumeration of enumerations of the
+	  *  commands this player has access to.
+	 */
+	public Enumeration getCommandLists()
+	{
+		final Enumeration clist = new Enumeration()
+		{
+			int state = 0;
+			int substate = 0;
+			int last_substate = 0;
+			
+			Object next = scanNextElement();
+			
+			public boolean hasMoreElements()
+			{
+				return( next != null );
+			}
+			
+			public Object nextElement()
+			{
+				if( next == null )
+					throw new NoSuchElementException();
+				
+				Object o = next;
+				next = scanNextElement();
+				return( o );
+			}
+			
+			/**
+			  *  This is done like this because, believe it or not,
+			  *  it's cleaner and more efficient this way.  Really.
+			  *  The old way sucked.
+			  * <P>
+			  *  Because of the way this is written, it can dynamically
+			  *  scan command lists without having to pre-process them,
+			  *  but also through the Enumeration interface.
+			 */
+			public Object scanNextElement()
+			{
+					//  temporary variable for result
+				CommandList cl; 
+				
+				switch( state )
+				{
+					case 0:
+						state++;  // state 1 is next
+						
+						if( context != null && context instanceof CommandContainer )
+						{
+							cl = ((CommandContainer)context).getCommandList();
+							
+							if( cl != null && cl.count() > 0 )
+								return( cl );
+						}
+						//  proceed to next state now
+					
+					case 1:
+							//  special commands for the player
+							//  (overriddable only by context)
+						state++;  // state 3 is next
+						cl = Player.this.getSpecialCommandList();
+						if( cl != null && cl != context && cl.count() > 0 )
+							return( cl );
+						
+					case 2:
+						state++;  // state 3 is next
+						if( context != Player.this )
+						{
+							cl = Player.this.getCommandList();
+							if( cl != null && cl.count() > 0 )
+								return( cl );
+						}
+						//  proceed to next state now
+						
+					case 3:
+						state++;  // state 4 is next
+						last_substate = substate;  //  save the old substate
+						substate = 0;  // initialise
+						//  proceed to next state now
+						
+					case 4:
+							//  return groups for each player based on
+							//  the substate, which is the group we're
+							//  currently upto
+						int rss = reverseScapes.size() - 1;
+						if( (substate) > rss )
+						{
+								//  this is an error, we should
+								//  already be on the next state -
+								//  just skip through
+							state++;
+						}
+						else
+						{
+							if( substate == rss )
+							{
+									//  this is the last time we can do this
+								state++;  //  next time we're in the next state
+							}
+							
+							CommandContainer cc = ((CommandContainer)(reverseScapes.elementAt( substate++ )));
+							
+							if( cc != null && cc != context )
+							{
+								cl = cc.getCommandList();
+								
+								if( cl != null )
+									return( cl );
+								else
+									return( scanNextElement() );
+							}
+							else
+								return( scanNextElement() );
+						}
+					
+					case 5:  // this is not a valid state.
+					default:
+						return( null );
+				}
+			}
+			
+			/**
+			  *  Used to get some information about what we're
+			  *  enumerating through for the command list.
+			  * <P>
+			  *  Returns a string of the form:
+			  * <BR>
+			  *  [context] name - x commands
+			  * <P>
+			  *  This method is called to get information about
+			  *  the result of the <I>last</I> nextElement() call.
+			  *
+			  * @return formatted details string
+			 */
+			String getLastDetails()
+			{
+				switch( state - 1 )
+				{
+					case -1:
+						throw new UnexpectedResult( "Player::getLastDetails() before nextElement()" );
+					case 0:
+							//  state 0 is the context scan
+						return( "context " + context.getName() + " - " + "" );
+						//break;
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					default:
+						throw new UnexpectedResult( "Player::getLastDetails(): invalid state" );
+				}
+				
+				return null;
+			}
+		};
+		
+		return( clist );
+	}
+	public InteractiveConnection getConnection()
+	{
+		if( connected() )
+			return( ic );
+		else
+			throw new PlayerNotConnectedException();
+	}
+	/** Returns the current players context */
+	public Atom getContext()
+	{
+		return( context );
+	}
+	private String getContextualPrompt()
+	{
+		StringBuffer gprompt = new StringBuffer();
+		
+		gprompt.append( idlePrompt );
+		
+		if( context != this )
+		{
+			gprompt.append( '[' );
+			gprompt.append( context.getName() );
+			gprompt.append( "] " );
+		}
+		
+		if( ic.isPaging() )
+			gprompt.append( "[PAGER] " );
+		
+		gprompt.append( prompt );
+		
+		return( gprompt.toString() );
+	}
+	public Object getCookie( Object key )
+	{
+		if( cookies == null )
+			return( null );
+		else
+			return( cookies.get( key ) );
+	}
+	public static Player getCurrent()
+	{
+		Thread t = Thread.currentThread();
+		if( t instanceof Animated )
+		{
+			Animate a = ((Animated)t).is();
+			if( a instanceof InteractiveConnection )
+			{
+				return( ((InteractiveConnection)a).getPlayer() );
+			}
+		}
+		else
+		{
+				//  sometimes, from a system script, currentThread won't be
+				//  animated.  In this case, however, we're always going
+				//  to be the only player online, and Key isn't going to
+				//  be running.  In that case:
+			Key key = Key.instance();
+			if( key != null && !key.isRunning() && key.numberPlayers() == 1 )
+			{
+				for( Enumeration e = key.players(); e.hasMoreElements(); )
+				{
+					return( (Player) e.nextElement() );
+				}
+			}
+		}
+		
+		return( null );
+	}
+	public AtomicStructure getDeclaredStructure()
+	{
+		return( STRUCTURE );
+	}
+	public Paragraph getDescription()
+	{
+		return( description );
+	}
+	public EmailAddress getEmail()
+	{
+			//  this could be made better (immutable email address?)
+		permissionList.check( seePrivateInfoAction );
+		permissionList.check( modifyAction );
+		return( email );
+	}
+	/**
+	  *  META:  this needs to be updated for the new permissionlist
+	  *  that has a boolean check method (that doesn't throw exceptions)
+	  *  for efficiency.
+	 */
+	public String getEmailAddress()
+	{
+		try
+		{
+			if( privateEmail )
+				permissionList.check( seePrivateInfoAction );
+			
+			return( email.toString() );
+		}
+		catch( AccessViolationException e )
+		{
+			return( "<private>" );
+		}
+	}
+	public final boolean getExpert()
+	{
+		return( expert );
+	}
+	public int getFlorins()
+	{
+		return( florins );
+	}
+	public Friends getFriends()
+	{
+		return( friends );
+	}
+	public String getFullName()
+	{
+		return( prefix + getName() );
+	}
+	public final Gender getGender()
+	{
+		return( gender );
+	}
+	public Room getHome()
+	{
+		try
+		{
+			return( (Room) home.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			home = Reference.EMPTY;
+			return( null );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".home wrong (reset)", e );
+			home = Reference.EMPTY;
+			return( null );
+		}
+	}
+	public final Duration getIdle( DateTime now )
+	{
+		return( connectionStats.getIdleTime( now ) );
+	}
+	public String getIdleMsg()
+	{
+		return( idleMsg );
+	}
+	public QualifierList.Immutable getImmutableQualifierList()
+	{
+			//  this is not a security risk because ImmutableQL isn't
+			//  changeable
+		return( qualifierList.getImmutable() );
+	}
+	public InformList getInform()
+	{
+		return( inform );
+	}
+		//  it is the inventories problem to prevent itself from being
+		//  modified by unauthorised people
+	public Inventory getInventory()
+	{
+		return( inventory );
+	}
+	public String getLastConnectFrom()
+	{
+		return( lastConnectFrom );
+	}
+	public Room getLastPublicRoom()
+	{
+		try
+		{
+			return( (Room) lastPublicRoomLocation.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			lastPublicRoomLocation = Reference.EMPTY;
+			return( null );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".lastpublicroom wrong (reset)", e );
+			lastPublicRoomLocation = Reference.EMPTY;
+			return( null );
+		}
+	}
+	/**  Gets the players location */
+	public final Room getLocation()
+	{
+		if( isHiding() )
+			permissionList.check( findAction );
+		
+		return( location );
+	}
+	public String getLoginMsg()
+	{
+		return( loginMsg );
+	}
+	public String getLogoutMsg()
+	{
+		return( logoutMsg );
+	}
+	public MessageBox getMailbox()
+	{
+		return( mailbox );
+	}
+	public String getName()
+	{
+		if( saved )
+			return( super.getName() );
+		else
+			return( "VISITOR:" + super.getName() );
+	}
+	public String getPassword()
+	{
+		return( password.toString() );
+	}
+	public Paragraph getPlan()
+	{
+		return( plan );
+	}
+	/**  eg: "subtle's" */
+	
+	// META: better representation for name would be nice, these are called a lot
+	public final String getPossessiveName()
+	{
+		return( getName() + "'s" );
+	}
+	public Group getPrefer()
+	{
+		return( prefer );
+	}
+	public String getPrefix()
+	{
+		return( prefix );
+	}
+	public QualifierList getQualifierList()
+	{
+		permissionList.check( modifyAction );
+		return( qualifierList );
+	}
+	public String getRank()
+	{
+		if( willSync() )
+		{
+			//if( beyond )
+				//return( "director" );
+			//else if( isStaff() )
+				//return( "staff" );
+			//else
+			if( isCitizen() )
+				return( "citizen" );
+			else
+				return( "resident" );
+		}
+		else
+			return( "visitor" );
+	}
+	public int getRankCount() { return( reverseRanks.size() ); }
+	public final Realm getRealm()
+	{
+		try
+		{
+			return( (Realm) realm.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			realm = Key.instance().getDefaultRealm().getThis();
+			return( (Realm) realm.get() );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".realm wrong (reset)", e );
+			realm = Reference.EMPTY;
+			return( null );
+		}
+	}
+		//  this would be an invasion of privacy to export
+	public Repeated getRepeated()
+	{
+			//  META: this modifyAction is temporary until we have some kind
+			//  of action to support this
+		permissionList.check( modifyAction );
+		return( repeat );
+	}
+	public boolean getSaved() { return( saved ); }
+	public int getScapeCount() { return( reverseScapes.size() ); }
+	public boolean getShowFlags()
+	{
+		return( showFlags );
+	}
+	public final CommandList getSpecialCommandList()
+	{
+		try
+		{
+			return( (CommandList) specialCommands.get() );
+		}
+		catch( OutOfDateReferenceException e )
+		{
+			specialCommands = Reference.EMPTY;
+			return( null );
+		}
+		catch( NullPointerException e )
+		{
+			Log.error( "during getSpecialCommandList: this is once-only code for converting pfiles", e );
+			specialCommands = Reference.EMPTY;
+			return( null );
+		}
+		catch( ClassCastException e )
+		{
+			Log.error( "somebody set " + getId() + ".specialcommands wrong (reset)", e );
+			commands = Reference.EMPTY;
+			return( null );
+		}
+	}
+	public Enumeration getTellHistory()
+	{
+		if( history != null )
+		{
+			if( getCurrent() != this )
+				throw new AccessViolationException( this, "No-one may access another players tell history" );
+			
+			return( history.elements() );
+		}
+		
+		return( key.util.EmptyEnumeration.EMPTY );
+	}
+	public Terminal getTerminal()
+	{
+		if( connected() )
+			if( ic instanceof TelnetIC )
+				return( ((TelnetIC)ic).getTerminal() );
+			else
+				throw new WrongTerminalTypeException();
+		else
+			throw new PlayerNotConnectedException();
+	}
+	public final Duration getTimezone()
+	{
+		return( timezone );
+	}
+	public String getTitledName()
+	{
+		return( getName() + title );
+	}
+	public static int getTotalPlayers()
+	{
+		return( totalPlayers );
+	}
+	public Webpage getWebpage()
+	{
+		return( homepage );
+	}
+	public boolean getWordwrap()
+	{
+		return( wordwrap );
+	}
+	public boolean hasPassword()
+	{
+		return( password.isSet() );
+	}
+	public final String heShe()
+	{
+		return( gender.heShe() );
+	}
+	public final String HeShe()
+	{
+		return( gender.HeShe() );
+	}
+	public final String himHer()
+	{
+		return( gender.himHer() );
+	}
+	public final String hisHer()
+	{
+		return( gender.hisHer() );
+	}
+	public final String HisHer()
+	{
+		return( gender.HisHer() );
+	}
+	private void init()
+	{
+		reverseScapes = new Vector( 5, 5 );
+		codes = new String[26];
+		idleTicks = MAX_IDLE_TICKS;
+		context = this;
+		idlePrompt = "";
+		repeat = new Repeated();
+		spamThrottle = new long[ NUMBER_OF_THROTTLES ];
+		spamViolations = new int[ NUMBER_OF_THROTTLES ];
+		
+		if( history == null )
+			history = new CircularBuffer( MAX_HISTORY_LINES );
+		
+		totalPlayers++;
+		commandLoopCount = 0;
+	}
+	public final boolean isAfk()
+	{
+		return( isafk );
+	}
+		// property routines
+	public boolean isBanished()
+	{
+		DateTime now = new DateTime();
+
+		if( banishedUntil == null )
+			return( false );
+
+		if( now.getTime() > banishedUntil.getTime() )
+		{
+			banishedUntil = null;
+			banishType = "";
+			return( false );
+		}
+		return( true );
+	}
+	public boolean isBeyond()
+	{
+		return( beyond );
+	}
+	public final boolean isCitizen()
+	{
+		return( citizen );
+	}
+		//  this should be automatically determined
+	public boolean isEmailPrivate()
+	{
+		return( privateEmail );
+	}
+	public boolean isExpert()
+	{
+		return( expert );
+	}
+	public boolean isHiding()
+	{
+		return( hidden );
+	}
+	public final boolean isIdle()
+	{
+		return( isIdle );
+	}
+		/**  if the player can't be put into a clan */
+	public boolean isLiberated()
+	{
+		return( liberated );
+	}
+	/**
+  	  *  You can target a player if you can target
+  	  *  any of the ranks that they're in.  That means
+  	  *  that most staff members will _not_ be in the
+  	  *  'resident' rank (so they can't hurt each other.
+ 	 */
+	public boolean isOutRankedBy( Rank rank )
+	{
+			//  cache this value for speed
+		Targets targets = rank.getTargets();
+		
+		if( targets != null )
+		{
+			for( Enumeration e = targets.elements(); e.hasMoreElements(); )
+			{
+				Object o = e.nextElement();
+				if( o instanceof Rank )
+				{
+					Rank theRank = (Rank) o;
+					if( theRank.containsAtAll( getThis() ) )
+					{
+						return true;
+					}
+				}
+				else if( o == this )
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	public boolean isStaff()
+	{
+		return( staff );
+	}
+	void linkToScape( Scape s )
+	{
+		reverseScapes.addElement( s );
+	}
+	/**  true if the player has a location */
+	public boolean located()
+	{
+		return( location != null );
+	}
+	public final String maleFemale()
+	{
+		return( gender.maleFemale() );
+	}
+	final void maybeClearBeyond()
+	{
+		if( !Key.instance().isRunning() )
+			beyond = false;
+		else
+			throw new UnexpectedResult( "trying to clear beyond while running" );
+	}
+	final void maybeSetBeyond()
+	{
+		if( !Key.instance().isRunning() )
+		{
+			beyond = true;
+			expert = true;
+		}
+		else
+			throw new UnexpectedResult( "trying to set beyond while running" );
+	}
+	void moveTo( Room newLocation )
+	{
+		try
+		{
+			if( location != null )
+				location.unlinkPlayer( this );
+			
+			location = newLocation;
+			realm = newLocation.getRealm().getThis();
+			
+			if( location != null )
+			{
+				location.linkPlayer( this );
+				
+					//  if they're moving into a public
+					//  room, store that they're there,
+					//  so we can return them to it when
+					//  they type 'leave', or when they
+					//  reconnect.
+				if( !(location.getParent() instanceof Player) )
+					lastPublicRoomLocation = location.getThis();
+			}
+		}
+		catch( BadKeyException e )
+		{
+			Log.error( e );
+		}
+		catch( NonUniqueKeyException e )
+		{
+			Log.error( e );
+		}
+	}
+	public void moveTo( Room newLocation, Effect leave, Effect enter )
+	{
+		if( !connected() )
+			throw new PlayerNotConnectedException();
+		
+		permissionList.check( summonAction );
+		
+		if( leave != null )
+			leave.cause();
+		
+		moveTo( newLocation );
+		enter.cause();
+	}
+	public final void putCode( char c, String value )
+	{
+		try
+		{
+			codes[ c - 'a' ] = value;
+		}
+		catch( Exception e )
+		{
+			e.printStackTrace();
+			Log.error( "During Player::putCode()", e );
+		}
+	}
+	public Enumeration ranks()
+	{
+		return( new FilteredEnumeration( 
+				reverseRanks.elements(),
+				new ReferenceEnumeratorFilter(
+					new ReferenceEnumeratorFilter.EnumeratedThing()
+					{
+						public void noSideEffectRemove( Reference r )
+							throws NonUniqueKeyException, java.util.NoSuchElementException,BadKeyException
+						{
+							Player.this.reverseRanks.removeElement( r );
+						}
+					}
+				, true ) ) );
+	}
+	private void readObject( ObjectInputStream ois ) throws IOException
+	{
+		try
+		{
+			ois.defaultReadObject();
+		}
+		catch( ClassNotFoundException e )
+		{
+			throw new UnexpectedResult( e.toString() );
+		}
+		
+		init();
+		
+			//  Playerfile revision code (example)
+			//  We just added loginRoom, which is a Reference,
+			//  and we want it to default to Reference.EMPTY.
+		if( loginRoom == null )
+			loginRoom = Reference.EMPTY;
+		if( loginMsg == null )
+			loginMsg = "";
+		if( logoutMsg == null )
+			logoutMsg = "";
+	}
+	private final void recalculateIdlePrompt()
+	{
+		if( isIdle )
+			idlePrompt = "[IDLE] ";
+		else
+			idlePrompt = "";
+	}
+	public void removeCookie( Object key )
+	{
+		if( cookies != null )
+			cookies.remove( key );
+	}
+	void removeReverseRank( Rank r )
+	{
+		reverseRanks.addElement( r.getThis() );
+		System.out.println( "removed revrank '" + r.getName() + "' to player " + getName() );
+	}
+	//  required for the 'term' command.
+	public synchronized void resetTerminal()
+	{
+		permissionList.check( modifyAction );
+		
+		if( connected() )
+		{
+			if( ic instanceof TelnetIC )
+				((TelnetIC)ic).resetTerminal();
+			else
+				throw new WrongTerminalTypeException();
+		}
+			
+		forcedTerminal = null;
+	}
+	public Object retrieveField( java.lang.reflect.Field f )
+		throws IllegalAccessException
+	{
+		if( f.getDeclaringClass() == Player.class )
+			return( f.get( this ) );
+		else
+			return( super.retrieveField( f ) );
+	}
+	public void roomLook()
+	{
+		if( ic == null )
+			throw new PlayerNotConnectedException();
+		
+		//permissionList.check( modifyAction );
+		
+		Room l = getLocation();
+		
+		if( brief() )
+		{
+			ic.send( new TextParagraph( (String) getLocation().called ), false );
+			ic.send( l.who( this ), false );
+		}	
+		else
+			ic.send( l.aspect( this ), false );
+		
+		ic.blankLine();
+		ic.flush();
+	}
+	/** The main thread of a player - simply starts the parser */
+	public void run( InteractiveConnection ic )
+	{
+		//setPriority( Thread.NORM_PRIORITY-1 );
+		if( ic != getConnection() )
+		{
+			ic.send( "Poor connection" );
+			ic.close();
+			return;
+		}
+		
+		ic.setKey( "IC: " + getKey().toString() );
+		
+		try
+		{
+			synchronized( this )
+			{
+				ic.blankLines( 3 );
+				
+				
+					//  connect the player to a room, initially
+				{
+					Room startRoom = null; 
+
+					try
+					{
+						startRoom = (Room) loginRoom.get();
+					}
+					catch( Exception e )
+					{
+						loginRoom = Reference.EMPTY;
+						ic.sendFailure( "^hYour login room is no longer valid.^-" );
+					}
+					
+					if( startRoom == null )
+						startRoom = Key.instance().getConnectRoom( this );
+					
+					String message = startRoom.getLoginMessage();
+					
+					putCode( originatorCode, getName() );
+					message = Grammar.substitute( message, getCodes() );
+					
+					moveTo( startRoom, null, new key.effect.Enter( this, startRoom, message ) );
+				}
+				
+				if( location == null )
+				{
+					ic.sendError( "Could not connect you to a room, disconnecting..." );
+					disconnect();
+					return;
+				}
+				
+					//  scan ranks
+				int warnLostRank = 0;
+				
+				for( int i = 0; i < reverseRanks.size(); i++ )
+				{
+					Reference o = (Reference) reverseRanks.elementAt( i );
+					
+					try
+					{
+						Rank r = (Rank) o.get();
+						
+						if( !r.contains( this ) )
+						{
+							reverseRanks.removeElementAt( i-- );
+							warnLostRank++;
+						}
+						else
+							r.establish( this );
+					}
+					catch( OutOfDateReferenceException e )
+					{
+						reverseRanks.removeElementAt( i-- );
+						warnLostRank++;
+					}
+					catch( ClassCastException e )
+					{
+						reverseRanks.removeElementAt( i-- );
+						warnLostRank++;
+					}
+				}
+				
+					//  might as well let them know...
+				if( warnLostRank > 0 )
+				{
+					if( warnLostRank == 1 )
+						ic.send( "^hWhile you were offline, a rank that you were in was erased.  (Just letting you know)  You will not be notified of this again, and I have no way of determining which rank it was.^-" );
+					else
+						ic.send( "^hWhile you were offline, " + warnLostRank + " ranks that you were in were erased.  (Just letting you know)  You will not be notified of this again, and I have no way of determining which ranks they were.^-" );
+				}
+				
+					//  this is the bit that links the player back
+					//  into any groups they should be in. :)
+				putCode( originatorCode, getName() );
+				new key.effect.Login( this, "%o has connected^@" + loginMsg + "^$" ).cause();
+				
+					//  execute the players login script
+				{
+					StringTokenizer st = new StringTokenizer( loginScript, "|", false );
+					
+					commandLoopCount = 0;
+					while( st.hasMoreTokens() )
+					{
+						command( st.nextToken(), ic, false );
+						Thread.yield();  //  be nice and friendly
+					}
+				}
+			}
+			
+			try
+			{
+				String entered;
+				
+				while( connected() )
+				{
+						//  just a quick check for the lag code
+						//  *grin*
+					if( lagAmount >= 0 )
+					{
+						try
+						{
+							Thread.sleep( lagAmount );
+						}
+						catch( InterruptedException e )
+						{
+						}
+						
+						if( lagOnce == true )
+						{
+							lagAmount = 0;
+							lagOnce = false;
+							
+							if( discard )
+							{
+								try
+								{
+									ic.discard();
+								}
+								catch( IOException e )
+								{
+								}
+								
+								discard = false;
+							}
+						}
+					}
+					
+					if( mode == null )
+						entered = ic.input( getContextualPrompt() );
+					else
+					{
+						entered = ic.input( getContextualPrompt() + mode );
+						
+						if( entered.length() == 0 )
+							mode = null;
+						else
+							entered = mode + entered;
+					}
+					
+					Thread.yield();  //  be nice and friendly
+					
+					if( entered.length() == 0 )
+					{
+						if( ic.isPaging() )
+						{
+							((TelnetIC)ic).drawNextPage();
+						}
+						
+						continue;
+					}
+					
+					try
+					{
+						commandLoopCount = 0;
+						command( entered, ic, false );
+					}
+					catch( Exception e )
+					{
+						if( e instanceof UserOutputException )
+							((UserOutputException)e).send( ic );
+						else
+							throw e;
+					}
+				}
+			}
+			catch( NetworkException e )
+			{
+			}
+		}
+		catch( ThreadDeath td )
+		{
+			synchronized( this )
+			{
+				if( ic == getConnection() )
+				{
+					disconnect();
+					ic = null;
+				}
+				else if( ic != null )
+				{
+					ic.close();
+					ic = null;
+				}
+			}
+			
+			throw td;
+		}
+		catch( Exception e )
+		{
+			Log.error( "Player::run() [" + getName() + "]", e );
+		}
+		
+		synchronized( this )
+		{
+				//  necessary for reconnections - we don't
+				//  want to disconnect the newly connected
+				//  player, but neither do we want to exit
+				//  this thread with an unclosed connection.
+			if( connected() )
+			{
+				if( ic == getConnection() )
+					disconnect();
+				else if( ic != null )
+					ic.close();
+			}
+			else if( ic != null )
+				ic.close();
+		}
+	}
+	public Enumeration scapes()
+	{
+		return( reverseScapes.elements() );
+	}
+	/**
+	  *  Meant to be used to send part of what would
+	  *  normally be a paragraph.
+	 */
+	public void send( String message )
+	{
+		ic.send( message );
+		ic.flush();
+	}
+	/**
+	  * This function is used when the user makes some
+	  * sort of error in typing - *not* if a command
+	  * can't be executed because of a failure.  So,
+	  * Command not found would go here, but 'Not enough
+	  * privs to nuke snapper' wouldn't.
+	  * <p>
+	  * this command does start a new line
+	 */
+	public void sendError( String message )
+	{
+		ic.send( message );
+		ic.flush();
+	}
+	public void sendExamineScreen( InteractiveConnection ic )
+	{
+		boolean seeThrough = permissionList.permissionCheck( seePrivateInfoAction, false, true );
+
+		Player p = getCurrent();
+		
+		ic.sendLine();
+		ic.send( getTitledName() );
+		
+			// show the description
+		{
+			if( description != null )
+			{
+				ic.sendLine();
+				ic.send( description );
+			}
+		}
+		
+		ic.sendLine();
+		
+		if( connected() )
+		{
+			ic.send( getFullName() + " has been logged in for " + loginStats.getTimeSinceConnection() );
+			InteractiveConnection pic = getConnection();
+			if( pic instanceof SocketIC )
+				ic.send( getName() + " is connected from: " + ((SocketIC)pic).getFullSiteName() );
+		}
+		else
+		{
+			DateTime dateTime = (DateTime) loginStats.getLastConnection();
+			
+			if( dateTime == null )
+				ic.send( getFullName() + " has never logged in." );
+			else
+				ic.send( getFullName() + " was last seen at " + dateTime.toString( p ) );
+		}
+		
+		ic.sendLine();
+		
+			//  output ranks.
+		ic.send( Grammar.enumerate( new FilteredEnumeration( ranks(),
+				new key.util.FilteredEnumeration.Filter()
+				{
+					public boolean isValid( Object element, Enumeration enum )
+					{
+						return( element instanceof Rank);
+					}
+					
+					public Object replace( Object element, Enumeration enum )
+					{
+						return( ((Rank)element).getContainedId() );
+					}
+				}) ) );
+		
+		/*
+		for( Enumeration e = ranks(); e.hasMoreElements(); )
+		{
+			Rank r = (Rank) e.nextElement();
+			
+		}
+		*/
+		
+		ic.sendLine();
+	}
+	public void sendFailure( String message )
+	{
+		ic.sendFailure( message );
+		ic.flush();
+	}
+	/**
+	  * This function is used to output direct,
+	  * *successful* feedback of a players command.
+	  * It is important that this feedback is normal
+	  * and expected by the player, since it generally
+	  * won't be hilited in any way.  Please try
+	  * to restrict this output to a single line.
+	  * <p>
+	  * this command does start a new line
+	  * <p>
+	  * Examples:
+	  * <p>
+	  * You tell name 'hi' <br>
+	  *
+	  * @param message the text to be displayed
+	 */
+	public void sendFeedback( String message )
+	{
+		ic.send( message );
+		ic.flush();
+	}
+	public void sendFingerScreen( InteractiveConnection ic )
+	{
+		boolean seeThrough = permissionList.permissionCheck( seePrivateInfoAction, false, true );
+		Player p = getCurrent();
+		
+		ic.sendLine();
+		ic.send( getTitledName() );
+		
+		ic.sendLine();
+		
+		if( connected() )
+		{
+			ic.send( getFullName() + " has been logged in for " + loginStats.getTimeSinceConnection() );
+			
+			InteractiveConnection pic = getConnection();
+			if( pic instanceof SocketIC )
+				ic.send( getName() + " is connected from: " + ((SocketIC)pic).getFullSiteName() );
+		}
+		else
+		{
+			DateTime dateTime = (DateTime) loginStats.getLastConnection();
+			
+			if( dateTime == null )
+				ic.send( getFullName() + " has never logged in." );
+			else
+				ic.send( getFullName() + " was last seen at " + dateTime.toString( p ) );
+		}
+		
+		if( !hideTime )
+		{
+			ic.send( gender.HisHer() + " total login time is " + loginStats.getTotalConnectionTime() );
+			if( oldLoginTime != null && oldLoginTime.length() > 0 )
+			{
+				ic.send( gender.HisHer() + " pre-eclipse login time was " + oldLoginTime );
+			}
+		}
+		
+		if( age !=  0 ) 
+			ic.send( gender.HeShe() + " is " + age + " year" + (age==1?"":"s") + " old" );
+		
+		{
+			if( aka.length() > 0 ) 
+				ic.sendFeedback( "Also known as: " + aka );
+		}
+		
+			//  email addresses
+		{
+			if( !privateEmail || seeThrough )
+			{
+				String ea = getEmailAddress();
+				if( ea != null )
+				{
+					ic.sendFeedback( HisHer() + " email address is: " + ea );
+				}
+			}
+		}
+		
+		{
+			String wp = homepage.get();
+			
+			if( wp != null )
+				ic.sendFeedback( HisHer() + " web page is: " + wp );
+		}
+		
+		Paragraph plan = getPlan();
+		
+			//  show the plan (exile 28jul97)
+		if( plan != null && !plan.isEmpty() )
+		{
+			ic.send( planHeading );
+			ic.send( plan );
+		}
+		
+		ic.sendLine();
+	}
+	private final void sendSplash( char preChar, String message, SuppressionList sl, Effect e )
+	{
+		e.sending( message, this );
+		
+		if( preChar == ' ' )
+			ic.send( message );
+		else
+			ic.send( preChar, message );
+		
+		if( sl != null )
+		{
+			if( isIdle() || isAfk() )
+				sl.add( this, SuppressionList.IDLING, idleMsg );
+		}
+	}
+	public void sendSystem( String message )
+	{
+		ic.send( message );
+		ic.flush();
+	}
+	public final void setAge( int na )
+	{
+		permissionList.check( modifyAction );
+		age = na;
+	}
+	public final void setAka( String na )
+	{
+		permissionList.check( modifyAction );
+		aka = na;
+	}
+	public final void setBlockingMsg( String na )
+	{
+		permissionList.check( modifyAction );
+		blockingMsg = na;
+	}
+	public final void setBlockMsg( String na )
+	{
+		permissionList.check( modifyAction );
+		blockMsg = na;
+	}
+	public void setBrief( boolean nb )
+	{
+		permissionList.check( modifyAction );
+		brief = nb;
+	}
+	public void setCanPage( boolean v )
+	{
+		permissionList.check( modifyAction );
+		canPage = v;
+	}
+	public final void setCitizen( boolean ba )
+	{
+		permissionList.check( modifyAction );
+		citizen = ba;
+	}
+	public void setContext( Atom r )
+	{
+		permissionList.check( modifyAction );
+		if( r != null )
+			context = r;
+		else
+			context = this;
+	}
+	public void setCookie( Object key, Object value )
+	{
+		if( cookies == null )
+			cookies = new Hashtable();
+		
+		cookies.put( key, value );
+	}
+	public final void setGender( Gender ng )
+	{
+		gender = ng;
+	}
+	public void setHiding( boolean tf )
+	{
+		permissionList.check( modifyAction );
+		hidden = tf;
+	}
+	public void setHome( Room r )
+	{
+		permissionList.check( modifyAction );
+		
+		try
+		{
+			home = r.getThis();
+		}
+		catch( TypeMismatchException e )
+		{
+			throw new UnexpectedResult( "property 'home' is not a Room in Player: " + e.toString() );
+		}
+	}
+	public void setIdle( boolean tf )
+	{
+		permissionList.check( modifyAction );
+		isIdle = tf;
+		recalculateIdlePrompt();
+	}
+	public void setLag( int amount, boolean continual )
+	{
+		permissionList.check( modifyAction );
+		if( amount >= 0 )
+		{
+			lagAmount = amount * 1000;
+			lagOnce = continual;
+		}
+	}
+	public void setLiberated( boolean nl )
+	{
+		permissionList.check( modifyAction );
+		liberated = nl;
+	}
+		//  should modify this routine to do
+		//  authentication - don't allow anyone
+		//  to set the password?
+	public void setPassword( String newValue )
+	{
+		permissionList.check( modifyAction );
+		password.set( newValue );
+	}
+	public void setPrefix( String s )
+	{
+		if( s == null || s.length() == 0 )
+			prefix = "";
+		else
+			prefix = s + " ";
+	}
+	void setSaved()
+	{
+		saved = true;
+	}
+	//  required for the 'term' command.
+	public synchronized boolean setTerminal( String name )
+	{
+		permissionList.check( modifyAction );
+		
+		if( connected() )
+		{
+			if( ic instanceof TelnetIC )
+			{
+				boolean r = ((TelnetIC)ic).forceTerminal( name );
+				if( r )
+					forcedTerminal = name;
+				return( r );
+			}
+			else
+				throw new WrongTerminalTypeException();
+		}
+		else
+			throw new PlayerNotConnectedException();
+	}
+	public final void setTimezone( Duration nd )
+	{
+		permissionList.check( modifyAction );
+		timezone = nd;
+	}
+	public void setWordwrap( boolean ww )
+	{
+		wordwrap = ww;
+		
+		if( connected() )
+		{
+			if( ic instanceof TelnetIC )
+				((TelnetIC)ic).setWordwrap( ww );
+			else
+				throw new WrongTerminalTypeException();
+		}
+	}
+	/**
+	  *  I hereby declare each player to be
+	  *  a soverign state, owned by no
+	  *  other. ;p~
+	  *
+	  *  taken out only for the reason that it isn't
+	  *  strictly necessary and I wanted to make isOwner final
+	  *  subtle, 05Nov98
+	  *
+	public boolean isOwner( Atom potential )
+	{
+		if( potential == this )
+			return( true );
+		else
+			return( false );
+	}
+	 */
+	
+	/*
+	public boolean isTellBlockingPlayer( Reference p )
+	{
+		return( !permissionList.check( originator.getThis(), tellAction ) );
+	}
+	*/
+	
+	public void splash( Effect e, SuppressionList s )
+	{
+		super.splash( e, s );
+		
+		QualifierList.Entry q = null;
+		boolean bounce = false;
+		char preChar = ' ';
+		String message = e.getMessage( this );
+		Player originator = e.getOriginator();
+		
+		if( e instanceof Communication )
+		{
+			if( originator != this || e instanceof Broadcast )
+			{
+					//  if not allowed, splash a message back and finish
+				if( !permissionList.check( originator.getThis(), tellAction ) )
+				{
+					if( originator.isBeyond() )
+					{
+						if( s != null )
+							s.add( this, SuppressionList.SPECIFIC, "(beyond used to send anyway)" );
+					}
+					else
+					{
+						if( s != null )
+							s.add( this, SuppressionList.SPECIFIC, blockMsg );
+						
+						return;
+					}
+				}
+				
+				q = qualifierList.getEntryFor( Type.typeOf( e.getSplasher() ) );
+				if( q == null )
+					q = qualifierList.getEntryFor( Type.typeOf( e ) );
+				
+				if( showFlags && originator != this )
+				{
+					if( e instanceof Directed )
+						preChar = SHOWCHARS[ SHOWFLAG_DIRECTED ];
+					else if( e instanceof Broadcast )
+					{
+						Atom rs = e.getSplasher();
+						
+						if( rs instanceof Friends )
+							preChar = SHOWCHARS[ SHOWFLAG_FRIENDS ];
+						else if( rs instanceof Room )
+							preChar = SHOWCHARS[ SHOWFLAG_ROOM ];
+						else if( e instanceof Shout )
+							preChar = SHOWCHARS[ SHOWFLAG_SHOUTS ];
+					}
+				}
+				
+				bounce = true;  //  tell them if a communication message fails
+			}
+		}
+		else if( e instanceof Movement )
+		{
+			if( showFlags && originator != this )
+			{
+				if( e instanceof Enter )
+					preChar = SHOWCHARS[ SHOWFLAG_ENTER ];
+				else if( e instanceof Leave )
+					preChar = SHOWCHARS[ SHOWFLAG_LEAVE ];
+			}
+			
+			//q = qualifierList.getEntryFor( Type.typeOf( e ) );
+			q = qualifierList.getEntryFor( Type.MOVEMENT );
+		}
+		else if( e instanceof key.effect.Connection )
+		{
+			StringBuffer foundBy = new StringBuffer( message );
+			
+			Reference pRef = originator.getThis();
+			boolean triggered = false;
+			
+			for( Enumeration en = inform.referenceElements(); en.hasMoreElements(); )
+			{
+				Reference a = (Reference) en.nextElement();
+				
+					//  this is an optimisation - (this code gets called a lot)
+					//  if the Reference isn't loaded, there
+					//  isn't much chance that this list entry
+					//  counts.  if you take this out, be sure
+					//  to put it back in on the final 'else'
+					//  clause, since it is required there.
+				if( a.isLoaded() )
+				{
+					if( pRef.equals( a ) )
+					{
+						foundBy.append( " [inform]" );
+						triggered = true;
+					}
+					else if( clan.equals( a ) )
+					{
+						foundBy.append( " [clan]" );
+						triggered = true;
+					}
+					else  //  if( a.isLoaded() ) <taken out, see above>
+					{
+						Atom j = a.get();
+						
+						//if( j instanceof Scape && ((Scape)j).containsPlayer( originator ) )
+						if( j instanceof Scape )
+						{
+							if( ((Scape)j).containsPlayer( originator ) )
+							{
+								foundBy.append( " [" );
+								foundBy.append( j.getName() );
+								foundBy.append( "]" );
+								
+								triggered = true;
+							}
+						}
+					}
+				}
+			}
+			
+			if( !triggered )
+				return;
+			
+			message = foundBy.toString();
+			
+			if( showFlags && originator != this )
+			{
+				if( e instanceof Login )
+					preChar = SHOWCHARS[ SHOWFLAG_LOGIN ];
+				else if( e instanceof Logout )
+					preChar = SHOWCHARS[ SHOWFLAG_LOGOUT ];
+			}
+			
+			q = qualifierList.getEntryFor( Type.CONNECTION );
+		}
+		else if( e instanceof Blocking )
+		{
+			q = qualifierList.getEntryFor( Type.BLOCKING );
+			
+			if( showFlags && originator != this )
+				preChar = SHOWCHARS[ SHOWFLAG_BLOCKING ];
+			
+			if( q == null && e instanceof Block )
+			{
+				Scape sc = ((Block)e).blockOf();
+				
+				q = qualifierList.getEntryFor( Type.typeOf( sc ) );
+			}
+		}
+		else if( e instanceof Global )
+		{
+			ic.send( "\n\n" );
+			ic.send( new HeadingParagraph( message ) );
+			ic.send( "\n\n" );
+			ic.flush();
+			return;
+		}
+		else
+			ic.send( " --[ Unknown splash type recvd ]--" );
+		
+		if( q != null )
+		{
+			char c = q.get();
+			
+			if( c == Qualifiers.UNKNOWN_CODE )
+				sendSplash( preChar, message, s, e );
+			else if( c == Qualifiers.SUPPRESSION_CODE )
+			{
+				//Log.debug( this, "suppressing message, bounce is " + bounce + ", sl is " + s.toString() );
+				
+					//  beyond goes through for directed events
+				if( !(e.getOriginator().isBeyond() && e instanceof Directed ) )
+				{
+						//  this has been suppressed - splash a message back
+					if( bounce && s != null )
+						s.add( this, SuppressionList.GENERAL, "(beyond used to deliver message anyway)" );
+					return;
+				}
+				else
+				{
+						//  this has been suppressed - splash a message back
+					if( bounce && s != null )
+						s.add( this, SuppressionList.GENERAL, getBlockingMsg() );
+					
+					c = q.getMark();
+					if( c != Qualifiers.UNKNOWN_CODE )
+						sendSplash( preChar, "^" + q.getMark() + message, s, e );
+					else
+						sendSplash( preChar, message, s, e );
+				}
+			}
+			else
+				sendSplash( preChar, "^" + c + message, s, e );
+		}
+		else
+			sendSplash( preChar, message, s, e );
+		
+		ic.flushIfWaiting();
+	}
+	void stopBeingTemporary()
+	{
+		//  do nothing, we upgrade from temporary to distinct later
+		//index = Registry.instance.allocateTemporaryIndex( this );
+	}
+	public void sync() throws IOException
+	{
+		if( canSave )
+		{
+			if( hasPassword() )
+			{
+				setSaved();
+				super.sync();
+				if( connected() )
+					ic.send( "Character saved." );
+			}
+			else
+			{
+				if( connected() )
+					ic.send( "You have no password, so your character has not been saved." );
+			}
+		}
+		else
+		{
+			if( connected() )
+				ic.send( "You have not been given permission to save" );
+		}
+	}
+	/**
+	  *  This is a special accessor that allows limited access
+	  *  to the supplied players florin count: only to increase
+	  *  it.
+	  *
+	  * @to the player to give the florins to
+	  * @amount the amount of florins to transfer
+	 */
+	public void transferFlorins( Player to, int amount )
+	{
+		if( amount > florins )
+			throw new InvalidArgumentException( getName() + " doesn't have that many florins" );
+		if( amount < 1 )
+			throw new InvalidArgumentException( "Unable to transfer negative amounts of florins" );
+		
+		permissionList.check( modifyAction );
+		to.florins += amount;
+		florins -= amount;
+		
+			//  if they are connected tell them about the good deed.
+		if( to.connected() )
+			to.send( getName() + " gives you " + amount + " silver florins." );
+	}
+	/**
+	  *  Called by the interactive connection to reset the 
+	  *  players idletime to 0
+	 */
+	final void unIdle()
+	{
+			//  don't you dare add anything to this routine to stop
+			//  certain players idling out: it needs to be as small
+			//  and fast as possible.  Put it in 'resetModify',
+			//  if you must.
+		connectionStats.unIdle();
+		idleTicks = MAX_IDLE_TICKS;
+	}
+	void unlinkFromScape( Scape s )
+	{
+		reverseScapes.removeElement( s );
+	}
+	public boolean willSync()
+	{
+		return( hasPassword() && canSave );
+	}
+}

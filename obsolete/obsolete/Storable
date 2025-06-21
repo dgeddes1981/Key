@@ -1,0 +1,36 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Storable,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  19Aug98     subtle       start of recorded history
+**
+*/
+
+package key;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+
+/**
+  *  Objects implementing storeable <b>must</b> have a null
+  *  constructor, so they can be created with Class.newInstance()
+ */
+public interface Storable
+{
+	public void loadFrom( DataInput from ) throws IOException;
+	public void writeTo( DataOutput to ) throws IOException;
+}
+

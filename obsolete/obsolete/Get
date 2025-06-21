@@ -1,0 +1,104 @@
+/*
+**               j###t  ########## ####   ####
+**              j###t   ########## ####   ####
+**             j###T               "###L J###"
+**          ######P'    ##########  #########
+**          ######k,    ##########   T######T
+**          ####~###L   ####
+**          #### q###L  ##########   .#####
+**          ####  \###L ##########   #####"
+**
+**  $Id: Get,v 1.1.1.1 1999/10/07 19:58:21 pdm Exp $
+**
+**  Class History
+**
+**  Date        Name         Description
+**  ---------|------------|-----------------------------------------------
+**  20Oct98     subtle       created
+**
+*/
+
+package key.commands;
+
+import key.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
+import java.util.Enumeration;
+
+public final class Get extends Command
+{
+	public Get()
+	{
+		setKey( "get" );
+		usage = "<object>";
+	}
+	
+	public void run( Player p, StringTokenizer args, String fullLine, ModalCommand caller, InteractiveConnection ic, Flags flags ) throws IOException
+	{
+		if( !args.hasMoreTokens() )
+		{
+			usage( ic );
+			return;
+		}
+		
+		String nt = args.nextToken();
+		Room r = p.getLocation();
+		Inventory i = p.getInventory();
+		
+		r.getPermissionList().check( Container.removeFromAction );
+		i.getPermissionList().check( Container.addToAction );
+		
+		if( nt.equalsIgnoreCase( "all" ) )
+		{
+			int count = 0;
+			
+			for( Enumeration e = r.elements(); e.hasMoreElements(); )
+			{
+				if( !i.canAdd() )
+				{
+					ic.sendFailure( "You are carrying too much already." );
+					return;
+				}
+				Thing t = (Thing) e.nextElement();
+				
+				if( !( t instanceof Exit ) )
+				{
+					doTheGet( p, ic, i, r, (Thing) e.nextElement() );
+					count++;
+				}
+			}
+			
+			if( count == 0 )
+			{
+				ic.sendFailure( "There is nothing in this room to get." );
+			}
+		}
+		else
+		{
+			if( !i.canAdd() )
+			{
+				ic.sendFailure( "You are carrying too much already." );
+				return;
+			}
+			
+			Thing t = getObjectFromLocation( p, ic, nt );
+			
+			if( t != null )
+				doTheGet( p, ic, i, r, t );
+		}
+	}
+
+	private void doTheGet( Player p, InteractiveConnection ic, Inventory i, Room r, Thing t )
+	{
+		try
+		{
+			r.remove( (Atom) t );
+			i.add( (Atom) t );
+			ic.sendFeedback( "You pick up " + t.getFullPortrait( p ) );
+		}
+		catch( Exception e )
+		{
+			throw new UnexpectedResult( e );
+		}
+	}
+}

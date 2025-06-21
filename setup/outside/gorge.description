@@ -1,0 +1,17 @@
+cd /realm/outside
+load PublicRoom gorge
+set gorge.called ^cInside Whispering Gorge^-
+set gorge.portrait the Whispering Gorge.
+set gorge.relation in
+edit gorge.description
+.wipe
+The walls of solid, ancient rock tower on either side as you wander through the cool, damp bottom of the gorge.  The sides are so steep that the gorge floor never receives any sun allowing the damp to nourish a rich environment for ferns and mosses.  You can hear your footsteps echo lightly from the distance, disturbed only by the call of birds and the scratchings of the hidden wildlife.
+
+You notice a large flat rock that has received some sun and you feel its warmth.  The rock is large enough for several people to sit or lie on when they get too tired from their travels.
+
+Every now and then you think that you can hear a voice whispering to you.
+
+The floor has been made smooth by centuries of water being channeled through it from a nearby lake.  A rocky track leads out of the mouth of the gorge.
+.end
+transfer gorge $
+cd
